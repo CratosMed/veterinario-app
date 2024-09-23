@@ -200,6 +200,7 @@
                                                 <th>Motivo de consulta</th>
                                                 <th>Diagnóstico</th>
                                                 <th>Tratamiento</th>
+                                                <th>Observaciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -209,8 +210,7 @@
                                                 <td>{{ parametro.motivo_consulta }}</td>
                                                 <td>{{ parametro.diagnostico || 'no come' }}</td>
                                                 <td>{{ parametro.tratamiento || 'complejo b' }}</td>
-
-
+                                                <td>{{ parametro.observaciones || 'complejo b' }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -225,23 +225,24 @@
                                             <div class="col-md-6 mb-3">
                                                 <h5 class="text-primary">Fecha</h5>
                                                 <p>{{ selectedParametro.fecha }}</p>
-
                                                 <h5 class="text-primary">Motivo de consulta</h5>
                                                 <p>{{ selectedParametro.motivoConsulta }}</p>
                                                 <h5 class="text-primary">Veterianrio que lo derivo</h5>
-                                                <p>{{ selectedParametro.motivoConsulta }}</p>
+                                                <p>{{ selectedParametro.Veterianrio }}</p>
+                                                <h5 class="text-primary">Antecedentes Familiares</h5>
+                                                <p>{{ selectedParametro.Antecedentes }}</p>
                                             </div>
 
                                             <!-- Columna 2 -->
                                             <div class="col-md-6 mb-3">
                                                 <h5 class="text-primary">Diagnóstico</h5>
                                                 <p>{{ selectedParametro.diagnostico }}</p>
-
                                                 <h5 class="text-primary">Tratamiento</h5>
                                                 <p>{{ selectedParametro.tratamiento }}</p>
-
                                                 <h5 class="text-primary"> Anamnésticos</h5>
                                                 <p>{{ selectedParametro.Anamnésticos }}</p>
+                                                <h5 class="text-primary"> Observaciones</h5>
+                                                <p>{{ selectedParametro.Observaciones }}</p>
                                             </div>
                                         </div>
 
@@ -296,6 +297,8 @@
                                                 <p>{{ selectedParametro.agresividad }}</p>
                                                 <h5 class="text-primary">Señas Particulares</h5>
                                                 <p>{{ selectedParametro.agresividad }}</p>
+                                                <h5 class="text-primary">Alergias</h5>
+                                                <p>{{ selectedParametro.alergias }}</p>
 
 
 

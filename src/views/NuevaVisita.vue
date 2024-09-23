@@ -10,6 +10,10 @@
             <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
         </div>
         <div class="mb-3">
+            <label for="Veterinario" class="form-label">Veterinario que lo derivó</label>
+            <input type="text" class="form-control" id="Veterinario" v-model="Veterinario" />
+        </div>
+        <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Motivo de la consulta</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
         </div>
@@ -17,8 +21,9 @@
             <label for="exampleFormControlTextarea1" class="form-label">Anamnésticos</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
         </div>
+
         <div class="mb-4">
-            <label for="exampleFormControlTextarea1" class="form-label">Veterinario que lo derivó</label>
+            <label for="exampleFormControlTextarea1" class="form-label">Antecedentes Familiares</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
         </div>
         <!-- Parámetros -->
@@ -278,6 +283,10 @@
                     <label for="SeñasParticulaares" class="form-label">Señas Particulares </label>
                     <input type="text" class="form-control" id="SeñasParticulaares">
                 </div>
+                <div class="col-md-4 mb-3">
+                    <label for="alergias" class="form-label">Alergias </label>
+                    <input type="text" class="form-control" id="Salergias">
+                </div>
             </div>
         </form>
 
@@ -292,6 +301,10 @@
         </div>
         <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Tratamiento</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Observaciones</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
         </div>
         <br />
