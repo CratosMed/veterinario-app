@@ -193,7 +193,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="musculoesqueletico" class="form-label">A. Musculoesquelético</label>
+                    <label for="musculoesqueletico" class="form-label">S. Musculoesquelético</label>
                     <input type="text" class="form-control" id="musculoesqueletico">
                 </div>
 
@@ -222,22 +222,22 @@
             <div class="row">
                 <!-- Columna 3 -->
                 <div class="col-md-4 mb-3">
-                    <label for="cardiovascular" class="form-label">A. Cardiovascular</label>
+                    <label for="cardiovascular" class="form-label">S. Cardiovascular</label>
                     <input type="text" class="form-control" id="cardiovascular">
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="respiratorio" class="form-label">A. Respiratorio</label>
+                    <label for="respiratorio" class="form-label">S. Respiratorio</label>
                     <input type="text" class="form-control" id="respiratorio">
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="digestivo" class="form-label">A. Digestivo</label>
+                    <label for="digestivo" class="form-label">S. Digestivo</label>
                     <input type="text" class="form-control" id="digestivo">
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="genitourinario" class="form-label">A. Genitourinario</label>
+                    <label for="genitourinario" class="form-label">S. Genitourinario</label>
                     <input type="text" class="form-control" id="genitourinario">
                 </div>
 
@@ -249,9 +249,6 @@
                         <option value="linfatico">Linfático</option>
                     </select>
                 </div>
-
-
-
                 <div class="col-md-4 mb-3">
                     <label for="orina" class="form-label">Orina</label>
                     <input type="text" class="form-control" id="orina">
@@ -270,10 +267,17 @@
                     <input type="date" class="form-control" id="ultimoCelo">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="orina" class="form-label">A. Reproductor</label>
-                    <input type="text" class="form-control" id=".reproductor">
+                    <label for="ultimoCelo" class="form-label">Último Parto</label>
+                    <input type="date" class="form-control" id="ultimoCelo">
                 </div>
-
+                <div class="col-md-4 mb-3">
+                    <label for="S.Reproductor" class="form-label">S. Reproductor</label>
+                    <input type="text" class="form-control" id="S.Reproductor">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="SeñasParticulaares" class="form-label">Señas Particulares </label>
+                    <input type="text" class="form-control" id="SeñasParticulaares">
+                </div>
             </div>
         </form>
 

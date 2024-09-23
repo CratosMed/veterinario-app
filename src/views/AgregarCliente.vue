@@ -122,7 +122,7 @@ export default {
                 axios.put(`http://localhost/veterinario-app/curso_apirest/propietarios`, { ...this.form, id: this.clienteId })
                     .then(() => {
                         alert('Cliente actualizado con éxito');
-                        this.$router.push('/listacliente'); // Redirigir después de actualizar
+                        this.$router.push('/listaclientes'); // Redirigir después de actualizar
                     })
                     .catch(error => alert('Error al actualizar cliente'));
             } else {

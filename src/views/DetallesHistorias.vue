@@ -294,6 +294,8 @@
                                                 <p>{{ selectedParametro.condicionCorporal }}</p>
                                                 <h5 class="text-primary">Agresividad</h5>
                                                 <p>{{ selectedParametro.agresividad }}</p>
+                                                <h5 class="text-primary">Señas Particulares</h5>
+                                                <p>{{ selectedParametro.agresividad }}</p>
 
 
 
@@ -313,7 +315,7 @@
                                                 <p>{{ selectedParametro.pielAnexos }}</p>
                                                 <h5 class="text-primary">Locomoción</h5>
                                                 <p>{{ selectedParametro.locomocion }}</p>
-                                                <h5 class="text-primary">A. Musculoesquelético</h5>
+                                                <h5 class="text-primary">S. Musculoesquelético</h5>
                                                 <p>{{ selectedParametro.musculoesqueletico }}</p>
                                                 <h5 class="text-primary">Sistema Nervioso</h5>
                                                 <p>{{ selectedParametro.sistemaNervioso }}</p>
@@ -325,23 +327,25 @@
 
                                             <!-- Columna 3 -->
                                             <div class="col-md-4 mb-3">
-                                                <h5 class="text-primary">A. Cardiovascular</h5>
+                                                <h5 class="text-primary">S. Cardiovascular</h5>
                                                 <p>{{ selectedParametro.cardiovascular }}</p>
-                                                <h5 class="text-primary">A. Respiratorio</h5>
+                                                <h5 class="text-primary">S. Respiratorio</h5>
                                                 <p>{{ selectedParametro.respiratorio }}</p>
-                                                <h5 class="text-primary">A. Digestivo</h5>
+                                                <h5 class="text-primary">S. Digestivo</h5>
                                                 <p>{{ selectedParametro.digestivo }}</p>
-                                                <h5 class="text-primary">A. Genitourinario</h5>
+                                                <h5 class="text-primary">S. Genitourinario</h5>
                                                 <p>{{ selectedParametro.genitourinario }}</p>
                                                 <h5 class="text-primary">Constantes fisiológicas</h5>
                                                 <p>{{ selectedParametro.constantesFisiologicas }}</p>
-                                                <h5 class="text-primary">A. Reproductor</h5>
+                                                <h5 class="text-primary">S. Reproductor</h5>
                                                 <p>{{ selectedParametro.cardiovascular }}</p>
                                                 <h5 class="text-primary">Orina</h5>
                                                 <p>{{ selectedParametro.Orina }}</p>
                                                 <h5 class="text-primary">Estado de deshidratación</h5>
                                                 <p>{{ selectedParametro.estadoDeshidratacion }}</p>
                                                 <h5 class="text-primary">Último Celo</h5>
+                                                <p>{{ selectedParametro.ultimoCelo }}</p>
+                                                <h5 class="text-primary">Último Parto</h5>
                                                 <p>{{ selectedParametro.ultimoCelo }}</p>
                                             </div>
                                         </div>
