@@ -2,8 +2,10 @@
     <div>
         <br />
         <div class="d-flex justify-content-between align-items-center mb-3 sticky-top bg-white py-2">
+            <!-- Botón de cerrar -->
             <h5 class="text-primary me-auto">Nueva Visita de :</h5>
             <button type="button" @click="NuevaVisita" class="btn btn-secondary">Guardar</button>
+            <button type="button" @click="ishistorias" class="btn btn-danger m-2">✖</button>
         </div>
         <div class="mb-3">
             <label for="fechaActual" class="form-label">Fecha actual:</label>
@@ -313,9 +315,15 @@
 </template>
 
 <script>
+
 export default {
+
+
+
+
     data() {
         return {
+            //showVisit: false,
             fechaActual: '',
             formularioParametrosVisible: false, // Parámetros
 
@@ -327,6 +335,7 @@ export default {
     },
     mounted() {
         this.obtenerFechaActual();
+        this.id = this.$route.params.id;
     },
     methods: {
         toggleFormulario(tipo) {
@@ -341,7 +350,11 @@ export default {
             const day = String(today.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
             this.fechaActual = `${year}-${month}-${day}`;
         },
-    },
+
+        ishistorias() {
+            this.$router.push({ path: `/detalleshistorias/${this.id}` });
+        },
+    }
 };
 </script>
 

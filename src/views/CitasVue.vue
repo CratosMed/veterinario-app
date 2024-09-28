@@ -6,13 +6,14 @@
         <ul class="list-group">
             <li v-for="(cita, index) in citasFiltradas" :key="index"
                 class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2"
-                :class="{ 'pulse': cita.fechaCompleta === hoy }">
+                :class="{ 'pulse': cita.fechaCompleta === hoy, 'custom-hover': true }"> <!-- Clase para efecto hover -->
                 <div class="d-flex flex-column align-items-center me-3">
                     <span class="badge bg-danger rounded-pill">{{ cita.dia }}</span>
                     <small class="text-muted">{{ cita.diaSemana }}</small>
                 </div>
                 <div class="d-flex flex-column">
-                    <h6 class="fw-bold">{{ cita.titulo }}</h6>
+                    <h5 class="fw-bold">{{ cita.titulo }}</h5>
+                    <h6 class=""> {{ cita.descripcion }}</h6>
                     <small>{{ cita.hora }} - {{ cita.recurrencia }}</small>
                 </div>
                 <div class="d-flex align-items-center">
@@ -31,6 +32,15 @@
             <div class="mb-3">
                 <label for="titulo" class="form-label">Título de la cita</label>
                 <input type="text" class="form-control" v-model="nuevaCita.titulo" required />
+            </div>
+            <div class="mb-3">
+                <label for="Paciente" class="form-label">Paciente</label>
+                <select class="form-select" v-model="nuevaCita.Paciente">
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Descripción</label>
+                <input type="text" class="form-control" v-model="nuevaCita.descripcion" required />
             </div>
             <div class="mb-3">
                 <label for="fecha" class="form-label">Fecha</label>
@@ -68,11 +78,12 @@ export default {
     data() {
         return {
             hoy: new Date().toLocaleDateString('sv-SE'), // Formato 'YYYY-MM-DD'
-
             search: '',
             citas: [],
             nuevaCita: {
                 titulo: '',
+                paciente: '',
+                descripcion: '',
                 fecha: '',
                 hora: '',
                 recurrencia: 'una vez'
@@ -84,9 +95,7 @@ export default {
     computed: {
         citasFiltradas() {
             return this.citas.filter(cita => cita.titulo.toLowerCase().includes(this.search.toLowerCase()));
-
         },
-
     },
     methods: {
         submitCita() {
@@ -132,6 +141,10 @@ export default {
 </script>
 
 <style scoped>
+.container {
+    background-color: #e8f0fc;
+}
+
 .pulse {
     animation: pulse-animation 3s infinite;
 }
@@ -152,22 +165,11 @@ export default {
         /* Color intermedio entre el naranja y el rosa */
     }
 
-
     100% {
         background-color: #fdd085;
         /* Naranja claro */
     }
-
-
-
-
 }
-
-
-
-
-
-
 
 .fixed-form {
     position: fixed;
@@ -179,5 +181,16 @@ export default {
     border-radius: 5px;
     padding: 15px;
     z-index: 1000;
+}
+
+/* Efecto de superposición para las citas */
+.list-group-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 5px;
+}
+
+.list-group-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>

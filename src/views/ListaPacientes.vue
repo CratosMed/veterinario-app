@@ -1,7 +1,7 @@
 <template>
-    <div class="container mt-4 fondo">
+    <div class="container mt-4 fondo table-responsive">
         <div class="d-grid gap-2">
-            <div class="d-flex justify-content-between align-items-center mb-3 sticky-top py-2">
+            <div class="d-flex justify-content-between align-items-center mb-3py-2">
                 <h2 class="text-primary me-auto">Historias de pacientes</h2>
             </div>
         </div>

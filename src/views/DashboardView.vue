@@ -1,8 +1,8 @@
 <template>
-    <div class="margen ">
-        <div class=" row d-flex justify-content-between align-items-center mb-3 sticky-top bg-white py-2">
+    <div class="margen container-fluid ">
+        <div class=" row d-flex justify-content-between align-items-center mb-3 py-2">
             <!-- Imagen de mascotas alineada al lado del menú lateral -->
-            <div class="col-md-9 col-lg-12 px-md-4">
+            <div class="md-4">
                 <div class="d-flex justify-content-center align-items-center mb-4 position-relative mascotas-container">
                     <img src="@/assets/mascotas.png" alt="Mascotas descansando"
                         class="img-fluid mascotas-img ext-primary me-auto" />
@@ -26,7 +26,6 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Citas</h5>
-
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div class="dropdown w-100">
                                         <button class="btn btn-outline-danger dropdown-toggle w-100" type="button"
@@ -109,19 +108,18 @@
 
 
                         <!-- Bloque 2 historias recientes -->
-                        <div class="col-12 col-md-6 mb-4">
+                        <div class="col-12 col-md-6 mb-4 table-responsive">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Historias recientes</h5>
                                 <div class="box-content">
                                     <!-- Agregar la estructura de la tabla correctamente -->
-                                    <table class="table table-striped">
+                                    <table class="table table-striped ">
                                         <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-center">Historia</th>
                                                 <th scope="col" class="text-center">Nombre</th>
                                                 <th scope="col" class="text-center">Estado reproductivo</th>
-                                                <th scope="col" class="text-center">Temperatura</th>
                                             </tr>
                                         </thead>
                                         <!-- Cuerpo de la tabla -->
@@ -130,7 +128,6 @@
                                                 <th scope="row" class="text-center">{{ historia.id }}</th>
                                                 <td class="text-center">{{ historia.nombre_paciente }}</td>
                                                 <td class="text-center">{{ historia.estado_reproductivo }}</td>
-                                                <td class="text-center">{{ historia.temperatura }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -155,7 +152,7 @@
 
                         <!-- Bloque 3 -->
                         <hr />
-                        <div class="col-12 col-md-6 mb-4">
+                        <div class="col-12 col-md-6 mb-4  table-responsive">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Últimos registros de clientes</h5>
                                 <div class="box-content">
@@ -396,6 +393,7 @@ export default {
     z-index: 10;
     /* Poner la imagen delante de las tarjetas */
     margin-top: -10px;
+    z-index: 0;
     /* Ajustar margen superior para acercar las patitas a las tarjetas */
 }
 
@@ -405,7 +403,7 @@ export default {
     height: 15%;
     position: relative;
     /* Hacer la imagen posicionable */
-    z-index: 10;
+    z-index: 0;
     /* Poner la imagen delante de las tarjetas */
     /* Ajustar margen superior para acercar las patitas a las tarjetas */
 }
@@ -449,9 +447,12 @@ export default {
 }
 
 .main-content {
-    margin-left: 0px;
+    width: 100%;
+    margin-left: 250px;
+    /* Ajusta este valor según el ancho de tu barra lateral */
+    position: relative;
+    z-index: 1;
 }
-
 
 .footer {
     color: #ffffff;
@@ -479,6 +480,7 @@ html,
 body {
     height: 100%;
     margin: 0;
+    overflow-x: hidden;
 }
 
 .nav {

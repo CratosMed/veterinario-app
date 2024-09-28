@@ -10,6 +10,10 @@
         <div v-for="(hallazgo, index) in hallazgos" :key="index" class="card mb-3 p-3 shadow-sm">
             <div class="card-body">
                 <!-- Seleccionar tipo de examen -->
+                <div class="mb-3">
+                    <label for="fechaActual" class="form-label">Fecha actual:</label>
+                    <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
+                </div>
                 <div class="mb-1">
                     <label for="tipoExamen" class="form-label">Tipo de hallazgos del examen</label>
                     <select class="form-select" v-model="hallazgo.tipo" aria-label="Tipo de examen">
@@ -37,10 +41,10 @@
                 <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div v-for="(imageData, index) in images" :key="index"
-                            :class="['carousel-item', { active: index === 0 }]">
-                            <img :src="imageData.url" class="d-block w-100" alt="Imagen del carrusel"
+                            :class="['carousel-item ', { active: index === 0 }]">
+                            <img :src="imageData.url" class="d-block w-100 " alt="Imagen del carrusel"
                                 @click="viewImage(imageData)" />
-                            <div class="carousel-caption d-none d-md-block">
+                            <div class="carousel-caption d-none d-md-block talla">
                                 <p>{{ imageData.description }}</p>
                             </div>
                         </div>
@@ -106,7 +110,11 @@ export default {
             images: [],
             selectedImage: null,
             newDescription: '',
+            fechaActual: ''
         };
+    },
+    mounted() {
+        this.obtenerFechaActual();
     },
     methods: {
         agregarHallazgo() {
@@ -136,6 +144,14 @@ export default {
         closeImage() {
             this.selectedImage = null; // Ocultar la imagen
         },
+        obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const año = hoy.getFullYear();
+            // Formato correcto para el input de tipo date: YYYY-MM-DD
+            this.fechaActual = `${año}-${mes}-${dia}`;
+        }
     }
 }
 </script>
@@ -202,5 +218,10 @@ export default {
     transform: translateX(-50%);
     color: white;
     /* Color del texto */
+}
+
+.talla {
+    margin-left: 15%;
+    margin-right: 15%;
 }
 </style>

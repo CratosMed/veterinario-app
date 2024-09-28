@@ -36,56 +36,56 @@
                     <div v-if="activeSection === 'datos'">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Nombre</h5>
                                         <p>{{ formData.name }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Apellido</h5>
                                         <p>{{ formData.apellido }}</p>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Cédula</h5>
                                         <p>{{ formData.cedula }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>E-mail</h5>
                                         <p>{{ formData.email }}</p>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Teléfono Móvil</h5>
                                         <p>{{ formData.telefonoMovil }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Teléfono Auxiliar</h5>
                                         <p>{{ formData.telefonoAuxiliar }}</p>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Ciudad</h5>
                                         <p>{{ formData.ciudad }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Municipio</h5>
                                         <p>{{ formData.municipio }}</p>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Veterinario Derivante</h5>
                                         <p>{{ formData.veterinarioDerivante }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 col-sm-6">
                                         <h5>Deuda</h5>
                                         <p>{{ formData.deuda }}</p>
                                     </div>
@@ -96,64 +96,63 @@
 
                     <div v-if="activeSection === 'pacientesRelacionados'">
                         <div class="card shadow-sm">
-                            <div class="card-body">
+                            <div class="card-body hovertable-responsive">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-primary me-auto">Pacientes Relacionados</h5>
                                 </div>
 
                                 <!-- Table of related patients -->
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">Nombre</th>
-                                            <th class="text-center">Especie</th>
-                                            <th class="text-center">Pelaje</th>
-                                            <th class="text-center">Sexo</th>
-                                            <th class="text-center">Citas</th>
-                                            <th class="text-center">Notificar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="parametro in parametros" :key="parametro.id"
-                                            @click="selectParametro(parametro)">
-                                            <td class="text-center">{{ parametro.Nombre }}</td>
-                                            <td class="text-center">{{ parametro.Especie || 'no come' }}</td>
-                                            <td class="text-center">{{ parametro.Pelaje || 'complejo b' }}</td>
-                                            <td class="text-center">{{ parametro.Sexo || 'complejo b' }}</td>
-                                            <td class="text-center citas-columna">
-                                                <div v-for="cita in parametro.Citas" :key="cita.id"
-                                                    class="d-flex align-items-center mb-2">
-                                                    <span class="badge bg-danger rounded-pill me-2">{{ cita.dia
+                                <div class="table-responsive"> <!-- Add this div with class "table-responsive" -->
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Nombre</th>
+                                                <th class="text-center">Especie</th>
+                                                <th class="text-center">Pelaje</th>
+                                                <th class="text-center">Sexo</th>
+                                                <th class="text-center">Citas</th>
+                                                <th class="text-center">Notificar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="parametro in parametros" :key="parametro.id"
+                                                @click="selectParametro(parametro)">
+                                                <td class="text-center">{{ parametro.Nombre }}</td>
+                                                <td class="text-center">{{ parametro.Especie || 'no come' }}</td>
+                                                <td class="text-center">{{ parametro.Pelaje || 'complejo b' }}</td>
+                                                <td class="text-center">{{ parametro.Sexo || 'complejo b' }}</td>
+                                                <td class="text-center citas-columna">
+                                                    <div v-for="cita in parametro.Citas" :key="cita.id"
+                                                        class="d-flex align-items-center mb-2">
+                                                        <span class="badge bg-danger rounded-pill me-2">{{
+                                                            cita.dia
                                                         }}</span>
-                                                    <div class="text-truncate" style="max-width: 150px;">
-                                                        <strong>{{ cita.evento }}</strong>
-                                                        <div class="text-muted">{{ cita.hora }} {{ cita.recurrencia }}
+                                                        <div class="text-truncate" style="max-width: 150px;">
+                                                            <strong>{{ cita.evento }}</strong>
+                                                            <div class="text-muted">{{ cita.hora }} {{ cita.recurrencia
+                                                                }}</div>
                                                         </div>
+                                                        <span
+                                                            :class="['badge', cita.recurrencia === 'every week' ? 'bg-success' : 'bg-danger']"></span>
                                                     </div>
-                                                    <span
-                                                        :class="['badge', cita.recurrencia === 'every week' ? 'bg-success' : 'bg-danger']"></span>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                            <td class="text-center">
-                                                <a :href="`https://web.whatsapp.com/send?phone=${parametro.telefono}&text=Hola%20${encodeURIComponent(parametro.Nombre)},%20te%20habla%20la%20veterinaria%20Inversiones%20Caru.%20Te%20recordamos%20la%20cita%20que%20tienes%20hoy.%20Te%20esperamos,%20tu%20salud%20es%20nuestra%20prioridad.`"
-                                                    target="_blank" rel="noopener noreferrer">
-                                                    <i class="fab fa-whatsapp fa-2x text-success"></i>
-                                                </a>
-                                            </td>
-
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a :href="`https://web.whatsapp.com/send?phone=${parametro.telefono}&text=Hola%20${encodeURIComponent(parametro.Nombre)},%20te%20habla%20la%20veterinaria%20Inversiones%20Caru.%20Te%20recordamos%20la%20cita%20que%20tienes%20hoy.%20Te%20esperamos,%20tu%20salud%20es%20nuestra%20prioridad.`"
+                                                        target="_blank" rel="noopener noreferrer">
+                                                        <i class="fab fa-whatsapp fa-2x text-success"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div> <!-- End of table-responsive div -->
+                            </div> <!-- End of table-responsive div -->
+                        </div> <!-- End of table-responsive div -->
+                    </div> <!-- End of table-responsive div -->
+                </div> <!-- End of table-responsive div -->
+            </div> <!-- End of table-responsive div -->
+        </div> <!-- End of table-responsive div -->
+    </div> <!-- End of table-responsive div -->
 </template>
 
 <script>
@@ -268,6 +267,8 @@ p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 150px;
+    /* Puedes ajustar este valor si es necesario */
 }
 
 .text-center {

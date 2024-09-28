@@ -61,7 +61,7 @@ const router = createRouter({
       component: ListaPacientes
     },
     {
-      path: '/nuevavisita',
+      path: '/nuevavisita/:id',
       name: 'nuevavisita',
       component: NuevaVisita
     },

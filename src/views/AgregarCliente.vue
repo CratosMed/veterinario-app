@@ -8,16 +8,19 @@
     <div>
         <form @submit.prevent="submitForm">
             <div class="row mb-3">
+                <!-- Fecha actual -->
                 <div class="col-md-4 col-lg-4">
-                    <label for="cedula" class="form-label">Cédula</label>
-                    <input type="number" class="form-control" id="cedula" v-model="form.cedula" required>
+                    <label for="fechaActual" class="form-label">Fecha actual:</label>
+                    <input type="date" class="form-control" id="fechaActual" v-model="form.fechaActual" />
                 </div>
 
+                <!-- Nombre -->
                 <div class="col-md-4 col-lg-4">
                     <label for="nombre" class="form-label">Nombre</label>
                     <input type="text" class="form-control" id="nombre" v-model="form.nombre" required>
                 </div>
 
+                <!-- Apellido -->
                 <div class="col-md-4 col-lg-4">
                     <label for="apellido" class="form-label">Apellido</label>
                     <input type="text" class="form-control" id="apellido" v-model="form.apellido" required>
@@ -25,28 +28,46 @@
             </div>
 
             <div class="row mb-3">
+                <!-- Cédula -->
+                <div class="col-md-4 col-lg-4">
+                    <label for="cedula" class="form-label">Cédula</label>
+                    <input type="number" class="form-control" id="cedula" v-model="form.cedula" required>
+                </div>
+
+                <!-- Dirección -->
                 <div class="col-md-4 col-lg-4">
                     <label for="direccion" class="form-label">Dirección</label>
                     <input type="text" class="form-control" id="direccion" v-model="form.direccion" required>
                 </div>
 
+                <!-- Teléfono -->
                 <div class="col-md-4 col-lg-4">
                     <label for="telefono" class="form-label">Teléfono</label>
                     <input type="text" class="form-control" id="telefono" v-model="form.telefono" required>
                 </div>
+            </div>
 
+            <div class="row mb-3">
+                <!-- Teléfono Auxiliar -->
+                <div class="col-md-4 col-lg-4">
+                    <label for="telefonoauxiliar" class="form-label">Teléfono Auxiliar</label>
+                    <input type="text" class="form-control" id="telefonoauxiliar" v-model="form.telefonoauxiliar"
+                        required>
+                </div>
+
+                <!-- Correo -->
                 <div class="col-md-4 col-lg-4">
                     <label for="correo" class="form-label">Correo</label>
                     <input type="email" class="form-control" id="correo" v-model="form.correo" required>
                 </div>
-            </div>
 
-            <div class="row mb-3">
+                <!-- Deuda -->
                 <div class="col-md-4 col-lg-4">
                     <label for="deuda" class="form-label">Deuda</label>
                     <input type="text" class="form-control" id="deuda" v-model="form.deuda">
                 </div>
             </div>
+
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-100">
@@ -71,7 +92,8 @@ export default {
                 direccion: '',
                 telefono: '',
                 correo: '',
-                deuda: ''
+                deuda: '',
+                fechaActual: '',
             },
             editMode: false,
             clienteId: null
@@ -82,6 +104,9 @@ export default {
         if (id) {
             this.loadCliente(id);
         }
+    },
+    mounted() {
+        this.obtenerFechaActual();
     },
     methods: {
         loadCliente(id) {
@@ -133,7 +158,15 @@ export default {
                     })
                     .catch(error => alert('Error al agregar cliente'));
             }
-        }
+        },
+        obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const año = hoy.getFullYear();
+            // Formato correcto para el input de tipo date: YYYY-MM-DD
+            this.form.fechaActual = `${año}-${mes}-${dia}`; // Asignar dentro de form
+        },
     }
 };
 </script>

@@ -55,6 +55,7 @@
     text-align: center;
     /* Centra el texto */
     position: relative;
+
     /* Cambia a "absolute" si necesitas que esté detrás del contenido */
     /* Asegura que el footer esté detrás del contenido */
 }

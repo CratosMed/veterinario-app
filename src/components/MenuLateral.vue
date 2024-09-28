@@ -2,19 +2,16 @@
     <div>
         <div class="row d-flex">
             <!-- Menú lateral -->
-            <nav :class="['sidebar', isSidebarOpen ? '' : 'd-none', 'col-md-12', 'col-lg-12', 'fondolateral']"
+            <nav :class="['sidebar', 'fondolateral', isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed']"
                 id="sidebar">
                 <div class="position-sticky top-0">
-                    <!-- Botón de cierre "X" para pantallas pequeñas -->
-                    <div class="d-md-none text-end pe-3 pt-2">
-                        <button class="btn-close" @click="toggleSidebar"></button>
-                    </div>
                     <div class="separacion"></div>
                     <ul class="nav flex-column">
                         <div class="alto"></div>
                         <li v-for="item in menuItems" :key="item.id" class="menu-item" @click="navigateTo(item)">
                             <i :class="item.icon" class="menu-icon"></i>
-                            <span class="menu-label">{{ item.label }}</span>
+                            <!-- Solo se muestra el texto si el menú está abierto -->
+                            <span v-if="isSidebarOpen" class="menu-label">{{ item.label }}</span>
                         </li>
                     </ul>
                 </div>
@@ -25,9 +22,14 @@
 
 <script>
 export default {
+    props: {
+        isSidebarOpen: {
+            type: Boolean,
+            required: true,
+        },
+    },
     data() {
         return {
-            isSidebarOpen: true,
             menuItems: [
                 { id: 1, label: 'Inicio', path: '/', icon: 'bi bi-house-door' },
                 { id: 2, label: 'Agregar Paciente', path: '/agregarPaciente', icon: 'bi bi-person-plus' },
@@ -41,9 +43,6 @@ export default {
         };
     },
     methods: {
-        toggleSidebar() {
-            this.isSidebarOpen = !this.isSidebarOpen;
-        },
         navigateTo(item) {
             if (item.path === '/logout') {
                 this.$router.push('/');
@@ -58,32 +57,36 @@ export default {
 <style scoped>
 .fondolateral {
     background: linear-gradient(to bottom, #045872, #034a58, #02343f);
+    z-index: 1000;
+}
+
+/* Estilo del menú colapsado */
+.sidebar-collapsed {
+    width: 60px;
+    /* Ajusta según el tamaño que prefieras */
+    transition: width 0.3s ease;
+}
+
+.sidebar-open {
+    width: 220px;
+    /* Ancho del menú cuando está abierto */
+    transition: width 0.3s ease;
 }
 
 .alto {
-    margin-top: 80%;
+    margin-top: 60%;
 }
 
 .d-flex {
     display: flex;
     min-height: 100vh;
-    /* Se asegura de que el contenedor ocupe toda la altura de la pantalla */
-}
-
-.sidebar {
-    height: 100vh;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    width: 276px;
-    transition: transform 0.3s ease-in-out;
 }
 
 /* Estilo del menú */
 .menu-item {
     display: flex;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 10px;
     color: #ffffff;
     font-size: 16px;
     font-family: 'Poppins', sans-serif;
@@ -96,45 +99,28 @@ export default {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Espaciado entre ícono y texto */
 .menu-icon {
     margin-right: 15px;
     font-size: 20px;
 }
 
+/* Esconde el texto cuando el menú está colapsado */
+.sidebar-collapsed .menu-label {
+    display: none;
+}
+
+/* Ajusta la alineación de los íconos en el menú colapsado */
+.sidebar-collapsed .menu-icon {
+    margin-right: 0;
+    text-align: center;
+    width: 100%;
+}
+
 .menu-label {
     margin-left: 5px;
+}
 
-    /* Sidebar ocultable para pantallas pequeñas */
-    @media (max-width: 768px) {
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            z-index: 1000;
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(-100%);
-        }
-
-        .sidebar.d-none {
-            transform: translateX(-100%);
-        }
-
-        .sidebar:not(.d-none) {
-            transform: translateX(0);
-        }
-
-        .main-content {
-            margin-left: 0;
-        }
-    }
-
-    /* Sidebar siempre visible en pantallas grandes */
-    @media (min-width: 768px) {
-        .sidebar {
-            transform: none;
-        }
-    }
+.separacion {
+    height: 60px;
 }
 </style>

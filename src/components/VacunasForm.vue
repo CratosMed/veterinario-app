@@ -10,6 +10,10 @@
             <div v-for="(vacuna, index) in vacunas" :key="index" class="card mb-3 p-3 shadow-sm">
                 <div class="card-body">
                     <!-- Seleccionar tipo de vacuna -->
+                    <div class="mb-3">
+                        <label for="fechaActual" class="form-label">Fecha actual:</label>
+                        <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
+                    </div>
                     <div class="mb-1">
                         <label for="tipoVacuna" class="form-label">Tipo de vacuna</label>
                         <input type="text" class="form-control" v-model="vacuna.tipovacuna" id="tipovacuna">
@@ -24,6 +28,10 @@
                     <div class="mb-3">
                         <label for="dosis" class="form-label">Dosis</label>
                         <input type="text" class="form-control" v-model="vacuna.dosis" id="dosis">
+                    </div>
+                    <div class="mb-3">
+                        <label for="peso" class="form-label">Peso</label>
+                        <input type="text" class="form-control" v-model="vacuna.peso" id="peso">
                     </div>
 
                     <!-- Descripción -->
@@ -62,7 +70,11 @@ export default {
     data() {
         return {
             vacunas: [],
+            fechaActual: ''
         };
+    },
+    mounted() {
+        this.obtenerFechaActual();
     },
     methods: {
         agregarVacuna() {
@@ -71,7 +83,15 @@ export default {
         eliminarVacuna(index) {
             this.vacunas.splice(index, 1);
         },
-    },
+        obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const año = hoy.getFullYear();
+            // Formato correcto para el input de tipo date: YYYY-MM-DD
+            this.fechaActual = `${año}-${mes}-${dia}`;
+        }
+    }
 };
 </script>
 

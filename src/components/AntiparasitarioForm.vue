@@ -8,6 +8,10 @@
         <!-- Formulario de Antiparasitarios -->
         <div>
             <div v-for="(antiparasitario, index) in antiparasitarios" :key="index" class="card mb-3 p-3 shadow-sm">
+                <div class="mb-3">
+                    <label for="fechaActual" class="form-label">Fecha actual:</label>
+                    <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
+                </div>
                 <div class="card-body">
                     <!-- Seleccionar tipo de antiparasitario -->
                     <div class="mb-1">
@@ -27,7 +31,14 @@
                         <input type="text" class="form-control" v-model="antiparasitario.marcaSerie"
                             id="marcaSerieAntiparasitario">
                     </div>
-
+                    <div class="mb-3">
+                        <label for="dosis" class="form-label">Dosis</label>
+                        <input type="text" class="form-control" v-model="antiparasitario.dosis" id="dosis">
+                    </div>
+                    <div class="mb-3">
+                        <label for="peso" class="form-label">Peso</label>
+                        <input type="text" class="form-control" v-model="antiparasitario.peso" id="peso">
+                    </div>
                     <!-- Descripción -->
                     <div class="mb-3">
                         <label for="descripcionAntiparasitario" class="form-label">Descripción</label>
@@ -64,7 +75,11 @@ export default {
     data() {
         return {
             antiparasitarios: [],
+            fechaActual: '',
         };
+    },
+    mounted() {
+        this.obtenerFechaActual();
     },
     methods: {
         agregarAntiparasitario() {
@@ -72,6 +87,13 @@ export default {
         },
         eliminarAntiparasitario(index) {
             this.antiparasitarios.splice(index, 1);
+        },
+        obtenerFechaActual() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
+            const day = String(today.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
+            this.fechaActual = `${year}-${month}-${day}`;
         },
     },
 };

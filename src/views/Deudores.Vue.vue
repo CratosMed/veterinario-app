@@ -161,3 +161,18 @@ export default {
     }
 }
 </script>
+<style>
+.table tbody tr {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.table tbody tr:active {
+    transform: translateY(-2px);
+}
+</style>

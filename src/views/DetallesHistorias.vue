@@ -10,13 +10,16 @@
                 <!-- Sidebar -->
                 <div class="col-md-2 bg-light">
                     <div class="text-center">
-                        <!-- Imagen de perfil y nombre -->
-                        <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Profile Picture">
-                        <h4>Benito</h4>
+
+                        <img src="http://localhost/veterinario-app/curso_apirest/imagenes_pacientes/66f2fa5bdc5b5.png"
+                            class="image-responsive mb-3" alt="Profile Picture">
+                        <h4>{{ paciente.nombre }}</h4>
+
+
                     </div>
 
                     <!-- Sidebar Links -->
-                    <ul class="nav flex-column">
+                    <ul class="nav flex-column sidebar-menu">
                         <li class="nav-item">
                             <a class="nav-link" href="#" :class="{ active: activeSection === 'datos' }"
                                 @click.prevent="setActiveSection('datos')">Datos del Paciente</a>
@@ -30,21 +33,20 @@
                                 @click.prevent="setActiveSection('vacunas')">Vacunas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" :class="{ active: activeSection === 'Antiparasitarios' }"
-                                @click.prevent="setActiveSection('Antiparasitarios')">Antiparasitarios</a>
+                            <a class="nav-link" href="#" :class="{ active: activeSection === 'antiparasitarios' }"
+                                @click.prevent="setActiveSection('antiparasitarios')">Antiparasitarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" :class="{ active: activeSection === 'Procedimiento' }"
-                                @click.prevent="setActiveSection('Procedimiento')">Procedimiento</a>
+                            <a class="nav-link" href="#" :class="{ active: activeSection === 'procedimiento' }"
+                                @click.prevent="setActiveSection('procedimiento')">Procedimiento</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" :class="{ active: activeSection === 'Examenes' }"
-                                @click.prevent="setActiveSection('Examenes')">Examenes</a>
+                            <a class="nav-link" href="#" :class="{ active: activeSection === 'examenes' }"
+                                @click.prevent="setActiveSection('examenes')">Examenes</a>
                         </li>
                     </ul>
 
                 </div>
-
                 <!-- Main Content -->
                 <div class="col-md-10 p-4">
                     <!-- Card Containing Patient Details -->
@@ -52,25 +54,31 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <!-- Sección de Detalles del Paciente -->
-                                <div class="row">
-                                    <div class="col-md-6">
+                                <div class="row justify-content-center">
+                                    <!-- Use justify-content-center to center the row -->
+                                    <div class="col-md-4 col-sm-6 ">
+                                        <!-- Add text-center class for centering -->
+                                        <h5 class="text-primary">Fecha</h5>
+                                        <p>{{ paciente.fecha || 'No disponible' }}</p>
                                         <h5 class="text-primary">Nombre</h5>
                                         <p>{{ paciente.nombre || 'No disponible' }}</p>
                                         <h5 class="text-primary">Cliente</h5>
-                                        <p>{{ paciente.nombre_propietario || 'No disponible' }}
+                                        <p>{{ paciente.nombre_propietario || 'No disponible' }}</p>
                                         <p>CI: {{ paciente.cedula || 'No disponible' }}</p>
-                                        </p>
 
                                         <h5 class="text-primary">Fecha de nacimiento</h5>
                                         <p>{{ paciente.fecha_nacimiento || 'No disponible' }}</p>
                                         <h5 class="text-primary">Edad</h5>
                                         <p>{{ paciente.edad || 'No disponible' }}</p>
-
                                     </div>
+
                                     <!-- Columna 2 -->
-                                    <div class="col-md-6">
+                                    <div class="col-md-4 col-sm-6 ">
+                                        <!-- Add text-center class for centering -->
                                         <h5 class="text-primary">Especie</h5>
                                         <p>{{ paciente.genero || 'No disponible' }}</p>
+                                        <h5 class="text-primary">Raza</h5>
+                                        <p>{{ paciente.raza || 'No disponible' }}</p>
                                         <h5 class="text-primary">Pelaje</h5>
                                         <p>{{ paciente.color || 'No disponible' }}</p>
                                         <h5 class="text-primary">Sexo</h5>
@@ -78,13 +86,13 @@
 
                                         <h5 class="text-primary">Comida que consume</h5>
                                         <p>Gatsy</p>
-
                                     </div>
                                 </div>
                             </div>
+                            <!-- End of Card -->
                         </div>
-                        <!-- End of Card -->
                     </div>
+
                     <div>
                         <div v-if="activeSection === 'vacunas'">
                             <div class="card shadow-sm">
@@ -100,29 +108,27 @@
                                         <VacunasForm />
                                     </div>
                                     <!-- Mostrar la tabla solo si el formulario no está visible -->
-                                    <div v-else>
-                                        <div class="row">
-                                            <div class="col-md-6 col-lg-12">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Fecha</th>
-                                                            <th scope="col">Tipo de vacuna</th>
-                                                            <th scope="col">Marca y N° de vacuna</th>
-                                                            <th scope="col">Observaciones</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">2024-09-15</th>
-                                                            <td>Parvovirus</td>
-                                                            <td>MarcaY - 67890</td>
-                                                            <td>Vacuna administrada con leve fiebre post-inmunización
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                    <div v-else class="table-responsive">
+                                        <div class="col-md-6 col-lg-12">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Fecha</th>
+                                                        <th scope="col">Tipo de vacuna</th>
+                                                        <th scope="col">Marca y N° de vacuna</th>
+                                                        <th scope="col">Observaciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">2024-09-15</th>
+                                                        <td>Parvovirus</td>
+                                                        <td>MarcaY - 67890</td>
+                                                        <td>Vacuna administrada con leve fiebre post-inmunización
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
 
@@ -134,7 +140,7 @@
                         </div>
                         <!-- End of Card -->
                     </div>
-                    <div v-if="activeSection === 'Antiparasitarios'">
+                    <div v-if="activeSection === 'antiparasitarios'">
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -149,7 +155,7 @@
                                     <AntiparasitarioForm />
                                 </div>
                                 <!-- Sección historial clínico -->
-                                <div class="row" v-if="!AntiparasitarioForm">
+                                <div v-if="!AntiparasitarioForm" class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -192,8 +198,8 @@
                                     </div>
                                 </div>
                                 <!-- Tabla de Parámetros -->
-                                <div v-if="!selectedParametro">
-                                    <table class="table table-striped">
+                                <div v-if="!selectedParametro" class="table-responsive">
+                                    <table class="table table-hover">
                                         <thead>
                                             <tr>
                                                 <th>Fecha</th>
@@ -363,7 +369,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="activeSection === 'Procedimiento'">
+                    <div v-if="activeSection === 'procedimiento'">
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -375,7 +381,7 @@
                                     <ProcedimientosForm />
                                 </div>
                                 <!-- Sección parámetros -->
-                                <div class="row" v-if="!isProcedimientosFormVisible">
+                                <div v-if="!isProcedimientosFormVisible" class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -412,7 +418,7 @@
                         </div>
                     </div>
 
-                    <div v-if="activeSection === 'Examenes'">
+                    <div v-if="activeSection === 'examenes'">
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -424,7 +430,7 @@
                                     <ExamenesForm />
                                 </div>
                                 <!-- Sección parámetros -->
-                                <div class="row" v-if="!isExamenesForm">
+                                <div v-if="!isExamenesForm" class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -457,6 +463,7 @@
             </div>
 
         </div>
+        <h2> arreglar la redireccion del menu que no funciona correctamente </h2>
     </div>
 </template>
 
@@ -534,7 +541,7 @@ export default {
             return edad;
         },
         NuevaVisita() {
-            this.$router.push('/nuevavisita');
+            this.$router.push({ path: `/nuevavisita/${this.id}` });
         },
         selectParametro(parametro) {
             this.selectedParametro = parametro;
@@ -572,7 +579,7 @@ export default {
         setActiveSection(section) {
             this.activeSection = null; // Resetea la sección activa primero
             this.$nextTick(() => {
-                this.activeSection = section; // Actualiza con la nueva sección
+                this.activeSection = section.toLowerCase();// Actualiza con la nueva sección
             });
         },
 
@@ -590,18 +597,18 @@ export default {
                     }
                     console.log(this.paciente);
                 } else if (seccion === 'historial') {
-                    const response = await axios.get(`https://api.example.com/pacientes/${this.id}/historial`);
-                    this.historial = response.data;
+                    //const response = await axios.get(`https://api.example.com/pacientes/${this.id}/historial`);
+                    // this.historial = response.data;
                 } else if (seccion === 'vacunas') {
                     this.isVacunasFormVisible = false
                     //const response = await axios.get(`https://api.example.com/pacientes/${this.id}/vacunas`);
                     //this.vacunas = response.data;
                 } else if (seccion === 'antiparasitarios') {
-                    const response = await axios.get(`https://api.example.com/pacientes/${this.id}/antiparasitarios`);
-                    this.antiparasitarios = response.data;
+                    //   const response = await axios.get(`https://api.example.com/pacientes/${this.id}/antiparasitarios`);
+                    //  this.antiparasitarios = response.data;
                 } else if (seccion === 'parametros') {
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?id=${this.id}`);
-                    const data = response.data;
+                    // const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?id=${this.id}`);
+                    //   const data = response.data;
                     // Asegúrate de que los datos siempre sean un array
                     this.parametros = Array.isArray(data) ? data : [];
                     console.log(this.parametros);  // Verifica qué datos estás recibiendo
@@ -620,6 +627,35 @@ export default {
 
 
 <style scoped>
+.image-responsive {
+    width: 150px;
+    /* o el tamaño que desees */
+    height: 150px;
+    /* o el tamaño que desees */
+    object-fit: cover;
+    /* Mantiene la proporción y recorta la imagen */
+    border-radius: 50%;
+    /* Hace que la imagen sea circular */
+}
+
+@media (max-width: 768px) {
+    .image-responsive {
+        max-width: 100%;
+        /* Se asegura de que la imagen no exceda el ancho de su contenedor */
+        height: auto;
+        /* Mantiene la proporción de la imagen */
+    }
+}
+
+@media (max-width: 1124px) {
+    .image-responsive {
+        max-width: 100%;
+        /* Se asegura de que la imagen no exceda el ancho de su contenedor */
+        height: auto;
+        /* Mantiene la proporción de la imagen */
+    }
+}
+
 .alto {
     margin-top: 1%;
 }
@@ -660,5 +696,65 @@ p {
 
 .container-fluid {
     background-color: #e8f0fc;
+}
+
+/* Estilos generales para el menú */
+.nav {
+    padding: 0;
+    /* Elimina el padding por defecto */
+}
+
+/* Estilos generales para el menú */
+.nav {
+    padding: 0;
+    /* Elimina el padding por defecto */
+}
+
+/* Estilos para pantallas grandes (desktop) */
+@media (min-width: 992px) {
+
+    /* Pantallas más grandes */
+    .sidebar-menu {
+        position: relative;
+        /* Se asegura de que el menú se mantenga en su lugar */
+        display: flex;
+        /* Por defecto, el menú es una fila */
+        flex-direction: column;
+        /* Coloca los elementos en columna */
+    }
+}
+
+/* Estilos para pantallas de tablet (por ejemplo, 768px a 991px) */
+@media (max-width: 991px) {
+    .sidebar-menu {
+        display: flex;
+        /* Muestra el menú como una fila */
+        flex-direction: column;
+        /* Coloca los elementos en columna */
+        align-items: flex-start;
+        /* Alinea los elementos al inicio */
+        width: 100%;
+        /* Ocupará el 100% del ancho disponible */
+    }
+
+    .nav {
+        margin-bottom: 15px;
+        /* Espacio entre el menú y la imagen */
+    }
+}
+
+/* Estilos para pantallas pequeñas (móviles) */
+@media (max-width: 767px) {
+    .sidebar-menu {
+        display: block;
+        /* El menú se verá como bloque */
+    }
+
+    .nav-link {
+        padding: 10px;
+        /* Ajusta el padding para que sea más cómodo en móviles */
+        font-size: 16px;
+        /* Aumenta el tamaño de fuente para que sea legible */
+    }
 }
 </style>

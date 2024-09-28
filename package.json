@@ -14,8 +14,10 @@
     "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "moment": "^2.30.1",
     "vue": "^3.2.45",
     "vue-good-table-next": "^0.2.1",
+    "vue-multiselect": "^3.1.0",
     "vue-router": "^4.1.6",
     "vue-toastification": "^2.0.0-rc.5"
   },

@@ -1,10 +1,10 @@
 <template>
-    <div class="container mt-4 fondo">
+    <div class="container mt-4 fondo table-responsive">
         <!-- Campo de búsqueda -->
         <input type="text" v-model="searchQuery" class="form-control" placeholder="Buscar..." />
 
         <!-- Tabla de clientes -->
-        <table class="table custom-table">
+        <table class="table custom-table ">
             <thead>
                 <tr>
                     <th @click="sortTable('nombre')">Nombre</th>

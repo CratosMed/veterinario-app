@@ -11,8 +11,8 @@
                 <div class="card-body">
                     <!-- Fecha -->
                     <div class="mb-3">
-                        <label for="fechaProcedimiento" class="form-label">Fecha</label>
-                        <input type="date" class="form-control" v-model="procedimiento.fecha">
+                        <label for="fechaActual" class="form-label">Fecha actual:</label>
+                        <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
                     </div>
 
                     <!-- Anestesiólogo -->
@@ -98,9 +98,13 @@
 export default {
     data() {
         return {
+            fechaActual: '',
             procedimientos: [],
             formularioProcedimientoVisible: false,
         };
+    },
+    mounted() {
+        this.obtenerFechaActual();
     },
     methods: {
         agregarProcedimiento() {
@@ -119,6 +123,14 @@ export default {
         eliminarProcedimiento(index) {
             this.procedimientos.splice(index, 1);
         },
+        obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const año = hoy.getFullYear();
+            // Formato correcto para el input de tipo date: YYYY-MM-DD
+            this.fechaActual = `${año}-${mes}-${dia}`;
+        }
     },
 };
 </script>
