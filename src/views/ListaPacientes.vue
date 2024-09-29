@@ -19,7 +19,7 @@
                     <th @click="sortTable('nombre')">Nombre <span :class="getSortIcon('nombre')"></span></th>
                     <th @click="sortTable('nombre_propietario')">Cliente <span
                             :class="getSortIcon('nombre_propietario')"></span></th>
-                    <th @click="sortTable('genero')">Genero <span :class="getSortIcon('genero')"></span></th>
+                    <th @click="sortTable('raza')">raza <span :class="getSortIcon('raza')"></span></th>
                     <th @click="sortTable('color')">Color <span :class="getSortIcon('color')"></span></th>
                     <th>Acciones</th>
                 </tr>
@@ -30,7 +30,7 @@
                     <td>{{ paciente.id }}</td>
                     <td>{{ paciente.nombre }}</td>
                     <td>{{ paciente.nombre_propietario }}</td>
-                    <td>{{ paciente.genero }}</td>
+                    <td>{{ paciente.raza }}</td>
                     <td>{{ paciente.color }}</td>
                     <td>
                         <button class="btn btn-sm btn-primary me-2" @click.stop="editPaciente(paciente.id)">
@@ -116,7 +116,7 @@ export default {
         },
         editPaciente(pacienteId) {
             // Redirigir a la página de edición del paciente
-            this.$router.push({ path: `/editarPaciente/${pacienteId}` });
+            this.$router.push({ path: `/agregarPaciente/${pacienteId}` });
         },
         async deletePaciente(paciente) {
             const confirmed = confirm(`¿Estás seguro de que quieres eliminar al paciente ${paciente.nombre}?`);

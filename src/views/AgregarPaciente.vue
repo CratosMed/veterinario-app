@@ -9,12 +9,6 @@
         <form @submit.prevent="submitForm">
             <!-- Campos obligatorios -->
             <div class="row mb-3">
-                <!-- Fecha actual -->
-                <div class="col-md-4 col-lg-4">
-                    <label for="fechaActual" class="form-label">Fecha actual:</label>
-                    <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
-                </div>
-
                 <!-- Nombre -->
                 <div class="col-md-4 col-lg-4">
                     <label for="nombre" class="form-label">Nombre</label>
@@ -25,15 +19,27 @@
                 <div class="col-md-4 col-lg-4">
                     <label for="cliente" class="form-label">Cliente</label>
                     <select class="form-select" id="cliente" v-model="form.cliente" required>
-                        <option value="" disabled selected>Seleccionar Cliente</option>
+                        <option value="" disabled>Seleccionar Cliente</option>
                         <option v-for="propietario in propietarios" :key="propietario.id" :value="propietario.id">
                             {{ propietario.nombre }} - {{ propietario.cedula }}
                         </option>
                     </select>
                 </div>
+
+                <!-- Especie -->
+                <div class="col-md-4 col-lg-4">
+                    <label for="especie" class="form-label">Especie</label>
+                    <input type="text" class="form-control" id="especie" v-model="form.especie">
+                </div>
             </div>
 
             <div class="row mb-3">
+                <!-- Raza -->
+                <div class="col-md-4 col-lg-4">
+                    <label for="raza" class="form-label">Raza</label>
+                    <input type="text" class="form-control" id="raza" v-model="form.raza">
+                </div>
+
                 <!-- Fecha de Nacimiento -->
                 <div class="col-md-4 col-lg-4">
                     <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
@@ -46,51 +52,15 @@
                     <label for="anos" class="form-label">Edad</label>
                     <input type="number" class="form-control" id="anos" v-model="form.anos" @change="updateDateFromAge">
                 </div>
-
-                <!-- Genero -->
-                <div class="col-md-4 col-lg-4">
-                    <label for="genero" class="form-label">Genero</label>
-                    <select class="form-select" id="genero" v-model="form.genero" required>
-                        <option value="" disabled selected>Seleccionar</option>
-                        <option value="caninos">Caninos</option>
-                        <option value="felinos">Felinos</option>
-                        <option value="aves">Aves</option>
-                        <option value="equinos">Equinos</option>
-                        <option value="conejos">Conejos</option>
-                        <option value="peces">Peces</option>
-                        <option value="reptiles">Reptiles</option>
-                        <option value="roedores">Roedores</option>
-                        <option value="anfibios">Anfibios</option>
-                        <option value="bovinos">Bovinos</option>
-                        <option value="caprino">Caprino</option>
-                        <option value="ovino">Ovino</option>
-                        <option value="porcino">Porcino</option>
-                        <option value="otra">Otra</option>
-                    </select>
-                </div>
             </div>
 
             <div class="row mb-3">
-                <!-- Especie -->
-                <div class="col-md-4 col-lg-4">
-                    <label for="especie" class="form-label">Especie</label>
-                    <input type="text" class="form-control" id="especie" v-model="form.especie">
-                </div>
-
-                <!-- Raza -->
-                <div class="col-md-4 col-lg-4">
-                    <label for="raza" class="form-label">Raza</label>
-                    <input type="text" class="form-control" id="raza" v-model="form.raza">
-                </div>
-
                 <!-- Color -->
                 <div class="col-md-4 col-lg-4">
                     <label for="color" class="form-label">Color</label>
                     <input type="text" class="form-control" id="color" v-model="form.color">
                 </div>
-            </div>
 
-            <div class="row mb-3">
                 <!-- Sexo -->
                 <div class="col-md-4 col-lg-4">
                     <label for="sexo" class="form-label">Sexo</label>
@@ -106,11 +76,15 @@
                     <label for="alergias" class="form-label">Alergias</label>
                     <input type="text" class="form-control" id="alergias" v-model="form.alergias">
                 </div>
+            </div>
 
+            <div class="row mb-3">
                 <!-- Foto -->
                 <div class="col-md-4 col-lg-4">
                     <label for="foto" class="form-label">Foto</label>
                     <input type="file" class="form-control" id="foto" @change="onFileChange">
+                    <img id="image-preview" :src="`http://localhost/veterinario-app/curso_apirest/${form.foto}`"
+                        alt="Imagen del paciente" class="img-fluid mt-2" />
                 </div>
             </div>
             <br />
@@ -125,6 +99,7 @@
     </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 //import moment from 'moment'; // Puedes instalar moment.js o usar JavaScript nativo para el cálculo de fechas.
@@ -134,11 +109,12 @@ export default {
     data() {
         return {
             form: {
+                id: '',
                 nombre: '',
                 cliente: '',
                 fechaNacimiento: '',
                 anos: '',
-                genero: '',
+                raza: '',
                 especie: '',
                 sexo: '',
                 color: '',
@@ -208,11 +184,12 @@ export default {
                 .then(response => {
                     const paciente = response.data[0];
                     this.form = {
+                        id: paciente.id,
                         nombre: paciente.nombre,
-                        cliente: paciente.cliente,
-                        fechaNacimiento: paciente.fechaNacimiento,
-                        anos: paciente.anos,
-                        genero: paciente.genero,
+                        cliente: paciente.propietarios_id, // Asignar el cliente correspondiente
+                        fechaNacimiento: paciente.fecha_nacimiento,
+                        anos: '', // Lo calcularemos basado en la fecha de nacimiento
+                        raza: paciente.raza,
                         especie: paciente.especie,
                         sexo: paciente.sexo,
                         color: paciente.color,
@@ -221,18 +198,47 @@ export default {
                     };
                     this.editMode = true;
                     this.pacienteId = id;
+                    console.log(response.data[0])
+
+                    // Actualizar la edad basado en la fecha de nacimiento
+                    this.updateAgeFromDate();
+
+                    // Mostrar vista previa de la foto
+                    this.previewImage(paciente.foto);
                 })
                 .catch(error => {
                     console.error('Error al cargar paciente:', error);
                 });
         },
+        updateAgeFromDate() {
+            if (this.form.fechaNacimiento) {
+                const today = new Date();
+                const birthDate = new Date(this.form.fechaNacimiento);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                this.form.anos = age; // Asignar la edad calculada
+            }
+        },
+
+        // Mostrar una vista previa de la imagen seleccionada o existente
+        previewImage(imagePath) {
+            if (imagePath) {
+                const fullPath = `http://localhost/veterinario-app/${imagePath}`;
+                // Aquí puedes mostrar la imagen actual en el formulario
+                document.getElementById('image-preview').src = fullPath;
+            }
+        },
         clearForm() {
             this.form = {
                 nombre: '',
+                fecha: '',
                 cliente: '',
                 fechaNacimiento: '',
                 anos: '',
-                genero: '',
+                raza: '',
                 especie: '',
                 sexo: '',
                 color: '',
@@ -246,23 +252,23 @@ export default {
             this.form.foto = file;  // Guardamos el archivo en el form
         },
         submitForm() {
+            console.log('Datos a enviar:', this.form); // Verificar los datos
             const formData = new FormData();
 
             // Asegúrate de que la fecha de nacimiento esté en formato 'YYYY-MM-DD'
             const fechaNacimiento = new Date(this.form.fechaNacimiento).toISOString().split('T')[0];
 
-            // Agregamos todos los campos del formulario a FormData
-            formData.append('datos', JSON.stringify({
-                nombre: this.form.nombre,
-                propietarios_id: this.form.cliente,
-                fechaNacimiento: fechaNacimiento, // Usar la fecha formateada
-                anos: this.form.anos,
-                genero: this.form.genero,
-                especie: this.form.especie,
-                sexo: this.form.sexo,
-                color: this.form.color,
-                alergias: this.form.alergias
-            }));
+            // Agregar todos los campos del formulario directamente a FormData
+            formData.append('id', this.form.id); // Agregar ID directamente
+            formData.append('nombre', this.form.nombre);
+            formData.append('propietarios_id', this.form.cliente);
+            formData.append('fechaNacimiento', fechaNacimiento); // Usar la fecha formateada            
+            formData.append('raza', this.form.raza);
+            formData.append('especie', this.form.especie);
+            formData.append('sexo', this.form.sexo);
+            formData.append('color', this.form.color);
+            formData.append('alergias', this.form.alergias);
+            console.log('Form Data being sent:', Array.from(formData.entries()));
 
             // Agregamos la imagen solo si fue seleccionada
             if (this.form.foto) {
@@ -271,8 +277,9 @@ export default {
 
             if (this.editMode) {
                 // Actualizar paciente existente
-                formData.append('id', this.pacienteId);
-                axios.put(`http://localhost/veterinario-app/curso_apirest/pacientes`, formData, {
+                // formData.append('id', this.id);
+
+                axios.post(`http://localhost/veterinario-app/curso_apirest/pacientes`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -281,6 +288,7 @@ export default {
                         alert('Paciente actualizado con éxito');
                         this.$router.push('/listapacientes');
                     })
+
                     .catch(error => alert('Error al actualizar paciente'));
             } else {
                 // Crear nuevo paciente

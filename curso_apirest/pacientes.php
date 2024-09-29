@@ -42,33 +42,37 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         http_response_code(200);
     }
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Verificar si se han subido archivos
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] == UPLOAD_ERR_OK) {
-        $postBody = isset($_POST['datos']) ? $_POST['datos'] : null; // Asegúrate de que tus datos se envían en 'datos'
-        $datosArray = $_pacientes->post($postBody, $_FILES); // Enviar los datos y archivos a la clase
-    } else {
-        // Leer el cuerpo de la solicitud, en caso de no haber archivos
-        $postBody = file_get_contents("php://input");
-        $datosArray = $_pacientes->post($postBody, null);
-    }
+    error_log("Método POST recibido."); // Log para indicar que se recibió una solicitud POST
 
-    // Devolver respuesta
-    header('Content-Type: application/json');
-    if (isset($datosArray["result"]["error_id"])) {
-        $responseCode = $datosArray["result"]["error_id"];
-        http_response_code($responseCode);
+    // Verificar si es una creación o edición según la existencia del campo 'id'
+    if (isset($_POST['id'])) {
+        error_log("Proceso de edición iniciado con ID: " . $_POST['id']); // Log para edición
+
+        // Proceso de edición (equivalente al PUT)
+        // Verificar si se han subido archivos
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == UPLOAD_ERR_OK) {
+            error_log("Se subió una imagen."); // Log para indicar que se subió una imagen
+            $postBody = isset($_POST['datos']) ? $_POST['datos'] : null;
+            $datosArray = $_pacientes->updatePaciente($_POST['id']); // Método para editar
+        } else {
+            error_log("No se subió ninguna imagen."); // Log si no se subió una imagen
+            // Leer el cuerpo de la solicitud en caso de no haber archivos
+            $postBody = isset($_POST['datos']) ? $_POST['datos'] : null;
+            $datosArray = $_pacientes->updatePaciente($_POST['id']);
+        }
     } else {
-        http_response_code(200);
-    }
-    echo json_encode($datosArray);
-} else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
-    // Verificar si se han subido archivos
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] == UPLOAD_ERR_OK) {
-        $postBody = isset($_POST['datos']) ? $_POST['datos'] : null; // Asegúrate de que tus datos se envían en 'datos'
-        $datosArray = $_pacientes->put($postBody, $_FILES); // Enviar los datos y archivos a la clase
-    } else {
-        $postBody = file_get_contents("php://input");
-        $datosArray = $_pacientes->put($postBody, null);
+        error_log("Proceso de creación iniciado."); // Log para creación
+
+        // Proceso de creación (nuevo paciente)
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == UPLOAD_ERR_OK) {
+            error_log("Se subió una imagen durante la creación."); // Log para creación con imagen
+            $postBody = isset($_POST['datos']) ? $_POST['datos'] : null;
+            $datosArray = $_pacientes->post($postBody, $_FILES); // Método para crear
+        } else {
+            error_log("No se subió ninguna imagen durante la creación."); // Log si no se subió imagen
+            $postBody = file_get_contents("php://input");
+            $datosArray = $_pacientes->post($postBody, null);
+        }
     }
 
     // Devolver respuesta

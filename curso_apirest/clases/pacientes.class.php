@@ -7,8 +7,9 @@ class pacientes extends conexion
     private $table = "pacientes";
     private $table2 = "propietarios";
     private $id = "";
+    private $fecha = "";
     private $nombre = "";
-    private $genero = "";
+    private $raza = "";
     private $especie = ""; // Campo nuevo
     private $color = "";
     private $sexo = "";
@@ -61,17 +62,14 @@ class pacientes extends conexion
         $datos = json_decode($json, true);
 
         // Verificar si los campos requeridos están presentes
-        if (!isset($datos['nombre']) || !isset($datos['genero']) || !isset($datos['especie']) || !isset($datos['propietarios_id'])) {
+        if (!isset($datos['nombre']) || !isset($datos['raza']) || !isset($datos['especie']) || !isset($datos['propietarios_id'])) {
             return $_respuestas->error_400();
         }
 
-        error_log(print_r($datos, true));
-        error_log(print_r($_POST, true)); // Para verificar los datos POST
-        error_log(print_r($_FILES, true)); // Para verificar los archivos subidos
-
         // Asignar valores
         $this->nombre = $datos['nombre'];
-        $this->genero = $datos['genero'];
+        $this->fecha = date("Y-m-d"); // Si no llega, usa la fecha actual
+        $this->raza = $datos['raza'];
         $this->especie = isset($datos['especie']) ? $datos['especie'] : "";
         $this->color = isset($datos['color']) ? $datos['color'] : "";
         $this->sexo = isset($datos['sexo']) ? $datos['sexo'] : "";
@@ -89,6 +87,7 @@ class pacientes extends conexion
             $this->foto = ""; // O asignar un valor por defecto si no hay foto
         }
 
+
         // Insertar paciente
         $resp = $this->insertarPaciente();
         if ($resp) {
@@ -103,8 +102,8 @@ class pacientes extends conexion
     // Método privado para insertar paciente
     private function insertarPaciente()
     {
-        $query = "INSERT INTO " . $this->table . " (nombre, genero, especie, color, sexo, fecha_nacimiento, alergias, propietarios_id, foto)
-                  VALUES ('$this->nombre', '$this->genero', '$this->especie', '$this->color', '$this->sexo', '$this->fecha_nacimiento', '$this->alergias', '$this->propietarios_id', '$this->foto')";
+        $query = "INSERT INTO " . $this->table . " (nombre, fecha, raza, especie, color, sexo, fecha_nacimiento, alergias, propietarios_id, foto)
+                  VALUES ('$this->nombre','$this->fecha', '$this->raza', '$this->especie', '$this->color', '$this->sexo', '$this->fecha_nacimiento', '$this->alergias', '$this->propietarios_id', '$this->foto')";
         $resp = parent::nonQueryId($query);
         return $resp;
     }
@@ -124,50 +123,60 @@ class pacientes extends conexion
         }
     }
     // Método para actualizar un paciente
-    public function put($json, $files)
+    public function updatePaciente($id)
     {
         $_respuestas = new respuestas;
-        $datos = json_decode($json, true);
 
-        if (!isset($datos['id'])) {
+        // Verificar si el ID es nulo o está vacío
+        if (empty($id)) {
             return $_respuestas->error_400();
+        }
+
+        // Asignar los datos del formulario
+        $this->id = $id;
+        $this->nombre = isset($_POST['nombre']) ? $_POST['nombre'] : "";
+        $this->raza = isset($_POST['raza']) ? $_POST['raza'] : "";
+        $this->especie = isset($_POST['especie']) ? $_POST['especie'] : "";
+        $this->color = isset($_POST['color']) ? $_POST['color'] : "";
+        $this->sexo = isset($_POST['sexo']) ? $_POST['sexo'] : "";
+        $this->fecha_nacimiento = isset($_POST['fechaNacimiento']) ? $_POST['fechaNacimiento'] : "0000-00-00";
+        $this->alergias = isset($_POST['alergias']) ? $_POST['alergias'] : "";
+        $this->propietarios_id = isset($_POST['propietarios_id']) ? $_POST['propietarios_id'] : "";
+
+        // Verificar si se ha subido una imagen nueva y guardarla
+        if (isset($_FILES['foto']) && !empty($_FILES['foto']['name'])) {
+            $this->foto = $this->guardarFoto($_FILES['foto']);
         } else {
-            $this->id = $datos['id'];
-            $this->nombre = isset($datos['nombre']) ? $datos['nombre'] : $this->nombre;
-            $this->genero = isset($datos['genero']) ? $datos['genero'] : $this->genero;
-            $this->especie = isset($datos['especie']) ? $datos['especie'] : $this->especie;
-            $this->color = isset($datos['color']) ? $datos['color'] : $this->color;
-            $this->sexo = isset($datos['sexo']) ? $datos['sexo'] : $this->sexo;
-            $this->fecha_nacimiento = isset($datos['fecha_nacimiento']) ? $datos['fecha_nacimiento'] : $this->fecha_nacimiento;
-            $this->alergias = isset($datos['alergias']) ? $datos['alergias'] : $this->alergias;
-            $this->propietarios_id = isset($datos['propietarios_id']) ? $datos['propietarios_id'] : $this->propietarios_id;
+            // Si no hay imagen nueva, mantenemos la foto anterior o dejamos el campo vacío
+            $this->foto = isset($_POST['foto']) ? $_POST['foto'] : ""; // Si el frontend envía la URL o nombre de la imagen anterior
+        }
 
-            // Verificar si se ha subido una nueva imagen
-            if (isset($files['foto'])) {
-                $this->foto = $this->guardarFoto($files['foto']);
-            }
-
-            $resp = $this->modificarPaciente();
-            if ($resp) {
-                $respuesta = $_respuestas->response;
-                $respuesta["result"] = array("id" => $this->id);
-                return $respuesta;
-            } else {
-                return $_respuestas->error_500();
-            }
+        // Llamada para actualizar el paciente en la base de datos
+        $resp = $this->modificarPaciente();
+        if ($resp) {
+            $respuesta = $_respuestas->response;
+            $respuesta["result"] = array("id" => $this->id);
+            return $respuesta;
+        } else {
+            return $_respuestas->error_500();
         }
     }
 
-    // Método privado para modificar paciente
+
+    // Método para modificar paciente en la base de datos
     private function modificarPaciente()
     {
         $query = "UPDATE " . $this->table . " 
-                  SET nombre = '$this->nombre', genero = '$this->genero', especie = '$this->especie', color = '$this->color', sexo = '$this->sexo', 
-                  fecha_nacimiento = '$this->fecha_nacimiento', alergias = '$this->alergias', propietarios_id = '$this->propietarios_id', foto = '$this->foto' 
+                  SET nombre = '$this->nombre', raza = '$this->raza', especie = '$this->especie', color = '$this->color', 
+                      sexo = '$this->sexo', fecha_nacimiento = '$this->fecha_nacimiento', alergias = '$this->alergias', 
+                      propietarios_id = '$this->propietarios_id', foto = '$this->foto' 
                   WHERE id = '$this->id'";
         $resp = parent::nonQuery($query);
         return ($resp >= 1) ? $resp : 0;
     }
+
+
+
 
     // Método para eliminar paciente
     public function delete($json)
