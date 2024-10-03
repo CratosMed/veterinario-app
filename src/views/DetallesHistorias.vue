@@ -25,8 +25,8 @@
                                 @click.prevent="setActiveSection('datos')">Datos del Paciente</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" :class="{ active: activeSection === 'parametros' }"
-                                @click.prevent="setActiveSection('parametros')">Historial Clínico</a>
+                            <a class="nav-link" href="#" :class="{ active: activeSection === 'historial' }"
+                                @click.prevent="setActiveSection('historial')">Historial Clínico</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" :class="{ active: activeSection === 'vacunas' }"
@@ -76,7 +76,7 @@
                                     <div class="col-md-4 col-sm-6 ">
                                         <!-- Add text-center class for centering -->
                                         <h5 class="text-primary">Especie</h5>
-                                        <p>{{ paciente.genero || 'No disponible' }}</p>
+                                        <p>{{ paciente.especie || 'No disponible' }}</p>
                                         <h5 class="text-primary">Raza</h5>
                                         <p>{{ paciente.raza || 'No disponible' }}</p>
                                         <h5 class="text-primary">Pelaje</h5>
@@ -84,8 +84,6 @@
                                         <h5 class="text-primary">Sexo</h5>
                                         <p>{{ paciente.sexo || 'No disponible' }}</p>
 
-                                        <h5 class="text-primary">Comida que consume</h5>
-                                        <p>Gatsy</p>
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +153,7 @@
                                     <AntiparasitarioForm />
                                 </div>
                                 <!-- Sección historial clínico -->
-                                <div v-if="!AntiparasitarioForm" class="table-responsive">
+                                <div v-else class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -185,8 +183,7 @@
                         <!-- End of Card -->
                     </div>
 
-                    <!-- Historial Clinico -->
-                    <div v-if="activeSection === 'parametros'">
+                    <div v-if="activeSection === 'historial'">
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -198,7 +195,7 @@
                                     </div>
                                 </div>
                                 <!-- Tabla de Parámetros -->
-                                <div v-if="!selectedParametro" class="table-responsive">
+                                <div v-if="!mostrarhistorial" class="table-responsive">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -210,20 +207,20 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="parametro in parametros" :key="parametro.id"
-                                                @click="selectParametro(parametro)">
-                                                <td>1991/07/01</td>
-                                                <td>{{ parametro.motivo_consulta }}</td>
-                                                <td>{{ parametro.diagnostico || 'no come' }}</td>
-                                                <td>{{ parametro.tratamiento || 'complejo b' }}</td>
-                                                <td>{{ parametro.observaciones || 'complejo b' }}</td>
+                                            <tr v-for="historia in historial" :key="historia.id"
+                                                @click="selectParametro(historia)">
+                                                <td>{{ historia.fecha }}</td>
+                                                <td>{{ historia.motivo_consulta }}</td>
+                                                <td>{{ historia.diagnostico || 'no come' }}</td>
+                                                <td>{{ historia.tratamiento || 'complejo b' }}</td>
+                                                <td>{{ historia.observaciones || 'complejo b' }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
 
                                 <!-- Detalles del Parámetro Seleccionado -->
-                                <div v-if="selectedParametro">
+                                <div v-if="mostrarhistorial">
                                     <div class="container mt-4">
                                         <h6>Datos Adicionales</h6>
                                         <div class="row">
@@ -232,11 +229,11 @@
                                                 <h5 class="text-primary">Fecha</h5>
                                                 <p>{{ selectedParametro.fecha }}</p>
                                                 <h5 class="text-primary">Motivo de consulta</h5>
-                                                <p>{{ selectedParametro.motivoConsulta }}</p>
-                                                <h5 class="text-primary">Veterianrio que lo derivo</h5>
-                                                <p>{{ selectedParametro.Veterianrio }}</p>
+                                                <p>{{ selectedParametro.motivo_consulta }}</p>
+                                                <h5 class="text-primary">Veterinario que lo derivó</h5>
+                                                <p>{{ selectedParametro.veterinario }}</p>
                                                 <h5 class="text-primary">Antecedentes Familiares</h5>
-                                                <p>{{ selectedParametro.Antecedentes }}</p>
+                                                <p>{{ selectedParametro.antecedentes }}</p>
                                             </div>
 
                                             <!-- Columna 2 -->
@@ -245,10 +242,10 @@
                                                 <p>{{ selectedParametro.diagnostico }}</p>
                                                 <h5 class="text-primary">Tratamiento</h5>
                                                 <p>{{ selectedParametro.tratamiento }}</p>
-                                                <h5 class="text-primary"> Anamnésticos</h5>
-                                                <p>{{ selectedParametro.Anamnésticos }}</p>
-                                                <h5 class="text-primary"> Observaciones</h5>
-                                                <p>{{ selectedParametro.Observaciones }}</p>
+                                                <h5 class="text-primary">Anamnésticos</h5>
+                                                <p>{{ selectedParametro.anamnesticos }}</p>
+                                                <h5 class="text-primary">Observaciones</h5>
+                                                <p>{{ selectedParametro.observaciones }}</p>
                                             </div>
                                         </div>
 
@@ -259,7 +256,7 @@
                                                 <h5 class="text-primary">¿Tiene transfusiones?</h5>
                                                 <p>{{ selectedParametro.transfusiones }}</p>
                                                 <h5 class="text-primary">Reflejo tusígeno</h5>
-                                                <p>{{ selectedParametro.reflejoTusigeno }}</p>
+                                                <p>{{ selectedParametro.reflejo_tusigeno }}</p>
                                                 <h5 class="text-primary">Temperatura</h5>
                                                 <p>{{ selectedParametro.temperatura }}</p>
                                                 <h5 class="text-primary">Palmopercusión</h5>
@@ -269,15 +266,15 @@
                                             <!-- Columna 2 -->
                                             <div class="col-md-6 mb-3">
                                                 <h5 class="text-primary">Frecuencia Respiratoria/min</h5>
-                                                <p>{{ selectedParametro.frecuenciaRespiratoria }}</p>
+                                                <p>{{ selectedParametro.frecuencia_respiratoria }}</p>
                                                 <h5 class="text-primary">Frecuencia cardíaca/min</h5>
-                                                <p>{{ selectedParametro.frecuenciaCardiaca }}</p>
+                                                <p>{{ selectedParametro.frecuencia_cardíaca }}</p>
                                                 <h5 class="text-primary">Presión Arterial</h5>
-                                                <p>{{ selectedParametro.presionArterial }}</p>
+                                                <p>{{ selectedParametro.presion_arterial }}</p>
                                                 <h5 class="text-primary">Pulso/min</h5>
                                                 <p>{{ selectedParametro.pulso }}</p>
                                                 <h5 class="text-primary">Reflejo deglutorio</h5>
-                                                <p>{{ selectedParametro.reflejoDeglutorio }}</p>
+                                                <p>{{ selectedParametro.reflejo_deglutorio }}</p>
                                             </div>
                                         </div>
 
@@ -290,7 +287,7 @@
                                                 <h5 class="text-primary">Oral</h5>
                                                 <p>{{ selectedParametro.oral }}</p>
                                                 <h5 class="text-primary">Vulvar/Prepucial</h5>
-                                                <p>{{ selectedParametro.vulvarPrepucial }}</p>
+                                                <p>{{ selectedParametro.vulvar_prepucial }}</p>
                                                 <h5 class="text-primary">Rectal</h5>
                                                 <p>{{ selectedParametro.rectal }}</p>
                                                 <h5 class="text-primary">Ojos</h5>
@@ -298,16 +295,13 @@
                                                 <h5 class="text-primary">Oídos</h5>
                                                 <p>{{ selectedParametro.oidos }}</p>
                                                 <h5 class="text-primary">Condición corporal</h5>
-                                                <p>{{ selectedParametro.condicionCorporal }}</p>
+                                                <p>{{ selectedParametro.condicion_corporal }}</p>
                                                 <h5 class="text-primary">Agresividad</h5>
                                                 <p>{{ selectedParametro.agresividad }}</p>
                                                 <h5 class="text-primary">Señas Particulares</h5>
-                                                <p>{{ selectedParametro.agresividad }}</p>
+                                                <p>{{ selectedParametro.señas_particulares }}</p>
                                                 <h5 class="text-primary">Alergias</h5>
                                                 <p>{{ selectedParametro.alergias }}</p>
-
-
-
                                             </div>
 
                                             <!-- Columna 2 -->
@@ -317,58 +311,58 @@
                                                 <h5 class="text-primary">Comida</h5>
                                                 <p>{{ selectedParametro.comida }}</p>
                                                 <h5 class="text-primary">Nódulos Linfáticos</h5>
-                                                <p>{{ selectedParametro.nodulosLinfaticos }}</p>
+                                                <p>{{ selectedParametro.nodulos_linfaticos }}</p>
                                                 <h5 class="text-primary">Tonsilas</h5>
                                                 <p>{{ selectedParametro.tonsilas }}</p>
                                                 <h5 class="text-primary">Piel y Anexos</h5>
-                                                <p>{{ selectedParametro.pielAnexos }}</p>
+                                                <p>{{ selectedParametro.piel_anexos }}</p>
                                                 <h5 class="text-primary">Locomoción</h5>
                                                 <p>{{ selectedParametro.locomocion }}</p>
                                                 <h5 class="text-primary">S. Musculoesquelético</h5>
                                                 <p>{{ selectedParametro.musculoesqueletico }}</p>
                                                 <h5 class="text-primary">Sistema Nervioso</h5>
-                                                <p>{{ selectedParametro.sistemaNervioso }}</p>
+                                                <p>{{ selectedParametro.sistema_nervioso }}</p>
                                                 <h5 class="text-primary">Heces</h5>
-                                                <p>{{ selectedParametro.Heces }}</p>
+                                                <p>{{ selectedParametro.heces }}</p>
                                                 <h5 class="text-primary">Estado Reproductivo</h5>
-                                                <p>{{ selectedParametro.estadoreproductivo }}</p>
+                                                <p>{{ selectedParametro.estado_reproductivo }}</p>
                                             </div>
 
                                             <!-- Columna 3 -->
                                             <div class="col-md-4 mb-3">
                                                 <h5 class="text-primary">S. Cardiovascular</h5>
-                                                <p>{{ selectedParametro.cardiovascular }}</p>
+                                                <p>{{ selectedParametro.sistema_cardiovascular }}</p>
                                                 <h5 class="text-primary">S. Respiratorio</h5>
-                                                <p>{{ selectedParametro.respiratorio }}</p>
+                                                <p>{{ selectedParametro.sistema_respiratorio }}</p>
                                                 <h5 class="text-primary">S. Digestivo</h5>
-                                                <p>{{ selectedParametro.digestivo }}</p>
+                                                <p>{{ selectedParametro.sistema_digestivo }}</p>
                                                 <h5 class="text-primary">S. Genitourinario</h5>
-                                                <p>{{ selectedParametro.genitourinario }}</p>
+                                                <p>{{ selectedParametro.sistema_genitourinario }}</p>
                                                 <h5 class="text-primary">Constantes fisiológicas</h5>
-                                                <p>{{ selectedParametro.constantesFisiologicas }}</p>
+                                                <p>{{ selectedParametro.constantes_fisiologicas }}</p>
                                                 <h5 class="text-primary">S. Reproductor</h5>
-                                                <p>{{ selectedParametro.cardiovascular }}</p>
+                                                <p>{{ selectedParametro.sistema_reproductor }}</p>
                                                 <h5 class="text-primary">Orina</h5>
-                                                <p>{{ selectedParametro.Orina }}</p>
+                                                <p>{{ selectedParametro.orina }}</p>
                                                 <h5 class="text-primary">Estado de deshidratación</h5>
-                                                <p>{{ selectedParametro.estadoDeshidratacion }}</p>
+                                                <p>{{ selectedParametro.estado_deshidratacion }}</p>
                                                 <h5 class="text-primary">Último Celo</h5>
-                                                <p>{{ selectedParametro.ultimoCelo }}</p>
+                                                <p>{{ selectedParametro.ultimo_celo }}</p>
                                                 <h5 class="text-primary">Último Parto</h5>
-                                                <p>{{ selectedParametro.ultimoCelo }}</p>
+                                                <p>{{ selectedParametro.ultimo_parto }}</p>
                                             </div>
                                         </div>
 
-
                                         <!-- End of Card -->
                                     </div>
-                                    <ParametroVue v-if="selectedParametro2" />
-                                    <!-- End of Card -->
                                 </div>
 
+                                <ParametroVue v-if="selectedParametro2" />
+                                <!-- End of Card -->
                             </div>
                         </div>
                     </div>
+
                     <div v-if="activeSection === 'procedimiento'">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -381,7 +375,7 @@
                                     <ProcedimientosForm />
                                 </div>
                                 <!-- Sección parámetros -->
-                                <div v-if="!isProcedimientosFormVisible" class="table-responsive">
+                                <div v-else class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -430,7 +424,7 @@
                                     <ExamenesForm />
                                 </div>
                                 <!-- Sección parámetros -->
-                                <div v-if="!isExamenesForm" class="table-responsive">
+                                <div v-else class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
@@ -446,8 +440,11 @@
                                             <tbody>
                                                 <tr>
                                                     <th scope="row">2024-09-12</th>
-                                                    <td>Perfil 20</td>
-                                                    <td>Todo normal</td>
+                                                    <td>Perfil 20 </td>
+                                                    <td>Todo normal Lorem, ipsum dolor sit amet consectetur adipisicing
+                                                        elit. Itaque nisi amet odio? Placeat officiis illo, rem cum amet
+                                                        repellat? Illum ut laboriosam numquam libero laudantium nemo
+                                                        magnam inventore corporis similique.</td>
                                                     <td>agrega el link de la imagen aqui</td>
 
                                                 </tr>
@@ -463,7 +460,7 @@
             </div>
 
         </div>
-        <h2> arreglar la redireccion del menu que no funciona correctamente </h2>
+        <h2> arreglado por super conejoss :)</h2>
     </div>
 </template>
 
@@ -493,20 +490,19 @@ export default {
     data() {
         return {
             activeSection: null,
-            mostrarParametros: false,
-            parametros: [
+            mostrarhistorial: false,
+            historial: [
                 // Datos de ejemplo
                 //{ id: 1, fecha: '05/05/2024', nombre: 'Parámetro 1', peso: '3.6kg', temperatura: '38.5°C', hidratacion: 'Normal', pulso: '80 bpm', frecuenciaCardiaca: '120 bpm', frecuenciaRespiratoria: '20 rpm', mucosas: 'Normal', llenadoCapilar: '2 seg', presionArterial: '120/80 mmHg', reflejoDeglutorio: 'Normal', linfonodos: 'Normal', reflejoTugiseno: 'Normal', palpacionAbdominal: 'Normal', palmopercusion: 'Normal', condicionCorporal: 'Obeso', tonsilas: 'Normal', conciencia: 'Alerta', anamnesis: 'Sin novedades', estadoReproductivo: 'Normal', constantesFisiologicas: 'Asténico', comida: 'Conejarina' }
                 // Más parámetros aquí
             ],
             paciente: [], // Datos del paciente
-            historial: [],  // Historial del paciente
+
             vacunas: [],    // Vacunas del paciente
             antiparasitarios: [], // Datos de antiparasitarios
             Procedimientos: [],
-            examenes: [], // Datos de antiparasitarios
-            // Datos de antiparasitarios
-            selectedParametro2: false,
+            examenes: [], // Datos de antiparasitarios 
+
             isVacunasFormVisible: null,
             AntiparasitarioForm: null,
             isProcedimientosFormVisible: null,
@@ -524,6 +520,7 @@ export default {
     watch: {
         activeSection(newSection) {
             this.cargarSeccion(newSection);
+            console.log(newSection)
         }
     },
     methods: {
@@ -543,12 +540,11 @@ export default {
         NuevaVisita() {
             this.$router.push({ path: `/nuevavisita/${this.id}` });
         },
-        selectParametro(parametro) {
-            this.selectedParametro = parametro;
+        selectParametro(historia) {
+            this.selectedParametro = historia;
+            this.mostrarhistorial = true
         },
-        Parametros() {
-            this.selectedParametro2 = true;
-        },
+
 
         vacunasTrue() {
             // Mostrar el formulario de vacunas
@@ -581,6 +577,7 @@ export default {
             this.$nextTick(() => {
                 this.activeSection = section.toLowerCase();// Actualiza con la nueva sección
             });
+            console.log(this.activeSection)
         },
 
         async cargarSeccion(seccion) {
@@ -596,25 +593,29 @@ export default {
                         this.paciente.edad = this.calcularEdad(this.paciente.fecha_nacimiento);
                     }
                     console.log(this.paciente);
-                } else if (seccion === 'historial') {
-                    //const response = await axios.get(`https://api.example.com/pacientes/${this.id}/historial`);
-                    // this.historial = response.data;
                 } else if (seccion === 'vacunas') {
                     this.isVacunasFormVisible = false
                     //const response = await axios.get(`https://api.example.com/pacientes/${this.id}/vacunas`);
                     //this.vacunas = response.data;
                 } else if (seccion === 'antiparasitarios') {
+                    this.AntiparasitarioForm = false
                     //   const response = await axios.get(`https://api.example.com/pacientes/${this.id}/antiparasitarios`);
                     //  this.antiparasitarios = response.data;
-                } else if (seccion === 'parametros') {
-                    // const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?id=${this.id}`);
-                    //   const data = response.data;
+                } else if (seccion === 'historial') {
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?paciente_id=${this.id}`);
+                    const data = response.data;
                     // Asegúrate de que los datos siempre sean un array
-                    this.parametros = Array.isArray(data) ? data : [];
-                    console.log(this.parametros);  // Verifica qué datos estás recibiendo
-                } else if (seccion === 'Procedimiento') {
+                    this.historial = Array.isArray(data) ? data : [];
+                    console.log(this.historial);  // Verifica qué datos estás recibiendo
+                    console.log(this.id)
+                    this.mostrarhistorial = false
+                } else if (seccion === 'procedimiento') {
+                    this.isProcedimientosFormVisible = false
+
 
                 } else if (seccion === 'examenes') {
+                    this.isExamenesForm = false
+
 
                 }
             } catch (error) {

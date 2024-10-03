@@ -2,6 +2,7 @@
     <div class="container mt-4 fondo table-responsive">
         <!-- Campo de búsqueda -->
         <input type="text" v-model="searchQuery" class="form-control" placeholder="Buscar..." />
+        <br />
 
         <!-- Tabla de clientes -->
         <table class="table custom-table ">

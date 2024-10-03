@@ -25,82 +25,28 @@
                         <!-- Bloque Citas -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="box box-custom-size gradient-gray p-4">
-                                <h5 class="box-title mb-4">Citas</h5>
+                                <h5 class="box-title">Citas programadas para hoy</h5>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="dropdown w-100">
-                                        <button class="btn btn-outline-danger dropdown-toggle w-100" type="button"
-                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Jan 2019
-                                        </button>
-                                    </div>
                                 </div>
-
-                                <!-- Listado de recordatorios -->
+                                <!-- Listado de citas -->
                                 <ul class="list-group">
-                                    <li
+                                    <li v-for="(cita, index) in paginatedCitas" :key="index"
                                         class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <span class="badge bg-danger rounded-pill">06</span>
-                                            <small class="text-muted">THU</small>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <h6 class="fw-bold">Yoga</h6>
-                                            <small>16:40 every week</small>
-                                        </div>
 
-                                        <span class="badge bg-success align-self-center">Every Week</span>
-                                    </li>
+                                        <!-- Contenedor principal -->
+                                        <div class="d-flex flex-grow-1 mx-2 citas-item ">
+                                            <!-- Título y Descripción -->
+                                            <div class="flex-grow-1 d-flex flex-column citas-text">
+                                                <h5 class="fw-bold mb-0 small-text">{{ cita.titulo }}</h5>
+                                                <h6 class="mb-0 small-text">{{ cita.descripcion }}</h6>
+                                            </div>
 
-                                    <li
-                                        class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <span class="badge bg-danger rounded-pill">08</span>
-                                            <small class="text-muted">SAT</small>
+                                            <!-- Fecha, Hora y Recurrencia -->
+                                            <div class="d-flex align-items-center ms-3 m-2 small-text fecha">
+                                                {{ new Date(cita.fecha).toLocaleDateString('en-US') }} - {{ cita.hora }}
+                                                - {{ cita.recurrencia }}
+                                            </div>
                                         </div>
-                                        <div class="d-flex flex-column">
-                                            <h6 class="fw-bold">Call John</h6>
-                                            <small>15:20 once</small>
-                                        </div>
-                                        <span class="badge bg-danger align-self-center">Once</span>
-                                    </li>
-
-                                    <li
-                                        class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <span class="badge bg-danger rounded-pill">19</span>
-                                            <small class="text-muted">TUE</small>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <h6 class="fw-bold">Shopping</h6>
-                                            <small>12:15 once</small>
-                                        </div>
-                                        <span class="badge bg-danger align-self-center">Once</span>
-                                    </li>
-
-                                    <li
-                                        class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <span class="badge bg-danger rounded-pill">25</span>
-                                            <small class="text-muted">MON</small>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <h6 class="fw-bold">Pool</h6>
-                                            <small>16:15 every week</small>
-                                        </div>
-                                        <span class="badge bg-success align-self-center">Every Week</span>
-                                    </li>
-
-                                    <li
-                                        class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <span class="badge bg-danger rounded-pill">31</span>
-                                            <small class="text-muted">SUN</small>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <h6 class="fw-bold">House Cleaning</h6>
-                                            <small>16:15 every month</small>
-                                        </div>
-                                        <span class="badge bg-warning align-self-center">Every Month</span>
                                     </li>
                                 </ul>
                             </div>
@@ -112,14 +58,15 @@
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Historias recientes</h5>
                                 <div class="box-content">
-                                    <!-- Agregar la estructura de la tabla correctamente -->
-                                    <table class="table table-striped ">
+                                    <!-- Tabla de historias recientes -->
+                                    <table class="table table-striped custom-table">
                                         <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-center">Historia</th>
                                                 <th scope="col" class="text-center">Nombre</th>
-                                                <th scope="col" class="text-center">Estado reproductivo</th>
+                                                <th scope="col" class="text-center">Cliente</th>
+                                                <th scope="col" class="text-center">Motivo de Consulta</th>
                                             </tr>
                                         </thead>
                                         <!-- Cuerpo de la tabla -->
@@ -127,14 +74,15 @@
                                             <tr v-for="historia in paginatedHistorias" :key="historia.id">
                                                 <th scope="row" class="text-center">{{ historia.id }}</th>
                                                 <td class="text-center">{{ historia.nombre_paciente }}</td>
-                                                <td class="text-center">{{ historia.estado_reproductivo }}</td>
+                                                <td class="text-center">{{ historia.nombre_propietario }}</td>
+                                                <td class="text-center">{{ historia.motivo_consulta }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" type="button" @click="mostrarHistorias">Ver
-                                        todas</button>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary" type="button" @click="mostrarHistorias">Ver
+                                            todas</button>
+                                    </div>
                                 </div>
                                 <!-- <div class="pagination-controls">
                                     <button class="btn btn-secondary" @click="changePage(page - 1)"
@@ -152,71 +100,75 @@
 
                         <!-- Bloque 3 -->
                         <hr />
-                        <div class="col-12 col-md-6 mb-4  table-responsive">
+                        <div class="col-12 col-md-6 mb-4 table-responsive margen">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Últimos registros de clientes</h5>
                                 <div class="box-content">
-                                    <table class="table table-hover">
+                                    <!-- Tabla de registros de clientes -->
+                                    <table class="table table-striped custom-table">
+                                        <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
-                                                <th scope="col">
-                                                    Nombre</th>
-                                                <th scope="col">Apellido</th>
-                                                <th scope="col">Cédula</th>
-                                                <th scope="col">Teléfono </th>
+                                                <th scope="col" class="text-center">Nombre</th>
+                                                <th scope="col" class="text-center">Apellido</th>
+                                                <th scope="col" class="text-center">Cédula</th>
+                                                <th scope="col" class="text-center">Teléfono</th>
+                                                <th scope="col" class="text-center">Deuda</th>
                                             </tr>
                                         </thead>
+                                        <!-- Cuerpo de la tabla -->
                                         <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>Mark</td>
-                                                <td>Otto</td>
-                                                <td>@mdo</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td>Jacob</td>
-                                                <td>Thornton</td>
-                                                <td>frf</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">4</th>
-                                                <td>Mark</td>
-                                                <td>Otto</td>
-                                                <td>@mdo</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>Jacob</td>
-                                                <td>Thornton</td>
-                                                <td>@fat</td>
+                                            <tr v-for="cliente in paginatedClientes" :key="cliente.cedula">
+                                                <td class="text-center">{{ cliente.nombre }}</td>
+                                                <td class="text-center">{{ cliente.apellido }}</td>
+                                                <td class="text-center">{{ cliente.cedula }}</td>
+                                                <td class="text-center">{{ cliente.telefono }}</td>
+                                                <td class="text-center">{{ cliente.deuda }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" type="button" @click="Listaclientes">Ver
-                                        todos</button>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary" type="button" @click="mostrarClientes">Ver
+                                            todos</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Bloque 4 -->
-                        <div class="col-12 col-md-6 mb-4">
-                            <div class="box box-custom-size gradient-gray p-4">
-                                <h5 class="box-title mb-4">Recordatorios hoy</h5>
+                        <div class="col-12 col-md-6 mb-4 table-responsive">
+                            <div class="box box-custom-size gradient-gray p-4  ">
+                                <h5 class="box-title mb-4">Lista de deudores</h5>
                                 <div class="box-content">
-                                    <form @submit.prevent="iniciarTemporizador">
-                                        <div class="mb-3">
-                                            <label for="tiempo" class="form-label">Tiempo en minutos</label>
-                                            <input type="number" class="form-control" id="tiempo"
-                                                v-model.number="tiempoMinutos" min="1" required />
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Iniciar Temporizador</button>
-                                    </form>
-                                    <p v-if="tiempoRestante > 0" class="mt-3">Tiempo restante: {{ tiempoRestante }}
-                                        segundos</p>
-                                    <p v-if="mensaje" class="mt-3 alert alert-success">{{ mensaje }}</p>
+                                    <!-- Tabla de historias recientes -->
+                                    <table class="table table-striped custom-table">
+                                        <!-- Encabezado de la tabla -->
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="text-center">Nombre</th>
+                                                <th scope="col" class="text-center">Apellido</th>
+                                                <th scope="col" class="text-center">Cédula</th>
+                                                <th scope="col" class="text-center">Teléfono</th>
+                                                <th scope="col" class="text-center">Deuda</th>
+                                            </tr>
+                                        </thead>
+                                        <!-- Cuerpo de la tabla -->
+                                        <tbody>
+                                            <tr v-for="cliente in deudores" :key="cliente.cedula">
+                                                <td class="text-center">{{ cliente.nombre }}</td>
+                                                <td class="text-center">{{ cliente.apellido }}</td>
+                                                <td class="text-center">{{ cliente.cedula }}</td>
+                                                <td class="text-center">{{ cliente.telefono }}</td>
+                                                <td class="text-center">{{ cliente.deuda }}</td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary" type="button" @click="mostrarDeudores">Ver
+                                            todos</button>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -255,7 +207,9 @@ export default {
     },
     data() {
         return {
-            historias: [],  // Para almacenar las historias recientes obtenidas de la API
+            historias: [],
+            clientes: [],
+            citas: [], // Para almacenar las historias recientes obtenidas de la API
             page: 1,
             pageSize: 10,
             isSidebarOpen: true,
@@ -274,7 +228,25 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.historias.length / this.pageSize);
-        }
+        },
+        paginatedClientes() {
+            const start = (this.page - 1) * this.pageSize;
+            const end = this.page * this.pageSize;
+            return this.clientes.slice(start, end);
+        },
+        totalPagesClientes() {
+            return Math.ceil(this.clientes.length / this.pageSize);
+        },
+        paginatedCitas() {
+            return this.citas.slice(0, 10); // Limita las citas a 10
+        },
+        deudores() {
+            // Filtra a los clientes con deuda mayor a 0
+            return this.clientes.filter(cliente => {
+                const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
+                return deudaValue > 0;
+            });
+        },
     },
     methods: {
         // Método para obtener historias recientes desde la API
@@ -291,7 +263,30 @@ export default {
             this.$router.push('/historias');
         },
         Listaclientes() {
-            this.$router.push('/listacliente');
+            this.$router.push('/listaclientes');
+        },
+        async fetchClientes() {
+            try {
+                const response = await axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1"); // Reemplaza con tu URL de clientes
+                this.clientes = response.data;
+            } catch (error) {
+                console.error('Error al obtener los clientes:', error);
+            }
+        },
+        async fetchCitas() {
+            try {
+                const response = await axios.get('http://localhost/veterinario-app/curso_apirest/citas?page=1');
+                this.citas = response.data;
+                console.log('Citas obtenidas:', this.citas); // Verifica los datos obtenidos
+            } catch (error) {
+                console.error('Error al obtener las citas:', error);
+            }
+        },
+        mostrarClientes() {
+            this.$router.push('/listaclientes');
+        },
+        mostrarDeudores() {
+            this.$router.push('/deudores'); // Asegúrate de que esta ruta esté definida en tu router
         },
         toggleSidebar() {
             this.isSidebarOpen = !this.isSidebarOpen;
@@ -300,37 +295,41 @@ export default {
             this.isDesktop = window.innerWidth >= 768;
             this.isSidebarOpen = this.isDesktop; // Muestra la sidebar si es desktop
         },
-        iniciarTemporizador() {
-            this.detenerTemporizador(); // Detén cualquier temporizador en curso
-            this.tiempoRestante = this.tiempoMinutos * 60;
-            this.intervalo = setInterval(() => {
-                if (this.tiempoRestante > 0) {
-                    this.tiempoRestante--;
-                } else {
-                    this.detenerTemporizador();
-                    this.mensaje = '¡El tiempo ha terminado!';
-                    setTimeout(() => this.mensaje = '', 5000); // Oculta el mensaje después de 5 segundos
-                }
-            }, 1000);
-        },
-        detenerTemporizador() {
-            clearInterval(this.intervalo);
-            this.intervalo = null;
-        },
         changePage(newPage) {
             if (newPage > 0 && newPage <= this.totalPages) {
                 this.page = newPage;
             }
-        }
+        },
+        estaCitaHoy(fecha) {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0); // Ajustamos la hora de hoy a medianoche
+
+            const citaFecha = new Date(fecha);
+            citaFecha.setHours(0, 0, 0, 0); // Ajustamos la hora de la cita a medianoche
+
+            return hoy.getTime() === citaFecha.getTime(); // Comparamos las fechas en milisegundos
+        },
+        filtrarCitasHoy() {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0); // Ajustamos la hora a medianoche
+
+            return this.citas.filter(cita => {
+                const citaFecha = new Date(cita.fecha);
+                citaFecha.setHours(0, 0, 0, 0); // Ajustamos la hora de la cita a medianoche
+                return hoy.getTime() === citaFecha.getTime(); // Comparamos las fechas
+            });
+        },
     },
     mounted() {
         window.addEventListener('resize', this.handleResize);
         this.fetchHistorias(); // Llamada a la API al montar el componente
+        this.fetchClientes();  // Llamada para cargar los clientes
+        this.fetchCitas();     // Llamada para cargar las citas
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.handleResize);
 
-    }
+    },
 };
 
 </script>
@@ -338,6 +337,10 @@ export default {
 
 
 <style scoped>
+.margen {
+    right: 1px;
+}
+
 .table tbody tr {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     cursor: pointer;
@@ -358,6 +361,50 @@ export default {
     background: #f8f9fa;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     cursor: pointer;
+    margin: 5px;
+    min-height: 50px;
+    /* Asegura un mínimo de altura */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    white-space: normal;
+    /* Permite el salto de línea */
+    word-wrap: break-word;
+    /* Permite romper la palabra si es muy larga */
+}
+
+.citas-item {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* Permite que el contenido se ajuste mejor */
+    width: 100%;
+    /* Asegura que ocupe todo el ancho disponible */
+    align-items: center;
+    /* Alinea verticalmente los elementos */
+}
+
+.citas-text {
+    flex-grow: 1;
+    /* Permite que el texto ocupe el espacio disponible */
+    margin-right: 10px;
+    /* Espacio entre el texto y la fecha */
+    white-space: normal;
+    /* Permite el salto de línea */
+    word-wrap: break-word;
+    /* Permite romper la palabra si es muy larga */
+}
+
+.fecha {
+    flex-shrink: 0;
+    /* Evita que la fecha se contraiga */
+    min-width: 100px;
+    /* Ancho mínimo para la fecha */
+    text-align: right;
+    /* Alinea la fecha a la derecha */
 }
 
 .list-group-item:hover {
@@ -511,5 +558,55 @@ body {
 
 .pagination-controls button {
     margin: 0 0.5rem;
+}
+
+.d-flex.flex-grow-1 {
+    width: 100%;
+    /* Asegúrate de que el contenedor principal ocupe todo el ancho */
+}
+
+.flex-grow-1.d-flex.flex-column {
+    flex: 1;
+    /* Permitir que este contenedor crezca para ocupar el espacio disponible */
+}
+
+
+.small-text {
+    font-size: 1rem;
+    white-space: normal;
+    word-wrap: break-word;
+    /* Evita que el texto muy largo salga del contenedor */
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .small-text {
+        font-size: 0.9rem;
+        /* Ajusta el tamaño del texto en pantallas pequeñas */
+    }
+
+    .list-group-item {
+        padding: 5px;
+        /* Reduce el padding para más espacio en pantallas pequeñas */
+    }
+
+    .citas-item {
+        flex-direction: column;
+        /* Cambia a columna en pantallas más pequeñas */
+    }
+
+    .fecha {
+        min-width: 70px;
+        /* Reduce el ancho mínimo para pantallas pequeñas */
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .custom-table th,
+    .custom-table td {
+        font-size: 0.8rem;
+        /* Ajusta este valor según tus necesidades */
+    }
 }
 </style>

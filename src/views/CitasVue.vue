@@ -5,29 +5,36 @@
 
         <ul class="list-group">
             <li v-for="(cita, index) in citasFiltradas" :key="index"
-                class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2"
-                :class="{ 'pulse': cita.fechaCompleta === hoy, 'custom-hover': true }"> <!-- Clase para efecto hover -->
-                <div class="d-flex flex-column align-items-center me-3">
+                class="list-group-item d-flex justify-content-between align-items-center p-3 mb-2" :class="{
+                    'pulse': estaCitaVencida(cita.fecha),
+                    'custom-hover': true
+                }">
+                <div class="d-flex align-items-center me-3">
                     <span class="badge bg-danger rounded-pill">{{ cita.dia }}</span>
-                    <small class="text-muted">{{ cita.diaSemana }}</small>
+                    <span class="text-muted ms-2">{{ cita.diaSemana }}</span>
                 </div>
-                <div class="d-flex flex-column">
-                    <h5 class="fw-bold">{{ cita.titulo }}</h5>
-                    <h6 class=""> {{ cita.descripcion }}</h6>
-                    <small>{{ cita.hora }} - {{ cita.recurrencia }}</small>
+                <div class="d-flex flex-grow-1 mx-2">
+                    <div class="flex-grow-1 d-flex flex-column">
+                        <h5 class="fw-bold mb-0">{{ cita.titulo }}</h5>
+                        <h6 class="mb-0">{{ cita.descripcion }}</h6>
+                    </div>
+                    <div class="d-flex align-items-center ms-3 m-2">
+                        {{ cita.fecha }} - {{ cita.hora }} - {{ cita.recurrencia }}
+                    </div>
                 </div>
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-warning btn-circle me-2" @click="editarCita(index)">
+                    <button class="btn btn-warning btn-circle me-2" @click="editarCita(cita, index)">
                         <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn btn-danger btn-circle" @click="eliminarCita(index)">
+                    <button class="btn btn-danger btn-circle me-2" @click="eliminarCita(cita.id, index)">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
             </li>
         </ul>
 
-        <!-- Formulario de agregar cita -->
+
+        <!-- Formulario de agregar/editar cita -->
         <form v-if="mostrarFormulario" @submit.prevent="submitCita" class="mt-4 fixed-form">
             <div class="mb-3">
                 <label for="titulo" class="form-label">Título de la cita</label>
@@ -35,11 +42,15 @@
             </div>
             <div class="mb-3">
                 <label for="Paciente" class="form-label">Paciente</label>
-                <select class="form-select" v-model="nuevaCita.Paciente">
+                <select class="form-select" v-model="nuevaCita.paciente_id" required>
+                    <option v-for="paciente in pacientes" :key="paciente.id" :value="paciente.id">
+                        {{ paciente.nombre }}
+                    </option>
                 </select>
             </div>
+
             <div class="mb-3">
-                <label for="titulo" class="form-label">Descripción</label>
+                <label for="descripcion" class="form-label">Descripción</label>
                 <input type="text" class="form-control" v-model="nuevaCita.descripcion" required />
             </div>
             <div class="mb-3">
@@ -74,68 +85,140 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
             hoy: new Date().toLocaleDateString('sv-SE'), // Formato 'YYYY-MM-DD'
             search: '',
             citas: [],
+            pacientes: [], // Agregar pacientes para cargar desde la API
             nuevaCita: {
                 titulo: '',
-                paciente: '',
+                paciente_id: '',
                 descripcion: '',
                 fecha: '',
                 hora: '',
                 recurrencia: 'una vez'
             },
             citaEditando: null,
-            mostrarFormulario: false // Inicializa el formulario como oculto
+            mostrarFormulario: false
         };
     },
     computed: {
         citasFiltradas() {
-            return this.citas.filter(cita => cita.titulo.toLowerCase().includes(this.search.toLowerCase()));
+            return this.citas.filter(cita =>
+                cita.titulo && cita.titulo.toLowerCase().includes(this.search.toLowerCase())
+            );
         },
     },
     methods: {
-        submitCita() {
-            if (this.citaEditando !== null) {
-                this.citas[this.citaEditando] = { ...this.nuevaCita, dia: this.getDia(this.nuevaCita.fecha), diaSemana: this.getDiaSemana(this.nuevaCita.fecha), fechaCompleta: this.nuevaCita.fecha };
-                this.citaEditando = null;
-            } else {
-                this.citas.push({ ...this.nuevaCita, dia: this.getDia(this.nuevaCita.fecha), diaSemana: this.getDiaSemana(this.nuevaCita.fecha), fechaCompleta: this.nuevaCita.fecha });
+        estaCitaVencida(fecha) {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0); // Ajusta hoy a medianoche
+
+            const citaFecha = new Date(fecha);
+            citaFecha.setHours(0, 0, 0, 0); // Ajusta la fecha de la cita a medianoche
+
+            console.log(`Fecha Cita: ${citaFecha.toLocaleDateString()}, Hoy: ${hoy.toLocaleDateString()}`);
+
+            return citaFecha >= hoy && citaFecha <= new Date(hoy.setDate(hoy.getDate() + 2)); // Comparar fechas
+        },
+        async fetchCitas() {
+            console.log('Iniciando fetchCitas');
+            try {
+                const response = await axios.get('http://localhost/veterinario-app/curso_apirest/citas?page=1');
+                console.log('Respuesta de la API:', response.data);
+
+                // Asegúrate de que la respuesta sea un array
+                this.citas = Array.isArray(response.data) ? response.data : [];
+                console.log('Citas asignadas:', this.citas);
+            } catch (error) {
+                console.error('Error al consultar la API:', error);
             }
-            this.resetFormulario();
         },
-        getDia(fecha) {
-            return new Date(fecha).getDate().toString().padStart(2, '0');
+        async fetchPacientes() {
+            console.log('Iniciando fetchPacientes');
+            try {
+                const response = await axios.get('http://localhost/veterinario-app/curso_apirest/pacientes?page=1'); // Cambia la URL según sea necesario
+                console.log('Respuesta de la API para pacientes:', response.data);
+
+                // Asegúrate de que la respuesta sea un array
+                this.pacientes = Array.isArray(response.data) ? response.data : [];
+                console.log('Pacientes asignados:', this.pacientes);
+            } catch (error) {
+                console.error('Error al consultar la API de pacientes:', error);
+            }
         },
-        getDiaSemana(fecha) {
-            const opciones = { weekday: 'short' };
-            return new Intl.DateTimeFormat('es-ES', opciones).format(new Date(fecha)).toUpperCase();
+
+
+        async submitCita() {
+            try {
+                if (this.citaEditando !== null) {
+                    await this.actualizarCita();
+                } else {
+                    await this.crearCita();
+                }
+                this.resetFormulario();
+            } catch (error) {
+                console.error('Error al guardar la cita:', error);
+            }
+        },
+        async crearCita() {
+            try {
+                const response = await axios.post('http://localhost/veterinario-app/curso_apirest/citas', this.nuevaCita);
+                const fechaCita = new Date(`${this.nuevaCita.fecha}T${this.nuevaCita.hora}`); // Combina fecha y hora
+                this.nuevaCita.fecha = fechaCita.toISOString().split('T')[0]; // Convierte a ISO y toma solo la fecha
+
+                // Aquí se puede agregar la nueva cita directamente a la lista
+                this.citas.push({ ...this.nuevaCita, id: response.data.result.id }); // Asegúrate de que `id` se agregue
+                this.resetFormulario(); // Limpiar el formulario después de agregar la cita
+            } catch (error) {
+                console.error('Error al crear la cita:', error);
+            }
+        },
+
+
+        async actualizarCita() {
+            try {
+                const response = await axios.put(`http://localhost/veterinario-app/curso_apirest/citas/${this.citas[this.citaEditando].id}`, this.nuevaCita);
+                this.citas.splice(this.citaEditando, 1, response.data); // Actualizar la cita en la lista
+            } catch (error) {
+                console.error('Error al actualizar la cita:', error);
+            }
+        },
+        async eliminarCita(id, index) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta cita?')) {
+                try {
+                    await axios.delete(`http://localhost/veterinario-app/curso_apirest/citas/${id}`);
+                    this.citas.splice(index, 1); // Eliminar la cita de la lista
+                } catch (error) {
+                    console.error('Error al eliminar la cita:', error);
+                }
+            }
+        },
+        editarCita(cita, index) {
+            this.nuevaCita = { ...cita };
+            this.citaEditando = index;
+            this.mostrarFormulario = true;
         },
         resetFormulario() {
-            this.nuevaCita = { titulo: '', fecha: '', hora: '', recurrencia: 'una vez' };
-            if (this.citaEditando === null) {
-                this.mostrarFormulario = false; // Ocultar solo cuando no estamos en modo edición
-            }
-        },
-        editarCita(index) {
-            this.nuevaCita = { ...this.citas[index] };
-            this.citaEditando = index;
-            this.mostrarFormulario = true; // Mostrar el formulario para editar
-        },
-        eliminarCita(index) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta cita?')) {
-                this.citas.splice(index, 1);
-            }
+            this.nuevaCita = { titulo: '', paciente_id: '', descripcion: '', fecha: '', hora: '', recurrencia: 'una vez' };
+            this.citaEditando = null;
+            this.mostrarFormulario = false;
         },
         toggleFormulario() {
             if (!this.mostrarFormulario) {
-                this.resetFormulario(); // Limpiar el formulario solo cuando lo vamos a mostrar
+                this.resetFormulario();
             }
             this.mostrarFormulario = !this.mostrarFormulario;
         }
+    },
+    async mounted() {
+        await this.fetchCitas();
+        // Aquí puedes cargar los pacientes si tienes una API para ello
+        this.fetchPacientes();
     }
 };
 </script>
@@ -152,22 +235,18 @@ export default {
 @keyframes pulse-animation {
     0% {
         background-color: #fdd085;
-        /* Naranja claro */
     }
 
     25% {
         background-color: #fdd085;
-        /* Naranja claro */
     }
 
     50% {
         background-color: #ff738b;
-        /* Color intermedio entre el naranja y el rosa */
     }
 
     100% {
         background-color: #fdd085;
-        /* Naranja claro */
     }
 }
 
@@ -187,6 +266,7 @@ export default {
 .list-group-item {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin: 5px;
+    height: 70px;
 }
 
 .list-group-item:hover {

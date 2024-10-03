@@ -59,26 +59,26 @@ class pacientes extends conexion
             return $_respuestas->error_400();
         }
 
-        $datos = json_decode($json, true);
-
+        // $datos = json_decode($json, true);
+        // error_log($datos);
         // Verificar si los campos requeridos están presentes
-        if (!isset($datos['nombre']) || !isset($datos['raza']) || !isset($datos['especie']) || !isset($datos['propietarios_id'])) {
+        if (!isset($json['nombre']) || !isset($json['raza']) || !isset($json['especie']) || !isset($json['propietarios_id'])) {
             return $_respuestas->error_400();
         }
 
         // Asignar valores
-        $this->nombre = $datos['nombre'];
+        $this->nombre = $json['nombre'];
         $this->fecha = date("Y-m-d"); // Si no llega, usa la fecha actual
-        $this->raza = $datos['raza'];
-        $this->especie = isset($datos['especie']) ? $datos['especie'] : "";
-        $this->color = isset($datos['color']) ? $datos['color'] : "";
-        $this->sexo = isset($datos['sexo']) ? $datos['sexo'] : "";
+        $this->raza = $json['raza'];
+        $this->especie = isset($json['especie']) ? $json['especie'] : "";
+        $this->color = isset($json['color']) ? $json['color'] : "";
+        $this->sexo = isset($json['sexo']) ? $json['sexo'] : "";
 
         // Cambiar 'fecha_nacimiento' a 'fechaNacimiento'
-        $this->fecha_nacimiento = isset($datos['fechaNacimiento']) ? $datos['fechaNacimiento'] : "0000-00-00";
+        $this->fecha_nacimiento = isset($json['fechaNacimiento']) ? $json['fechaNacimiento'] : "0000-00-00";
 
-        $this->alergias = isset($datos['alergias']) ? $datos['alergias'] : "";
-        $this->propietarios_id = isset($datos['propietarios_id']) ? $datos['propietarios_id'] : "";
+        $this->alergias = isset($json['alergias']) ? $json['alergias'] : "";
+        $this->propietarios_id = isset($json['propietarios_id']) ? $json['propietarios_id'] : "";
 
         // Verificar si hay una imagen subida
         if (isset($files['foto']) && !empty($files['foto']['name'])) {

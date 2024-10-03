@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
     error_log("Método POST recibido."); // Log para indicar que se recibió una solicitud POST
+    error_log("Datos de POST: " . print_r($_POST, true));
 
     // Verificar si es una creación o edición según la existencia del campo 'id'
     if (isset($_POST['id'])) {
@@ -66,12 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         // Proceso de creación (nuevo paciente)
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] == UPLOAD_ERR_OK) {
             error_log("Se subió una imagen durante la creación."); // Log para creación con imagen
-            $postBody = isset($_POST['datos']) ? $_POST['datos'] : null;
-            $datosArray = $_pacientes->post($postBody, $_FILES); // Método para crear
+            //$postBody = isset($_POST['datos']) ? $_POST['datos'] : null;
+            $datosArray = $_pacientes->post($_POST, $_FILES); // Método para crear
+
         } else {
             error_log("No se subió ninguna imagen durante la creación."); // Log si no se subió imagen
-            $postBody = file_get_contents("php://input");
-            $datosArray = $_pacientes->post($postBody, null);
+            //$postBody = file_get_contents("php://input");
+            $datosArray = $_pacientes->post($_POST, null);
         }
     }
 

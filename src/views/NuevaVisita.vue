@@ -158,11 +158,12 @@
 
                 <div class="col-md-4 mb-3">
                     <label for="agresividad" class="form-label">Agresividad</label>
-                    <input type="range" class="form-range" id="agresividad" min="1" max="10">
+                    <input type="range" class="form-range" id="agresividad" min="1" max="10" v-model="form.agresividad">
                     <div class="mt-2">
                         <span>Valor: {{ form.agresividad }}</span>
                     </div>
                 </div>
+
                 <div class="col-md-4 mb-3">
                     <label for="mucosas" class="form-label">Mucosas</label>
                     <select class="form-select" id="mucosas">
@@ -315,22 +316,20 @@
 </template>
 
 <script>
-
+import { reactive } from 'vue';
 export default {
-
-
-
-
     data() {
+        const form = reactive({
+            agresividad: 5 // Valor inicial del slider
+        });
         return {
             //showVisit: false,
             fechaActual: '',
             formularioParametrosVisible: false, // Parámetros
 
             form: {
-
-                agresividad: 5, // Valor inicial del slider (por defecto en 5)
             }
+
         };
     },
     mounted() {
@@ -354,6 +353,7 @@ export default {
         ishistorias() {
             this.$router.push({ path: `/detalleshistorias/${this.id}` });
         },
+
     }
 };
 </script>

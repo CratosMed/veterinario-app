@@ -4,6 +4,13 @@
         <h2 class="text-primary me-auto">{{ editMode ? 'Editar Paciente' : 'Agregar Paciente' }}</h2>
     </div>
     <br />
+    <!-- Alertas -->
+    <div v-if="message" v-show="message"
+        :class="['alert', messageType === 'success' ? 'alert-success' : 'alert-danger']"
+        style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 50%;"
+        role="alert">
+        {{ message }}
+    </div>
 
     <div class="">
         <form @submit.prevent="submitForm">
@@ -74,12 +81,9 @@
                 <!-- Alergias -->
                 <div class="col-md-4 col-lg-4">
                     <label for="alergias" class="form-label">Alergias</label>
-                    <input type="text" class="form-control" id="alergias" v-model="form.alergias">
+                    <input type="text" class="form-control" id="color" v-model="form.alergias">
                 </div>
-            </div>
 
-            <div class="row mb-3">
-                <!-- Foto -->
                 <div class="col-md-4 col-lg-4">
                     <label for="foto" class="form-label">Foto</label>
                     <input type="file" class="form-control" id="foto" @change="onFileChange">
@@ -124,7 +128,9 @@ export default {
             },
             editMode: false,
             pacienteId: null,
-            propietarios: [] // Lista de propietarios (clientes)
+            propietarios: [],// Lista de propietarios (clientes)
+            message: null,   // Almacena el mensaje a mostrar
+            messageType: '', // Tipo de mensaje: success o error
         };
     },
     created() {
@@ -176,7 +182,7 @@ export default {
                     this.propietarios = response.data;
                 })
                 .catch(error => {
-                    console.error('Error al cargar propietarios:', error);
+                    this.showMessage('Error al cargar propietarios', 'error');
                 });
         },
         loadPaciente(id) {
@@ -207,7 +213,7 @@ export default {
                     this.previewImage(paciente.foto);
                 })
                 .catch(error => {
-                    console.error('Error al cargar paciente:', error);
+                    this.showMessage('Error al cargar paciente', 'error');
                 });
         },
         updateAgeFromDate() {
@@ -259,7 +265,7 @@ export default {
             const fechaNacimiento = new Date(this.form.fechaNacimiento).toISOString().split('T')[0];
 
             // Agregar todos los campos del formulario directamente a FormData
-            formData.append('id', this.form.id); // Agregar ID directamente
+            //formData.append('id', this.form.id); // Agregar ID directamente
             formData.append('nombre', this.form.nombre);
             formData.append('propietarios_id', this.form.cliente);
             formData.append('fechaNacimiento', fechaNacimiento); // Usar la fecha formateada            
@@ -277,19 +283,23 @@ export default {
 
             if (this.editMode) {
                 // Actualizar paciente existente
-                // formData.append('id', this.id);
+                formData.append('id', this.form.id);
 
                 axios.post(`http://localhost/veterinario-app/curso_apirest/pacientes`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                    .then(() => {
-                        alert('Paciente actualizado con éxito');
-                        this.$router.push('/listapacientes');
-                    })
+                const successMessage = this.editMode
+                    ? 'Paciente actualizado con éxito'
+                    : 'Paciente agregado con éxito';
+                this.showMessage(successMessage, 'success', () => {
+                    this.$router.push('/listapacientes');
+                })
 
-                    .catch(error => alert('Error al actualizar paciente'));
+                    .catch(error => {
+                        this.showMessage('Error al guardar paciente', 'error');
+                    });
             } else {
                 // Crear nuevo paciente
                 axios.post('http://localhost/veterinario-app/curso_apirest/pacientes', formData, {
@@ -298,12 +308,29 @@ export default {
                     }
                 })
                     .then(() => {
-                        alert('Paciente agregado con éxito');
-                        this.$router.push('/listapacientes');
+                        // Mostrar mensaje de éxito
+                        this.showMessage('Paciente agregado con éxito', 'success', () => {
+                            this.$router.push('/listapacientes');
+                        });
                     })
-                    .catch(error => alert('Error al agregar paciente'));
+                    .catch(error => {
+                        // Mostrar mensaje de error
+                        this.showMessage('Error al agregar paciente', 'error');
+                    });
             }
-        }
+        },
+        showMessage(message, type, callback) {
+            this.message = message;
+            this.messageType = type;
+
+            setTimeout(() => {
+                this.message = null;
+                this.messageType = '';
+                if (callback) {
+                    callback();
+                }
+            }, 3000);
+        },
 
     }
 };

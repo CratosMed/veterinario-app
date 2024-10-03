@@ -1,167 +1,181 @@
 <template>
-    <div class="mt-4 fondo">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="text-primary me-auto">Lista de Clientes Deudores </h2>
-        </div>
-
+    <div class="container mt-4 fondo table-responsive">
         <!-- Campo de búsqueda -->
-        <div class="mb-3">
-            <input type="text" v-model="searchQuery" class="form-control" placeholder="Buscar..." />
-        </div>
+        <input type="text" v-model="searchQuery" class="form-control" placeholder="Buscar..." />
+        <br>
 
-        <!-- Tabla personalizada con ordenación -->
-        <table class="table custom-table align-middle">
+        <!-- Tabla de clientes -->
+        <table class="table custom-table">
             <thead>
                 <tr>
-                    <th @click="sortTable('name')">
-                        Nombre
-                        <span :class="getSortIcon('name')"></span>
-                    </th>
-                    <th @click="sortTable('status')">
-                        Apellido
-                        <span :class="getSortIcon('status')"></span>
-                    </th>
-                    <th @click="sortTable('cedula')">
-                        Cédula
-                        <span :class="getSortIcon('cedula')"></span>
-                    </th>
-                    <th @click="sortTable('telefono')">
-                        Teléfono
-                        <span :class="getSortIcon('telefono')"></span>
-                    </th>
-                    <th @click="sortTable('telefono_auxiliar')">
-                        Teléfono auxiliar
-                        <span :class="getSortIcon('telefono_auxiliar')"></span>
-                    </th>
-                    <th @click="sortTable('email')">
-                        E-mail
-                        <span :class="getSortIcon('email')"></span>
-                    </th>
-                    <th @click="sortTable('parroquia')">
-                        Parroquia
-                        <span :class="getSortIcon('parroquia')"></span>
-                    </th>
-                    <th @click="sortTable('ciudad')">
-                        Ciudad
-                        <span :class="getSortIcon('ciudad')"></span>
-                    </th>
-                    <th @click="sortTable('deuda')">
-                        Deuda
-                        <span :class="getSortIcon('deuda')"></span>
-                    </th>
-                    <th>
-                        Acciones
-                    </th>
+                    <th @click="sortTable('nombre')">Nombre</th>
+                    <th @click="sortTable('apellido')">Apellido</th>
+                    <th @click="sortTable('cedula')">Cédula</th>
+                    <th>Teléfono</th>
+                    <th>E-mail</th>
+                    <th @click="sortTable('cedula')">Deuda</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in filteredAndSortedRows" :key="index" @click="selectRow(row)"
-                    :class="{ 'selected-row': selectedRow === row }">
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.status }}</td>
-                    <td>{{ row.cedula }}</td>
-                    <td>{{ row.telefono }}</td>
-                    <td>{{ row.telefono_auxiliar }}</td>
-                    <td>{{ row.email }}</td>
-                    <td>{{ row.parroquia }}</td>
-                    <td>{{ row.ciudad }}</td>
-                    <td>{{ row.deuda }}</td>
+                <tr v-for="(cliente, index) in filteredAndSortedRows" :key="index">
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.apellido }}</td>
+                    <td>{{ cliente.cedula }}</td>
+                    <td>{{ cliente.telefono }}</td>
+                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.deuda }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-2" @click.stop="editRow(row)">
-                            Editar
-                        </button>
-                        <button class="btn btn-sm btn-secondary" @click.stop="viewRow(row)">
-                            Eliminar
-                        </button>
+                        <button class="btn btn-sm btn-primary me-2" @click="editarCliente(cliente.id)">Editar</button>
+                        <button class="btn btn-sm btn-danger" @click="deleteCliente(cliente.id)">Eliminar</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-
-        <!-- Paginación (si es necesario) -->
-        <nav>
-            <ul class="pagination justify-content-end">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Siguiente">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
     </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-    name: "DeudoresVue",
-    data() { // Cambiado de "ata()" a "data()"
+    data() {
         return {
             searchQuery: "",
-            rows: [
-                { name: "Juan Pérez", status: "Activo", cedula: "1234567890", telefono: "0991234567", telefono_auxiliar: "0987654321", email: "juan@example.com", parroquia: "Centro", ciudad: "Quito", deuda: "$500" },
-                { name: "Ana Martínez", status: "Inactivo", cedula: "9876543210", telefono: "0999876543", telefono_auxiliar: "0981234567", email: "ana@example.com", parroquia: "Norte", ciudad: "Guayaquil", deuda: "$250" },
-                { name: "Carlos Rodríguez", status: "Activo", cedula: "5647382910", telefono: "0998765432", telefono_auxiliar: "0984567891", email: "carlos@example.com", parroquia: "Sur", ciudad: "Cuenca", deuda: "$700" },
-                { name: "Luisa Gómez", status: "Activo", cedula: "1092837465", telefono: "0992345678", telefono_auxiliar: "0986543212", email: "luisa@example.com", parroquia: "Centro", ciudad: "Quito", deuda: "$100" },
-                { name: "María López", status: "Inactivo", cedula: "2083746521", telefono: "0993456789", telefono_auxiliar: "0985432109", email: "maria@example.com", parroquia: "Norte", ciudad: "Guayaquil", deuda: "$350" },
-            ],
-            selectedRow: null,
+            clientes: [],
             sortKey: "",
-            sortOrder: 1, // 1 para ascendente, -1 para descendente
+            sortOrder: 1
         };
     },
     computed: {
         filteredAndSortedRows() {
-            let filteredRows = this.rows.filter(row => {
-                return row.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+            // Filtra los clientes cuya deuda es mayor que 0
+            let filteredClientes = this.clientes.filter((cliente) => {
+                // Convertir deuda a número y comprobar que sea mayor que 0
+                const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
+                return deudaValue > 0 && Object.values(cliente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase());
             });
-
-            if (this.sortKey) {
-                filteredRows.sort((a, b) => {
-                    let result = (a[this.sortKey] > b[this.sortKey]) ? 1 : (a[this.sortKey] < b[this.sortKey]) ? -1 : 0;
-                    return result * this.sortOrder;
-                });
-            }
-            return filteredRows;
-        }
+            // Ordena por el campo 'deuda' de mayor a menor
+            return filteredClientes.sort((a, b) => {
+                if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
+                if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
+                return 0;
+            });
+        },
     },
     methods: {
+        fetchClientes() {
+            axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1")
+                .then((response) => {
+                    this.clientes = response.data;
+                })
+                .catch((error) => {
+                    console.error("Error fetching clients:", error);
+                });
+        },
         sortTable(key) {
-            if (this.sortKey === key) {
-                this.sortOrder = -this.sortOrder;
-            } else {
-                this.sortKey = key;
-                this.sortOrder = 1;
+            this.sortKey = key;
+            this.sortOrder *= -1;
+        },
+        editarCliente(id) {
+            // Redirige a la vista de editar cliente con el ID del cliente
+            this.$router.push({ name: 'editarCliente', params: { id: id } });
+        },
+        deleteCliente(id) {
+            if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
+                axios
+                    .delete(`http://localhost/veterinario-app/curso_apirest/propietarios`, {
+                        data: { id: id },
+                    })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            // Cliente eliminado correctamente
+                            alert("Cliente eliminado correctamente");
+                            // Aquí actualiza la lista de clientes después de eliminar
+                            this.fetchClientes();
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response && error.response.status === 409) {
+                            // Error de restricción de clave foránea (409 Conflict)
+                            alert("No se puede eliminar el cliente porque tiene pacientes asociados.");
+                        } else {
+                            // Otro tipo de error
+                            alert("Ocurrió un error al intentar eliminar el cliente.");
+                        }
+                    });
             }
-        },
-        getSortIcon(key) {
-            if (this.sortKey === key) {
-                return this.sortOrder === 1 ? 'bi bi-arrow-up' : 'bi bi-arrow-down';
-            }
-            return '';
-        },
-        selectRow(row) {
-            this.selectedRow = row;
-        },
-        editRow(row) {
-            // Acción para editar la fila
-            console.log("Editar", row);
-        },
-        viewRow(row) {
-            // Acción para ver la fila
-            console.log("Eliminar", row);
         }
+    },
+    mounted() {
+        this.fetchClientes();
     }
-}
+};
 </script>
-<style>
+
+<style scoped>
+/* Estilos aquí */
+</style>
+
+<style scoped>
+.container {
+    max-width: 100%;
+}
+
+.custom-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.custom-table thead {
+    background-color: #f8f9fa;
+}
+
+.custom-table th,
+.custom-table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.custom-table tbody .selected-row {
+    background-color: #e2e6ea;
+}
+
+.custom-table td {
+    border-top: none;
+    vertical-align: middle;
+}
+
+.custom-table th {
+    border-top: none;
+    border-bottom: 2px solid #dee2e6;
+    cursor: pointer;
+}
+
+/* Iconos de Bootstrap */
+.bi {
+    margin-left: 5px;
+}
+
+/* Estilo para los botones */
+.btn {
+    margin-right: 10px;
+}
+
+.pagination .page-item .page-link {
+    color: #007bff;
+}
+
+.fondo {
+    background-color: #e8f0fc;
+    margin-top: -60px;
+}
+
 .table tbody tr {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     cursor: pointer;
