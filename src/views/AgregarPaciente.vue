@@ -1,7 +1,7 @@
 <template>
     <br />
     <div class="d-flex justify-content-between align-items-center mb-3 bg-white py-2">
-        <h2 class="text-primary me-auto">{{ editMode ? 'Editar Paciente' : 'Agregar Paciente' }}</h2>
+        <h4 class="text-primary me-auto">{{ editMode ? 'Editar Paciente' : 'Agregar Paciente' }}</h4>
     </div>
     <br />
     <!-- Alertas -->
@@ -339,6 +339,7 @@ export default {
 <style scoped>
 .container {
     max-width: 100%;
+    margin-right: 1px;
 }
 
 @media (min-width: 768px) {

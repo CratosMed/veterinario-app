@@ -1,5 +1,10 @@
 <template>
     <div class="container mt-4 fondo table-responsive">
+        <div class="d-grid gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3 py-2">
+                <h4 class="text-primary me-auto">Lista Clientes</h4>
+            </div>
+        </div>
         <!-- Campo de búsqueda -->
         <input type="text" v-model="searchQuery" class="form-control" placeholder="Buscar..." />
         <br />
@@ -18,7 +23,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(cliente, index) in filteredAndSortedRows" :key="index">
+                <tr v-for="(cliente, index) in filteredAndSortedRows" :key="index" @click="selectcliente(cliente)"
+                    :class="{ 'selected-cliente': selectedcliente === cliente }">
                     <td>{{ cliente.nombre }}</td>
                     <td>{{ cliente.apellido }}</td>
                     <td>{{ cliente.cedula }}</td>
@@ -44,7 +50,8 @@ export default {
             searchQuery: "",
             clientes: [],
             sortKey: "",
-            sortOrder: 1
+            sortOrder: 1,
+            selectedcliente: null,
         };
     },
     computed: {
@@ -60,6 +67,9 @@ export default {
         },
     },
     methods: {
+        selectcliente(cliente) {
+            this.$router.push({ path: `/detallesclientes/${cliente.id}` });
+        },
         fetchClientes() {
             axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1")
                 .then((response) => {

@@ -1,10 +1,14 @@
 <template>
     <div>
         <br />
+        <!-- Mensaje de éxito -->
+        <div v-if="mensaje" class="alert alert-success">
+            {{ mensaje }}
+        </div>
         <div class="d-flex justify-content-between align-items-center mb-3 sticky-top bg-white py-2">
             <!-- Botón de cerrar -->
-            <h5 class="text-primary me-auto">Nueva Visita de :</h5>
-            <button type="button" @click="NuevaVisita" class="btn btn-secondary">Guardar</button>
+            <h4 class="text-primary me-auto">Visita de :</h4>
+            <button type="button" @click="guardarVisita()" class="btn btn-secondary">Guardar</button>
             <button type="button" @click="ishistorias" class="btn btn-danger m-2">✖</button>
         </div>
         <div class="mb-3">
@@ -16,97 +20,75 @@
             <input type="text" class="form-control" id="Veterinario" v-model="Veterinario" />
         </div>
         <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Motivo de la consulta</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <label for="motivoConsulta" class="form-label">Motivo de la consulta</label>
+            <textarea class="form-control" id="motivoConsulta" rows="3" v-model="motivoConsulta"></textarea>
         </div>
         <div class="mb-4">
-            <label for="exampleFormControlTextarea1" class="form-label">Anamnésticos</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <label for="anamnesicos" class="form-label">Anamnésticos</label>
+            <textarea class="form-control" id="anamnesicos" rows="3" v-model="anamnesicos"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="antecedentesFamiliares" class="form-label">Antecedentes Familiares</label>
+            <textarea class="form-control" id="antecedentesFamiliares" rows="3"
+                v-model="antecedentesFamiliares"></textarea>
         </div>
 
-        <div class="mb-4">
-            <label for="exampleFormControlTextarea1" class="form-label">Antecedentes Familiares</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <!-- Parámetros -->
         <div class="fondo2">
             <h6>
                 Parámetros
-                <!-- Ícono para mostrar/ocultar el formulario sin hover ni estilo de botón -->
                 <i @click="toggleFormulario('parametros')"
                     :class="formularioParametrosVisible ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"
                     class="icono-toggle">
                 </i>
             </h6>
             <br />
-            <!-- Formulario mostrado/oculto según el valor de formularioParametrosVisible -->
             <form v-if="formularioParametrosVisible">
                 <div class="row">
-                    <!-- Columna 1 -->
                     <div class="col-md-4 mb-3">
-                        <!-- Transfusiones -->
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="transfusiones">
+                            <input type="checkbox" class="form-check-input" id="transfusiones" v-model="transfusiones">
                             <label for="transfusiones" class="form-check-label">¿Tiene transfusiones?</label>
                         </div>
                     </div>
-
                     <div class="col-md-4 mb-3">
-                        <!-- Reflejo tusígeno -->
                         <label for="reflejoTusigeno" class="form-label">Reflejo tusígeno</label>
-                        <input type="text" class="form-control" id="reflejoTusigeno">
+                        <input type="text" class="form-control" id="reflejoTusigeno" v-model="reflejoTusigeno">
                     </div>
-
                     <div class="col-md-4 mb-3">
-                        <!-- Temperatura -->
                         <label for="temperatura" class="form-label">Temperatura</label>
-                        <input type="text" class="form-control" id="temperatura">
+                        <input type="text" class="form-control" id="temperatura" v-model="temperatura">
                     </div>
                 </div>
-
                 <div class="row">
-                    <!-- Frecuencia Respiratoria -->
                     <div class="col-md-4 mb-3">
                         <label for="frecuenciaRespiratoria" class="form-label">Frecuencia Respiratoria/min</label>
-                        <input type="text" class="form-control" id="frecuenciaRespiratoria">
+                        <input type="text" class="form-control" id="frecuenciaRespiratoria"
+                            v-model="frecuenciaRespiratoria">
                     </div>
-
-                    <!-- Frecuencia cardíaca -->
                     <div class="col-md-4 mb-3">
                         <label for="frecuenciaCardiaca" class="form-label">Frecuencia cardíaca/min</label>
-                        <input type="text" class="form-control" id="frecuenciaCardiaca">
+                        <input type="text" class="form-control" id="frecuenciaCardiaca" v-model="frecuenciaCardiaca">
                     </div>
-
-                    <!-- Presión Arterial -->
                     <div class="col-md-4 mb-3">
                         <label for="presionArterial" class="form-label">Presión arterial</label>
-                        <input type="text" class="form-control" id="presionArterial">
+                        <input type="text" class="form-control" id="presionArterial" v-model="presionArterial">
                     </div>
                 </div>
-
                 <div class="row">
-                    <!-- Pulso -->
                     <div class="col-md-4 mb-3">
                         <label for="pulso" class="form-label">Pulso/min</label>
-                        <input type="text" class="form-control" id="pulso">
+                        <input type="text" class="form-control" id="pulso" v-model="pulso">
                     </div>
-
-                    <!-- Palmopercusión -->
                     <div class="col-md-4 mb-3">
                         <label for="palmopercusion" class="form-label">Palmopercusión</label>
-                        <input type="text" class="form-control" id="palmopercusion">
+                        <input type="text" class="form-control" id="palmopercusion" v-model="palmopercusion">
                     </div>
-
-                    <!-- Reflejo deglutorio -->
                     <div class="col-md-4 mb-3">
                         <label for="reflejoDeglutorio" class="form-label">Reflejo deglutorio</label>
-                        <input type="text" class="form-control" id="reflejoDeglutorio">
+                        <input type="text" class="form-control" id="reflejoDeglutorio" v-model="reflejoDeglutorio">
                     </div>
                 </div>
             </form>
-
-
-
         </div>
         <br />
 
@@ -115,58 +97,49 @@
 
         <form>
             <div class="row">
-                <!-- Columna 1 -->
                 <div class="col-md-4 mb-3">
                     <label for="peso" class="form-label">Peso</label>
-                    <input type="text" class="form-control" id="peso">
+                    <input type="text" class="form-control" id="peso" v-model="peso">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="oral" class="form-label">Oral</label>
-                    <input type="text" class="form-control" id="oral">
+                    <input type="text" class="form-control" id="oral" v-model="oral">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="vulvarPrepucial" class="form-label">Vulvar/Prepucial</label>
-                    <input type="text" class="form-control" id="vulvarPrepucial">
+                    <input type="text" class="form-control" id="vulvarPrepucial" v-model="vulvarPrepucial">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="rectal" class="form-label">Rectal</label>
-                    <input type="text" class="form-control" id="rectal">
+                    <input type="text" class="form-control" id="rectal" v-model="rectal">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="ojos" class="form-label">Ojos</label>
-                    <input type="text" class="form-control" id="ojos">
+                    <input type="text" class="form-control" id="ojos" v-model="ojos">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="oidos" class="form-label">Oídos</label>
-                    <input type="text" class="form-control" id="oidos">
+                    <input type="text" class="form-control" id="oidos" v-model="oidos">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="condicionCorporal" class="form-label">Condición corporal</label>
-                    <select class="form-select" id="condicionCorporal">
+                    <select class="form-select" id="condicionCorporal" v-model="condicionCorporal">
                         <option value="obeso">Obeso</option>
                         <option value="normal">Normal</option>
                         <option value="delgado">Delgado</option>
                         <option value="caquectico">Caquéctico</option>
                     </select>
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="agresividad" class="form-label">Agresividad</label>
-                    <input type="range" class="form-range" id="agresividad" min="1" max="10" v-model="form.agresividad">
+                    <input type="range" class="form-range" id="agresividad" min="1" max="10" v-model="agresividad">
                     <div class="mt-2">
-                        <span>Valor: {{ form.agresividad }}</span>
+                        <span>Valor: {{ agresividad }}</span>
                     </div>
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="mucosas" class="form-label">Mucosas</label>
-                    <select class="form-select" id="mucosas">
+                    <select class="form-select" id="mucosas" v-model="mucosas">
                         <option value="normal">Normal</option>
                         <option value="anormal">Anormal</option>
                     </select>
@@ -174,167 +147,96 @@
             </div>
 
             <div class="row">
-                <!-- Columna 2 -->
                 <div class="col-md-4 mb-3">
                     <label for="comida" class="form-label">Comida</label>
-                    <input type="text" class="form-control" id="comida">
+                    <input type="text" class="form-control" id="comida" v-model="comida">
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label for="nodulosLinfaticos" class="form-label">Nódulos Linfáticos</label>
-                    <input type="text" class="form-control" id="nodulosLinfaticos">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="tonsilas" class="form-label">Tonsilas</label>
-                    <input type="text" class="form-control" id="tonsilas">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="pielAnexos" class="form-label">Piel y Anexos</label>
-                    <input type="text" class="form-control" id="pielAnexos">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="locomocion" class="form-label">Locomoción</label>
-                    <input type="text" class="form-control" id="locomocion">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="musculoesqueletico" class="form-label">S. Musculoesquelético</label>
-                    <input type="text" class="form-control" id="musculoesqueletico">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="sistemaNervioso" class="form-label">Sistema Nervioso</label>
-                    <input type="text" class="form-control" id="sistemaNervioso">
+                    <input type="text" class="form-control" id="nodulosLinfaticos" v-model="nodulosLinfaticos">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="estadoDeshidratacion" class="form-label">Estado de deshidratación</label>
-                    <select class="form-select" id="estadoDeshidratacion">
-                        <option value="normal">Normal</option>
-                        <option value="5%">5%</option>
-                        <option value="6-7%">6-7%</option>
-                        <option value="8-9%">8-9%</option>
-                        <option value="10%+">10%+</option>
-                    </select>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="heces" class="form-label">Heces</label>
-                    <input type="text" class="form-control" id="heces">
+                    <label for="temperaturaCorporal" class="form-label">Temperatura Corporal</label>
+                    <input type="text" class="form-control" id="temperaturaCorporal" v-model="temperaturaCorporal">
                 </div>
             </div>
 
-
-            <div class="row">
-                <!-- Columna 3 -->
-                <div class="col-md-4 mb-3">
-                    <label for="cardiovascular" class="form-label">S. Cardiovascular</label>
-                    <input type="text" class="form-control" id="cardiovascular">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="respiratorio" class="form-label">S. Respiratorio</label>
-                    <input type="text" class="form-control" id="respiratorio">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="digestivo" class="form-label">S. Digestivo</label>
-                    <input type="text" class="form-control" id="digestivo">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="genitourinario" class="form-label">S. Genitourinario</label>
-                    <input type="text" class="form-control" id="genitourinario">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label for="constantesFisiologicas" class="form-label">Constantes fisiológicas</label>
-                    <select class="form-select" id="constantesFisiologicas">
-                        <option value="astenico">Asténico</option>
-                        <option value="apropietico">Apoplético</option>
-                        <option value="linfatico">Linfático</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="orina" class="form-label">Orina</label>
-                    <input type="text" class="form-control" id="orina">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="estadoReproductivo" class="form-label">Estado reproductivo</label>
-                    <select class="form-select" id="estadoReproductivo">
-                        <option value="castrado">Castrado</option>
-                        <option value="gestacion">Gestación</option>
-                        <option value="lactancia">Lactancia</option>
-                        <option value="entero">Entero</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="ultimoCelo" class="form-label">Último celo</label>
-                    <input type="date" class="form-control" id="ultimoCelo">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="ultimoCelo" class="form-label">Último Parto</label>
-                    <input type="date" class="form-control" id="ultimoCelo">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="S.Reproductor" class="form-label">S. Reproductor</label>
-                    <input type="text" class="form-control" id="S.Reproductor">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="SeñasParticulaares" class="form-label">Señas Particulares </label>
-                    <input type="text" class="form-control" id="SeñasParticulaares">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="alergias" class="form-label">Alergias </label>
-                    <input type="text" class="form-control" id="Salergias">
-                </div>
+            <hr />
+            <div class="mb-3">
+                <label for="diagnostico" class="form-label">Diagnóstico</label>
+                <textarea class="form-control" id="diagnostico" rows="3" v-model="diagnostico"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="tratamiento" class="form-label">Tratamiento</label>
+                <textarea class="form-control" id="tratamiento" rows="3" v-model="tratamiento"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="observaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="observaciones" rows="3" v-model="observaciones"></textarea>
             </div>
         </form>
-
-
-        <hr>
-
-        <br />
-
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Diagnóstico</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Tratamiento</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Observaciones</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <br />
-        <br />
     </div>
 </template>
 
 <script>
 import { reactive } from 'vue';
+import axios from 'axios';
+
 export default {
     data() {
-        const form = reactive({
-            agresividad: 5 // Valor inicial del slider
-        });
         return {
-            //showVisit: false,
+            mensaje: '',
+            // Propiedades del formulario
+            id_historia: '',
             fechaActual: '',
-            formularioParametrosVisible: false, // Parámetros
-
-            form: {
-            }
+            Veterinario: '',
+            motivoConsulta: '',
+            anamnesicos: '',
+            antecedentesFamiliares: '',
+            transfusiones: false,
+            reflejoTusigeno: '',
+            temperatura: '',
+            frecuenciaRespiratoria: '',
+            frecuenciaCardiaca: '',
+            presionArterial: '',
+            pulso: '',
+            palmopercusion: '',
+            reflejoDeglutorio: '',
+            peso: '',
+            oral: '',
+            vulvarPrepucial: '',
+            rectal: '',
+            ojos: '',
+            oidos: '',
+            condicionCorporal: 'normal',
+            agresividad: 5,
+            mucosas: 'normal',
+            comida: '',
+            nodulosLinfaticos: '',
+            temperaturaCorporal: '',
+            diagnostico: '',
+            tratamiento: '',
+            observaciones: '',
+            formularioParametrosVisible: false,
+            paciente_id: null,
+            pacientes_id: '',
 
         };
     },
     mounted() {
         this.obtenerFechaActual();
-        this.id = this.$route.params.id;
+        this.id = this.$route.params.id || null;
+
+        // Obtener el paciente_id desde la URL
+        this.pacientes_id = this.$route.params.paciente_id || null;
+
+        if (this.id) {
+            // Si hay un id en la URL, es edición
+            this.cargarHistoria(this.id); // Aquí cargas los datos de la historia para editar
+        } else if (this.pacientes_id) {
+            // Si solo hay paciente_id, es una nueva visita
+            console.log('Creando nueva visita para el paciente con id:', this.pacientes_id);
+        }
     },
     methods: {
         toggleFormulario(tipo) {
@@ -345,18 +247,150 @@ export default {
         obtenerFechaActual() {
             const today = new Date();
             const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
-            const day = String(today.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
             this.fechaActual = `${year}-${month}-${day}`;
         },
 
-        ishistorias() {
-            this.$router.push({ path: `/detalleshistorias/${this.id}` });
+        async cargarHistoria() {
+            try {
+                const $id = this.$route.params.id;
+                const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?id=${$id}`);
+                if (response.data.length) {
+                    const historia = response.data[0];
+                    console.log(historia)
+                    // Rellena el formulario con los datos obtenidos
+                    this.id_historia = historia.id || '';
+                    this.fechaActual = historia.fecha || '';
+                    this.Veterinario = historia.veterinario || '';
+                    this.motivoConsulta = historia.motivo_consulta || '';
+                    this.anamnesicos = historia.anamnesicos || '';
+                    this.antecedentesFamiliares = historia.antecedentes_familiares || '';
+                    this.peso = historia.peso || '';
+                    this.reflejoTusigeno = historia.reflejo_tusigeno || '';
+                    this.reflejoDeglutorio = historia.reflejo_deglutorio || '';
+                    this.temperatura = historia.temperatura || '';
+                    this.presionArterial = historia.presion_arterial || '';
+                    this.frecuenciaCardiaca = historia.frecuencia_cardiaca || '';
+                    this.frecuenciaRespiratoria = historia.frecuencia_respiratoria || '';
+                    this.pulso = historia.pulso || '';
+                    this.palmopercusion = historia.palmopercusion || '';
+                    this.transfusiones = historia.transfusiones || false; // Suponiendo que es un booleano
+                    this.oral = historia.oral || '';
+                    this.vulvarPrepucial = historia.vulvar_prepucial || '';
+                    this.rectal = historia.rectal || '';
+                    this.ojos = historia.ojos || '';
+                    this.oidos = historia.oidos || '';
+                    this.nodulosLinfaticos = historia.nodulos || '';
+                    this.condicionCorporal = historia.condicion_corporal || 'normal'; // Asignar valor por defecto
+                    this.agresividad = historia.agresividad || 5; // Asignar valor por defecto
+                    this.mucosas = historia.mucosa || 'normal'; // Asignar valor por defecto
+                    this.comida = historia.comida || '';
+                    this.diagnostico = historia.diagnostico || '';
+                    this.tratamiento = historia.tratamiento || '';
+                    this.observaciones = historia.observaciones || '';
+                    this.ultimoCelo = historia.ultimo_celo || ''; // Si tienes este campo
+                    this.ultimoParto = historia.ultimo_parto || ''; // Si tienes este campo
+                    this.sistemaReproductor = historia.sistema_reproductor || ''; // Si tienes este campo
+                    this.sistemaCardiovascular = historia.sistema_cardiovascular || ''; // Si tienes este campo
+                    this.sistemaRespiratorio = historia.sistema_respiratorio || ''; // Si tienes este campo
+                    this.sistemaDigestivo = historia.sistema_digestivo || ''; // Si tienes este campo
+                    this.sistemaGenitourinario = historia.sistema_genitourinario || ''; // Si tienes este campo
+                    this.estadoDeshidratacion = historia.estado_deshidratacion || ''; // Si tienes este campo
+                    this.constantesFisiologicas = historia.constantes_fisiologicas || ''; // Si tienes este campo
+                    this.temperaturaCorporal = historia.temperatura || ''; // Si es diferente del anterior
+                    this.pacientes_id = historia.pacientes_id || ''; //
+                    // Agrega más campos según sea necesario
+                }
+            } catch (error) {
+                console.error('Error al cargar la historia:', error);
+            }
         },
 
+        async guardarVisita() {
+            try {
+                // Construir el objeto con los datos que realmente se van a enviar al backend
+                const datosVisita = {
+                    fecha: this.fechaActual,
+                    veterinario: this.Veterinario,
+                    motivo_consulta: this.motivoConsulta,
+                    anamnesicos: this.anamnesicos,
+                    antecedentes_familiares: this.antecedentesFamiliares,
+                    transfusiones: this.transfusiones,
+                    reflejo_tusigeno: this.reflejoTusigeno,
+                    temperatura: this.temperatura,
+                    frecuencia_respiratoria: this.frecuenciaRespiratoria,
+                    frecuencia_cardiaca: this.frecuenciaCardiaca,
+                    presion_arterial: this.presionArterial,
+                    pulso: this.pulso,
+                    palmopercusion: this.palmopercusion,
+                    reflejo_deglutorio: this.reflejoDeglutorio,
+                    peso: this.peso,
+                    oral: this.oral,
+                    vulvar_prepucial: this.vulvarPrepucial,
+                    rectal: this.rectal,
+                    ojos: this.ojos,
+                    oidos: this.oidos,
+                    nodulos: this.nodulosLinfaticos,
+                    condicion_corporal: this.condicionCorporal,
+                    agresividad: this.agresividad,
+                    mucosa: this.mucosas,
+                    comida: this.comida,
+                    temperatura_corporal: this.temperaturaCorporal,
+                    diagnostico: this.diagnostico,
+                    tratamiento: this.tratamiento,
+                    observaciones: this.observaciones,
+                    pacientes_id: parseInt(this.pacientes_id, 10) // Este es el ID del paciente, que se usa para la relación
+                };
+                let response;
+
+                // Verificar si estamos editando o creando
+                if (this.id) {
+                    // Si tienes el id de la historia, es una edición (PUT)
+                    let direccion = `http://localhost/veterinario-app/curso_apirest/historias`
+                    response = await axios.put(direccion, { ...datosVisita, id: this.id_historia });
+                    console.log(datosVisita);
+                } else if (this.paciente_id) {
+                    // Si tienes el paciente_id pero no hay id de historia, es una creación (POST)
+                    response = await axios.post('http://localhost/veterinario-app/curso_apirest/historias', { ...datosVisita, pacientes_id: this.pacientes_id });
+                    console.log('Nueva historia creada con éxito:', response.data);
+                }
+                // Mostrar mensaje de éxito
+                this.mensaje = this.id ? 'La visita se ha actualizado correctamente.' : 'La visita se ha guardado correctamente.';
+
+                // Esperar 3 segundos y redirigir
+                setTimeout(() => {
+                    this.mensaje = ''; // Oculta el mensaje
+                    this.$router.push({
+                        path: `/detalleshistorias/${this.pacientes_id}`,
+                        hash: '#historial'
+                    });
+
+                }, 3000);
+            } catch (error) {
+                console.error('Error al guardar la visita:', error);
+                // Manejo de errores: puedes mostrar un mensaje de error si lo deseas
+                this.mensaje = 'Error al guardar la visita. Por favor, intenta nuevamente.';
+                setTimeout(() => {
+                    this.mensaje = ''; // Oculta el mensaje después de 3 segundos
+                }, 3000);
+            }
+        },
+
+        ishistorias() {
+            this.$router.push({ path: `/detalleshistorias/${this.paciente_id}` });
+        },
     }
 };
 </script>
+
+<style scoped>
+/* Agrega tus estilos aquí */
+.icono-toggle {
+    cursor: pointer;
+}
+</style>
+
 
 <style>
 .fondo {

@@ -78,18 +78,40 @@ export default {
     },
     methods: {
         agregarVacuna() {
-            this.vacunas.push({ tipo: '', marcaSerie: '', descripcion: '' });
+            this.vacunas.push({ tipovacuna: '', marcaSerie: '', dosis: '', peso: '', descripcion: '' });
         },
-        eliminarVacuna(index) {
-            this.vacunas.splice(index, 1);
-        },
-        obtenerFechaActual() {
-            const hoy = new Date();
-            const dia = hoy.getDate().toString().padStart(2, '0');
-            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
-            const año = hoy.getFullYear();
-            // Formato correcto para el input de tipo date: YYYY-MM-DD
-            this.fechaActual = `${año}-${mes}-${dia}`;
+    },
+    eliminarVacuna(index) {
+        this.vacunas.splice(index, 1);
+    },
+    obtenerFechaActual() {
+        const hoy = new Date();
+        const dia = hoy.getDate().toString().padStart(2, '0');
+        const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+        const año = hoy.getFullYear();
+        // Formato correcto para el input de tipo date: YYYY-MM-DD
+        this.fechaActual = `${año}-${mes}-${dia}`;
+    },
+    async guardarVacunas() {
+        try {
+            for (const vacuna of this.vacunas) {
+                // Aquí deberías definir la URL de tu API
+                await axios.post(`http://localhost/veterinario-app/curso_apirest/vacunas`, {
+                    fecha: this.fechaActual,
+                    tipo: vacuna.tipovacuna,
+                    marcaSerie: vacuna.marcaSerie,
+                    dosis: vacuna.dosis,
+                    peso: vacuna.peso,
+                    descripcion: vacuna.descripcion
+                });
+            }
+            alert('Vacunas guardadas con éxito');
+            // Opcionalmente puedes reiniciar el formulario
+            this.vacunas = [];
+            this.obtenerFechaActual(); // Opcional: reiniciar la fecha actual
+        } catch (error) {
+            console.error('Error al guardar las vacunas:', error);
+            alert('Hubo un error al guardar las vacunas');
         }
     }
 };

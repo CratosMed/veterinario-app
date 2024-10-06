@@ -40,6 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         header("Content-Type: application/json");
         echo json_encode($datosPaciente);
         http_response_code(200);
+    } else if (isset($_GET['propietario_id'])) {
+        $id = $_GET['propietario_id'];
+        $datosPaciente = $_pacientes->obtenerPacientesPorPropietario($id);
+        header("Content-Type: application/json");
+        echo json_encode($datosPaciente);
+        http_response_code(200);
     }
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
     error_log("Método POST recibido."); // Log para indicar que se recibió una solicitud POST

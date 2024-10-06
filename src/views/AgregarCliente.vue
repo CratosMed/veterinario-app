@@ -1,7 +1,7 @@
 <template>
     <br />
     <div class="d-flex justify-content-between align-items-center mb-3  bg-white py-2">
-        <h2 class="text-primary me-auto">{{ editMode ? 'Editar Cliente' : 'Agregar Cliente' }}</h2>
+        <h4 class="text-primary me-auto">{{ editMode ? 'Editar Cliente' : 'Agregar Cliente' }}</h4>
     </div>
     <br />
     <div v-if="message" v-show="message"

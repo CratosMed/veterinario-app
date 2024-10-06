@@ -1,7 +1,3 @@
-Compartir
-
-
-Tú dijiste:
 <template>
   <div id="app">
     <div class="main-content">
@@ -13,24 +9,27 @@ Tú dijiste:
           </button>
         </div>
 
-        <!-- Menú lateral -->
-        <div :class="isSidebarOpen ? 'menu-lateral col-lg-3 col-md-4 col-sm-4 col-2' : 'menu-collapsed col-1'">
+        <!-- Menú lateral fijo -->
+        <div :class="isSidebarOpen ? 'menu-lateral col-lg-3 col-md-4 col-sm-4 col-2' : 'menu-collapsed col-1'"
+          id="sidebar">
           <MenuLateral :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar" />
         </div>
 
-        <!-- Contenido principal -->
-        <div :class="isSidebarOpen ? 'col-lg-9 col-md-8 col-sm-7 col-10 container' : 'col-11 container'">
-          <router-view />
-          <br />
-          <div class="navigation-buttons">
-            <button @click="goBack" class="btn-atras">
-              <i class="bi bi-arrow-left"></i> Atrás
-            </button>
+        <!-- Contenido principal desplazable -->
+        <div :class="['container', isSidebarOpen && screenWidth < 768 ? 'hide-content' : '']" id="content">
+          <div class="content-wrapper">
+            <router-view />
+            <br />
+            <div class="navigation-buttons">
+              <button @click="goBack" class="btn-atras">
+                <i class="bi bi-arrow-left"></i> Atrás
+              </button>
 
-            <!-- Botón "Adelante" -->
-            <button @click="goForward" class="btn-adelante">
-              Adelante <i class="bi bi-arrow-right"></i>
-            </button>
+              <!-- Botón "Adelante" -->
+              <button @click="goForward" class="btn-adelante">
+                Adelante <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -53,6 +52,7 @@ export default {
   data() {
     return {
       isSidebarOpen: false, // Empieza cerrado por defecto
+      screenWidth: window.innerWidth, // Guarda el ancho de la pantalla
     };
   },
   mounted() {
@@ -65,12 +65,18 @@ export default {
   methods: {
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
-      console.log(this.isSidebarOpen);
+      const sidebarElement = document.getElementById('sidebar');
+
+      if (this.isSidebarOpen) {
+        sidebarElement.classList.add('menu-lateral-open');
+      } else {
+        sidebarElement.classList.remove('menu-lateral-open');
+      }
     },
     handleResize() {
-      const screenWidth = window.innerWidth;
-      if (screenWidth < 768) {
-        this.isSidebarOpen = false;
+      this.screenWidth = window.innerWidth;
+      if (this.screenWidth < 768) {
+        this.isSidebarOpen = false; // Asegura que el menú esté cerrado en pantallas pequeñas por defecto
       }
     },
     goBack() {
@@ -95,6 +101,10 @@ body {
   margin: 0;
 }
 
+.hide-content {
+  display: none;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -103,7 +113,6 @@ body {
 
 .main-content {
   flex: 1;
-  margin-right: 2%;
 }
 
 .row.no-gutters {
@@ -124,11 +133,15 @@ body {
   z-index: 1000;
   width: 250px;
   transition: width 0.3s ease;
+  position: fixed;
+
 }
 
 .menu-collapsed {
   width: 60px;
   transition: width 0.3s ease;
+  position: fixed;
+  z-index: 1000;
 }
 
 .menu-collapsed .menu-item-text {
@@ -138,6 +151,7 @@ body {
 .menu-collapsed i {
   display: block;
   font-size: 24px;
+
 }
 
 /* Estilos para el botón de tres puntos */
@@ -151,6 +165,18 @@ button.btn-secondary {
 
 button.btn-secondary:hover {
   background-color: #034a58;
+}
+
+/* Contenedor para el contenido principal */
+#content {
+  padding-left: 250px;
+  /* Se asegura que el contenido no se superponga al menú lateral */
+  transition: padding-left 0.3s ease;
+}
+
+.menu-collapsed+#content {
+  padding-left: 10%;
+  /* Ajusta el padding cuando el menú está colapsado */
 }
 
 /* Contenedor para los botones de navegación */
@@ -189,18 +215,34 @@ footer {
   left: 0;
 }
 
-@media (max-width: 736px) {
+/* Media Queries */
+@media (max-width: 768px) {
 
-  .menu-lateral,
-  .menu-collapsed {
-    display: none;
-    /* Oculta el menú lateral en dispositivos móviles */
+
+  /* Ajusta el contenido para ocupar el ancho completo en dispositivos móviles */
+  #content {
+    padding-left: 0;
+    width: 100%;
+    padding: 15px;
+    /* Pequeño margen interno en dispositivos móviles */
   }
 
-  /* Asegura que el contenedor principal use todo el ancho */
-  .col-10,
-  .col-11 {
-    width: 100% !important;
+  /* Reducir el tamaño de las letras en dispositivos móviles */
+  #content,
+  .navigation-buttons,
+  button,
+  input,
+  label,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span {
+    font-size: 12px;
+    /* Ajusta este valor según sea necesario */
   }
 }
 </style>

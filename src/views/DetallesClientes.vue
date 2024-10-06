@@ -10,11 +10,14 @@
                 <!-- Sidebar -->
                 <div class="col-md-2 bg-light">
                     <div class="text-center">
-                        <!-- Imagen de perfil y nombre -->
-                        <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Profile Picture">
-                        <h4>Benito</h4>
-                    </div>
 
+                        <!-- Sidebar --><br>
+                        <!-- Sidebar --><br>
+                        <h4>{{ cliente.nombre }}</h4>
+                    </div>
+                    <br>
+                    <!-- Sidebar --><br>
+                    <!-- Sidebar --><br>
                     <!-- Sidebar Links -->
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -39,61 +42,55 @@
                                 <div class="row justify-content-center">
                                     <div class="col-md-4 col-sm-6">
                                         <h5>Nombre</h5>
-                                        <p>{{ formData.name }}</p>
+                                        <p>{{ cliente.nombre }}</p>
                                     </div>
                                     <div class="col-md-4 col-sm-6">
                                         <h5>Apellido</h5>
-                                        <p>{{ formData.apellido }}</p>
+                                        <p>{{ cliente.apellido }}</p>
                                     </div>
                                 </div>
 
                                 <div class="row justify-content-center">
                                     <div class="col-md-4 col-sm-6">
                                         <h5>Cédula</h5>
-                                        <p>{{ formData.cedula }}</p>
+                                        <p>{{ cliente.cedula }}</p>
                                     </div>
                                     <div class="col-md-4 col-sm-6">
                                         <h5>E-mail</h5>
-                                        <p>{{ formData.email }}</p>
+                                        <p>{{ cliente.correo }}</p>
                                     </div>
                                 </div>
 
                                 <div class="row justify-content-center">
                                     <div class="col-md-4 col-sm-6">
                                         <h5>Teléfono Móvil</h5>
-                                        <p>{{ formData.telefonoMovil }}</p>
+                                        <p>{{ cliente.telefono }}</p>
                                     </div>
-                                    <div class="col-md-4 col-sm-6">
-                                        <h5>Teléfono Auxiliar</h5>
-                                        <p>{{ formData.telefonoAuxiliar }}</p>
-                                    </div>
-                                </div>
 
-                                <div class="row justify-content-center">
-                                    <div class="col-md-4 col-sm-6">
-                                        <h5>Ciudad</h5>
-                                        <p>{{ formData.ciudad }}</p>
-                                    </div>
-                                    <div class="col-md-4 col-sm-6">
-                                        <h5>Municipio</h5>
-                                        <p>{{ formData.municipio }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="row justify-content-center">
-                                    <div class="col-md-4 col-sm-6">
-                                        <h5>Veterinario Derivante</h5>
-                                        <p>{{ formData.veterinarioDerivante }}</p>
-                                    </div>
                                     <div class="col-md-4 col-sm-6">
                                         <h5>Deuda</h5>
-                                        <p>{{ formData.deuda }}</p>
+                                        <p>{{ cliente.deuda }}</p>
+                                    </div>
+
+                                </div>
+
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4 col-sm-6">
+                                        <h5>Dirección</h5>
+                                        <p>{{ cliente.direccion }}</p>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
                     <div v-if="activeSection === 'pacientesRelacionados'">
                         <div class="card shadow-sm">
                             <div class="card-body hovertable-responsive">
@@ -102,7 +99,7 @@
                                 </div>
 
                                 <!-- Table of related patients -->
-                                <div class="table-responsive"> <!-- Add this div with class "table-responsive" -->
+                                <div class="table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -116,21 +113,22 @@
                                         </thead>
                                         <tbody>
                                             <tr v-for="parametro in parametros" :key="parametro.id"
-                                                @click="selectParametro(parametro)">
-                                                <td class="text-center">{{ parametro.Nombre }}</td>
-                                                <td class="text-center">{{ parametro.Especie || 'no come' }}</td>
-                                                <td class="text-center">{{ parametro.Pelaje || 'complejo b' }}</td>
-                                                <td class="text-center">{{ parametro.Sexo || 'complejo b' }}</td>
+                                                @click="selectParametro(parametro)" class="table-row">
+                                                <td class="text-center">{{ parametro.nombre }}</td>
+                                                <td class="text-center">{{ parametro.especie || 'No disponible' }}
+                                                </td>
+                                                <td class="text-center">{{ parametro.color || 'No disponible' }}
+                                                </td>
+                                                <td class="text-center">{{ parametro.sexo || 'No disponible' }}</td>
                                                 <td class="text-center citas-columna">
-                                                    <div v-for="cita in parametro.Citas" :key="cita.id"
+                                                    <div v-for="cita in parametro.citas" :key="cita.id"
                                                         class="d-flex align-items-center mb-2">
-                                                        <span class="badge bg-danger rounded-pill me-2">{{
-                                                            cita.dia
-                                                        }}</span>
+                                                        <span class="badge bg-danger rounded-pill me-2">{{ cita.dia
+                                                            }}</span>
                                                         <div class="text-truncate" style="max-width: 150px;">
                                                             <strong>{{ cita.evento }}</strong>
-                                                            <div class="text-muted">{{ cita.hora }} {{ cita.recurrencia
-                                                                }}</div>
+                                                            <div class="text-muted">{{ cita.hora }} {{
+                                                                cita.recurrencia }}</div>
                                                         </div>
                                                         <span
                                                             :class="['badge', cita.recurrencia === 'every week' ? 'bg-success' : 'bg-danger']"></span>
@@ -138,73 +136,88 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <a :href="`https://web.whatsapp.com/send?phone=${parametro.telefono}&text=Hola%20${encodeURIComponent(parametro.Nombre)},%20te%20habla%20la%20veterinaria%20Inversiones%20Caru.%20Te%20recordamos%20la%20cita%20que%20tienes%20hoy.%20Te%20esperamos,%20tu%20salud%20es%20nuestra%20prioridad.`"
-                                                        target="_blank" rel="noopener noreferrer">
+                                                        target="_blank" rel="noopener noreferrer"
+                                                        aria-label="Notificar a través de WhatsApp">
                                                         <i class="fab fa-whatsapp fa-2x text-success"></i>
                                                     </a>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div> <!-- End of table-responsive div -->
-                            </div> <!-- End of table-responsive div -->
-                        </div> <!-- End of table-responsive div -->
-                    </div> <!-- End of table-responsive div -->
-                </div> <!-- End of table-responsive div -->
-            </div> <!-- End of table-responsive div -->
-        </div> <!-- End of table-responsive div -->
-    </div> <!-- End of table-responsive div -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'DetallesClientes',
     data() {
         return {
-            activeSection: 'datos',
-            parametros: [
-                {
-                    id: 1,
-                    Nombre: "Firulais",
-                    Especie: "Perro",
-                    Pelaje: "Corto",
-                    Sexo: "Macho",
-                    Citas: [
-                        {
-                            id: 1,
-                            evento: "Yogryrtytryhfffffffffffffffffffffffffffffffffffffffffffffffffffffffffftrhrthrthr",
-                            dia: "THU",
-                            hora: "16:40",
-                            recurrencia: "every week"
-                        },
-                        {
-                            id: 2,
-                            evento: "Call John",
-                            dia: "SAT",
-                            hora: "15:20",
-                            recurrencia: "once"
-                        }
-                    ]
-                }
-                // Más pacientes...
-            ],
-            formData: {
-                name: "Juan Pérez",
-                apellido: "López",
-                cedula: "1234567890",
-                email: "juan.perez@example.com",
-                telefonoMovil: "04129638367",
-                telefonoAuxiliar: "",
-                ciudad: "Quito",
-                municipio: "Pichincha",
-                veterinarioDerivante: "Dr. Gómez",
-                deuda: "$500",
-            }
+            activeSection: null,
+            cliente: [],
+            parametros: [], // Aquí cargarás tus pacientes relacionados
+            pacientesRelacionados: true
         };
     },
-    methods: {
-        selectParametro(parametro) {
-            this.selectedParametro = parametro;
+    mounted() {
+        // Obtener el ID de la URL
+        this.id = this.$route.params.id;
+        // Cargar los datos iniciales (datos del paciente)
+        this.cargarSeccion('datos');
+
+    },
+    watch: {
+        activeSection(newSection) {
+            this.cargarSeccion(newSection);
+            console.log(newSection)
         }
+    },
+    methods: {
+        setActiveSection(section) {
+            this.activeSection = null; // Resetea la sección activa primero
+            this.$nextTick(() => {
+                this.activeSection = section.toLowerCase();// Actualiza con la nueva sección
+            });
+            console.log(this.activeSection)
+        },
+
+        async cargarSeccion(seccion) {
+            this.activeSection = seccion;
+
+            try {
+                if (seccion === 'datos') {
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/propietarios?id=${this.id}`);
+                    const data = response.data;
+                    console.log(data); // Verifica aquí la respuesta
+
+                    // Asigna el cliente correctamente dependiendo del formato de la respuesta
+                    this.cliente = Array.isArray(data) ? data[0] : data;
+                } else if (seccion === 'pacientesRelacionados') {
+                    this.pacientesRelacionados = true;
+                    try {
+                        const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/pacientes?propietario_id=${this.id}`); // Reemplaza con la URL de tu API
+                        this.parametros = response.data; // Asumiendo que la respuesta contiene un array de pacientes
+                        console.log(this.parametros)
+                    } catch (error) {
+                        console.error('Error al obtener pacientes:', error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar los datos:', error.response ? error.response.data : error.message);
+            }
+        },
+
+
+
     }
 };
 </script>

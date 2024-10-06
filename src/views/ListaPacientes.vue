@@ -2,9 +2,10 @@
     <div class="container mt-4 fondo table-responsive">
         <div class="d-grid gap-2">
             <div class="d-flex justify-content-between align-items-center mb-3py-2">
-                <h2 class="text-primary me-auto">Historias de pacientes</h2>
+                <h4 class="text-primary me-auto">Historias Pacientes</h4>
             </div>
         </div>
+        <br />
 
         <!-- Campo de búsqueda -->
         <div class="mb-3">
@@ -125,7 +126,7 @@ export default {
                     const response = await axios.delete(`http://localhost/veterinario-app/curso_apirest/pacientes`, {
                         data: { id: paciente.id }
                     });
-                    console.log(response); // Verifica la respuesta
+
                     this.pacientes = this.pacientes.filter(p => p.id !== paciente.id);
                     alert(`El paciente ${paciente.nombre} ha sido eliminado.`);
                 } catch (error) {

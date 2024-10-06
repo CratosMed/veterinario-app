@@ -37,8 +37,8 @@
                                 @click.prevent="setActiveSection('antiparasitarios')">Antiparasitarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" :class="{ active: activeSection === 'procedimiento' }"
-                                @click.prevent="setActiveSection('procedimiento')">Procedimiento</a>
+                            <a class="nav-link" href="#" :class="{ active: activeSection === 'procedimientos' }"
+                                @click.prevent="setActiveSection('procedimientos')">Procedimiento</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" :class="{ active: activeSection === 'examenes' }"
@@ -118,12 +118,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <th scope="row">2024-09-15</th>
-                                                        <td>Parvovirus</td>
-                                                        <td>MarcaY - 67890</td>
-                                                        <td>Vacuna administrada con leve fiebre post-inmunización
-                                                        </td>
+                                                    <tr v-for="vacuna in vacunas" :key="vacuna.id">
+                                                        <th scope="row">{{ vacuna.fecha }}</th>
+                                                        <td>{{ vacuna.tipo }}</td>
+                                                        <td>{{ vacuna.numero_serie }}</td>
+                                                        <td>{{ vacuna.descripcion }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -165,13 +164,12 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row">2024-08-25</th>
-                                                    <td>Antiparasitario A</td>
-                                                    <td>ParasiteY</td>
-                                                    <td>Sin efectos secundarios observados</td>
+                                                <tr v-for="(antiparasitario, index) in antiparasitarios" :key="index">
+                                                    <th scope="row">{{ antiparasitario.fecha }}</th>
+                                                    <td>{{ antiparasitario.tipo }}</td>
+                                                    <td>{{ antiparasitario.numero_serie }}</td>
+                                                    <td>{{ antiparasitario.descripcion }}</td>
                                                 </tr>
-
                                             </tbody>
                                         </table>
 
@@ -211,9 +209,19 @@
                                                 @click="selectParametro(historia)">
                                                 <td>{{ historia.fecha }}</td>
                                                 <td>{{ historia.motivo_consulta }}</td>
-                                                <td>{{ historia.diagnostico || 'no come' }}</td>
-                                                <td>{{ historia.tratamiento || 'complejo b' }}</td>
-                                                <td>{{ historia.observaciones || 'complejo b' }}</td>
+                                                <td>{{ historia.diagnostico || '' }}</td>
+                                                <td>{{ historia.tratamiento || '' }}</td>
+                                                <td>{{ historia.observaciones || '' }}</td>
+                                                <td>
+                                                    <button @click.stop="EditarVisita(historia.id)"
+                                                        class="btn btn-warning btn-sm me-1">
+                                                        <i class="bi bi-pencil"></i> Editar
+                                                    </button>
+                                                    <button @click.stop="eliminarHistoria(historia)"
+                                                        class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-trash"></i> Eliminar
+                                                    </button>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -242,8 +250,8 @@
                                                 <p>{{ selectedParametro.diagnostico }}</p>
                                                 <h5 class="text-primary">Tratamiento</h5>
                                                 <p>{{ selectedParametro.tratamiento }}</p>
-                                                <h5 class="text-primary">Anamnésticos</h5>
-                                                <p>{{ selectedParametro.anamnesticos }}</p>
+                                                <h5 class="text-primary">Anamnesicos</h5>
+                                                <p>{{ selectedParametro.anamnesicos }}</p>
                                                 <h5 class="text-primary">Observaciones</h5>
                                                 <p>{{ selectedParametro.observaciones }}</p>
                                             </div>
@@ -363,7 +371,7 @@
                         </div>
                     </div>
 
-                    <div v-if="activeSection === 'procedimiento'">
+                    <div v-if="activeSection === 'procedimientos'">
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -391,18 +399,16 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row">2024-09-12</th>
-                                                    <td>Dr. Juan Pérez</td>
-                                                    <td>Dr. Ana Gómez</td>
-                                                    <td>Clase II</td>
-                                                    <td>25.5</td>
-                                                    <td>Diabetes Mellitus tipo 2</td>
-                                                    <td>Insulina 10 UI, Paracetamol 500 mg</td>
-                                                    <td>Procedimiento realizado sin complicaciones</td>
+                                                <tr v-for="procedimiento in procedimientos" :key="procedimiento.id">
+                                                    <th scope="row">{{ procedimiento.fecha }}</th>
+                                                    <td>{{ procedimiento.anestesiologo }}</td>
+                                                    <td>{{ procedimiento.cirujano }}</td>
+                                                    <td>{{ procedimiento.valoracion_asa }}</td>
+                                                    <td>{{ procedimiento.peso }}</td>
+                                                    <td>{{ procedimiento.patologias }}</td>
+                                                    <td>{{ procedimiento.medicacion }}</td>
+                                                    <td>{{ procedimiento.observaciones }}</td>
                                                 </tr>
-
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -416,37 +422,35 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="text-primary me-auto"> Examenes</h5>
+                                    <h5 class="text-primary me-auto"> Exámenes</h5>
                                     <button type="button" @click="ExamenesTrue()" class="btn btn-secondary">Nuevos
-                                        Examenes</button>
+                                        Exámenes</button>
                                 </div>
                                 <div v-if="isExamenesForm">
                                     <ExamenesForm />
                                 </div>
-                                <!-- Sección parámetros -->
+                                <!-- Sección de la tabla -->
                                 <div v-else class="table-responsive">
                                     <div class="col-md-6 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Fecha</th>
-                                                    <th scope="col"> Tipo de Examenes</th>
-                                                    <th scope="col">Observaciones</th>
+                                                    <th scope="col">Tipo de Examen</th>
+                                                    <th scope="col">Descripción</th>
                                                     <th scope="col">Imágenes</th>
-
-
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row">2024-09-12</th>
-                                                    <td>Perfil 20 </td>
-                                                    <td>Todo normal Lorem, ipsum dolor sit amet consectetur adipisicing
-                                                        elit. Itaque nisi amet odio? Placeat officiis illo, rem cum amet
-                                                        repellat? Illum ut laboriosam numquam libero laudantium nemo
-                                                        magnam inventore corporis similique.</td>
-                                                    <td>agrega el link de la imagen aqui</td>
-
+                                                <tr v-for="examene in examenes" :key="examene.id">
+                                                    <th scope="row">{{ examene.fecha }}</th>
+                                                    <td>{{ examene.tipo }}</td>
+                                                    <td>{{ examene.descripcion }}</td>
+                                                    <td>
+                                                        <button @click="verImagen(examene.foto)" class="btn btn-link">
+                                                            <i class="fas fa-eye"></i> <!-- Ícono de ojo -->
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -456,6 +460,7 @@
                             <!-- End of Card -->
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -491,18 +496,12 @@ export default {
         return {
             activeSection: null,
             mostrarhistorial: false,
-            historial: [
-                // Datos de ejemplo
-                //{ id: 1, fecha: '05/05/2024', nombre: 'Parámetro 1', peso: '3.6kg', temperatura: '38.5°C', hidratacion: 'Normal', pulso: '80 bpm', frecuenciaCardiaca: '120 bpm', frecuenciaRespiratoria: '20 rpm', mucosas: 'Normal', llenadoCapilar: '2 seg', presionArterial: '120/80 mmHg', reflejoDeglutorio: 'Normal', linfonodos: 'Normal', reflejoTugiseno: 'Normal', palpacionAbdominal: 'Normal', palmopercusion: 'Normal', condicionCorporal: 'Obeso', tonsilas: 'Normal', conciencia: 'Alerta', anamnesis: 'Sin novedades', estadoReproductivo: 'Normal', constantesFisiologicas: 'Asténico', comida: 'Conejarina' }
-                // Más parámetros aquí
-            ],
-            paciente: [], // Datos del paciente
-
-            vacunas: [],    // Vacunas del paciente
-            antiparasitarios: [], // Datos de antiparasitarios
-            Procedimientos: [],
-            examenes: [], // Datos de antiparasitarios 
-
+            historial: [],
+            paciente: [],
+            vacunas: [],
+            antiparasitarios: [], // Asegúrate de que esta línea está presente
+            procedimientos: [],
+            examenes: [],
             isVacunasFormVisible: null,
             AntiparasitarioForm: null,
             isProcedimientosFormVisible: null,
@@ -514,8 +513,16 @@ export default {
     mounted() {
         // Obtener el ID de la URL
         this.id = this.$route.params.id;
-        // Cargar los datos iniciales (datos del paciente)
-        this.cargarSeccion('datos');
+
+        const hash = this.$route.hash;
+        if (hash) {
+            const section = hash.replace('#', ''); // Extrae el nombre de la sección sin el #
+            this.activeSection = section; // Asigna la sección a 'activeSection' para cargarla
+        } else {
+            // Cargar los datos iniciales (datos del paciente)
+            this.cargarSeccion('datos');
+        }
+
     },
     watch: {
         activeSection(newSection) {
@@ -524,6 +531,27 @@ export default {
         }
     },
     methods: {
+
+        // Lógica para eliminar una historia
+        eliminarHistoria(historia) {
+            // Preguntar confirmación
+            if (confirm("¿Estás seguro de que quieres eliminar esta historia?")) {
+                // Hacer la petición DELETE enviando el ID en el cuerpo
+                axios.delete('http://localhost/veterinario-app/curso_apirest/historias/', {
+                    data: { id: historia.id }
+                })
+                    .then(response => {
+                        // Filtrar la historia eliminada de la lista
+                        this.historial = this.historial.filter(p => p.id !== historia.id);
+                        alert("Historia eliminada con éxito.");
+                    })
+                    .catch(error => {
+                        // Manejar errores
+                        console.error("Error al eliminar la historia:", error);
+                        alert("Ocurrió un error al eliminar la historia.");
+                    });
+            }
+        },
         calcularEdad(fechaNacimiento) {
             const hoy = new Date();
             const nacimiento = new Date(fechaNacimiento);
@@ -537,8 +565,20 @@ export default {
 
             return edad;
         },
+        verImagen(foto) {
+            if (foto) {
+                // Concatenar la ruta base con el nombre de la imagen desde la base de datos
+                const imagenUrl = `http://localhost/veterinario-app/curso_apirest/${foto}`;
+                window.open(imagenUrl, '_blank'); // Abre la imagen en una nueva pestaña
+            } else {
+                alert('No hay imagen disponible.');
+            }
+        },
         NuevaVisita() {
-            this.$router.push({ path: `/nuevavisita/${this.id}` });
+            this.$router.push({ path: `/nuevavisita/paciente_id/${this.id}` });
+        },
+        EditarVisita($id) {
+            this.$router.push({ path: `/nuevavisita/${$id}` });
         },
         selectParametro(historia) {
             this.selectedParametro = historia;
@@ -594,13 +634,14 @@ export default {
                     }
                     console.log(this.paciente);
                 } else if (seccion === 'vacunas') {
-                    this.isVacunasFormVisible = false
-                    //const response = await axios.get(`https://api.example.com/pacientes/${this.id}/vacunas`);
-                    //this.vacunas = response.data;
+                    this.isVacunasFormVisible = false;
+                    // Hacer la llamada a la API para obtener las vacunas del paciente
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/vacunas?paciente_id=${this.id}`);
+                    this.vacunas = response.data; // Asignar los datos de las vacunas
                 } else if (seccion === 'antiparasitarios') {
-                    this.AntiparasitarioForm = false
-                    //   const response = await axios.get(`https://api.example.com/pacientes/${this.id}/antiparasitarios`);
-                    //  this.antiparasitarios = response.data;
+                    this.AntiparasitarioForm = false;
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/antiparasitarios?paciente_id=${this.id}`);
+                    this.antiparasitarios = response.data;
                 } else if (seccion === 'historial') {
                     const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?paciente_id=${this.id}`);
                     const data = response.data;
@@ -609,13 +650,14 @@ export default {
                     console.log(this.historial);  // Verifica qué datos estás recibiendo
                     console.log(this.id)
                     this.mostrarhistorial = false
-                } else if (seccion === 'procedimiento') {
-                    this.isProcedimientosFormVisible = false
-
-
+                } else if (seccion === 'procedimientos') {
+                    this.ProcedimientosForm = false;
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/procedimientos?paciente_id=${this.id}`);
+                    this.procedimientos = response.data;
                 } else if (seccion === 'examenes') {
                     this.isExamenesForm = false
-
+                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/examenes?paciente_id=${this.id}`);
+                    this.examenes = response.data;
 
                 }
             } catch (error) {

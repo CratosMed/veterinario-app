@@ -98,6 +98,18 @@ class pacientes extends conexion
             return $_respuestas->error_500();
         }
     }
+    // Método para obtener pacientes vinculados a un propietariooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+    public function obtenerPacientesPorPropietario($id)
+    {
+        $_respuestas = new respuestas;
+
+        // Verificar si el ID del propietario es válido
+        // Consulta para obtener los pacientes asociados al propietario
+        $query = "SELECT * FROM `pacientes` WHERE propietarios_id = $id;";
+
+        $datos = parent::obtenerDatos($query);
+        return ($datos);
+    }
 
     // Método privado para insertar paciente
     private function insertarPaciente()
@@ -195,12 +207,16 @@ class pacientes extends conexion
         parent::nonQuery($queryDeleteHistorias);
 
         // Eliminar vacunas asociadas al paciente
-        $queryDeleteVacunas = "DELETE FROM vacunas WHERE pacientes_id = '$id'";
+        $queryDeleteVacunas = "DELETE FROM vacunas WHERE paciente_id = '$id'";
         parent::nonQuery($queryDeleteVacunas);
 
         // Eliminar desparasitaciones asociadas al paciente
-        $queryDeleteDesparasitaciones = "DELETE FROM desparasitaciones WHERE pacientes_id = '$id'";
+        $queryDeleteDesparasitaciones = "DELETE FROM antiparasitarios WHERE paciente_id = '$id'";
         parent::nonQuery($queryDeleteDesparasitaciones);
+
+        // Eliminar procedimientos asociadas al paciente
+        $queryDeleteProcedimientos = "DELETE FROM procedimientos WHERE paciente_id = '$id'";
+        parent::nonQuery($queryDeleteProcedimientos);
 
         // Eliminar paciente
         $query = "DELETE FROM pacientes WHERE id = '$id'";

@@ -1,6 +1,6 @@
 <?php
 require_once 'clases/respuestas.class.php';
-require_once 'clases/historias.class.php';
+require_once 'clases/procedimientos.class.php';
 
 function cors()
 {
@@ -29,78 +29,60 @@ function cors()
 cors();
 
 $_respuestas = new respuestas;
-$_historias = new historias;
+$_procedimientos = new procedimientos;
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     if (isset($_GET["page"])) {
-        // Obtener lista de historias paginadas
         $pagina = $_GET["page"];
-        $listahistorias = $_historias->listarHistorias($pagina);
+        $listaprocedimientos = $_procedimientos->listaprocedimientos($pagina);
         header("Content-Type: application/json");
-        echo json_encode($listahistorias);
+        echo json_encode($listaprocedimientos);
         http_response_code(200);
-    } else if (isset($_GET['id'])) {
-        // Obtener historia específica por id
+    } elseif (isset($_GET['id'])) {
         $id = $_GET['id'];
-        $datoshistoria = $_historias->obtenerHistoria($id);
+        $datosprocedimiento = $_procedimientos->obtenerprocedimiento($id);
         header("Content-Type: application/json");
-        echo json_encode($datoshistoria);
+        echo json_encode($datosprocedimiento);
         http_response_code(200);
-    } else if (isset($_GET['paciente_id'])) {
-        // Obtener historia específica por id
+    } elseif (isset($_GET['paciente_id'])) {
         $id = $_GET['paciente_id'];
-        $datoshistoria = $_historias->obtenerHistorias($id);
+        $datosprocedimiento = $_procedimientos->obtenerprocedimientos($id);
         header("Content-Type: application/json");
-        echo json_encode($datoshistoria);
+        echo json_encode($datosprocedimiento);
         http_response_code(200);
     } else {
-        // Error si no se proporcionan parámetros adecuados
-        $datosArray = $_respuestas->error_400();
+        // Si no se proporciona 'page' o 'id', devuelve un error 400
         header("Content-Type: application/json");
+        $datosArray = $_respuestas->error_400();
         echo json_encode($datosArray);
         http_response_code(400);
     }
-} else if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Recibir datos enviados
+} elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
+    // Recibimos los datos enviados
     $postBody = file_get_contents("php://input");
-    error_log($postBody);
-    // Enviar los datos al manejador
-    $datosArray = $_historias->crearHistoria($postBody);
-    // Devolver una respuesta
+    // Enviamos los datos al manejador
+    $datosArray = $_procedimientos->post($postBody);
+    // Devolvemos una respuesta
     header('Content-Type: application/json');
-    if (isset($datosArray["result"]["error_id"])) {
-        $responseCode = $datosArray["result"]["error_id"];
-        http_response_code($responseCode);
-    } else {
-        http_response_code(201); // Created
-    }
+    http_response_code(isset($datosArray["result"]["error_id"]) ? $datosArray["result"]["error_id"] : 200);
     echo json_encode($datosArray);
-} else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
-    // Recibir datos enviados
+} elseif ($_SERVER['REQUEST_METHOD'] == "PUT") {
+    // Recibimos los datos enviados
     $postBody = file_get_contents("php://input");
-    error_log($postBody);
-    // Enviar datos al manejador
-    $datosArray = $_historias->actualizarHistoria($postBody);
-    // Devolver una respuesta
+    // Enviamos datos al manejador
+    $datosArray = $_procedimientos->put($postBody);
+    // Devolvemos una respuesta
     header('Content-Type: application/json');
-    if (isset($datosArray["result"]["error_id"])) {
-        $responseCode = $datosArray["result"]["error_id"];
-        http_response_code($responseCode);
-    } else {
-        http_response_code(200);
-    }
+    http_response_code(isset($datosArray["result"]["error_id"]) ? $datosArray["result"]["error_id"] : 200);
     echo json_encode($datosArray);
-} else if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+} elseif ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+    // Recibimos los datos enviados
     $postBody = file_get_contents("php://input");
-    $datosArray = $_historias->eliminarHistoria($postBody);
-
+    // Enviamos datos al manejador
+    $datosArray = $_procedimientos->delete($postBody);
+    // Devolvemos una respuesta
     header('Content-Type: application/json');
-    if (isset($datosArray["result"]["error_id"])) {
-        $responseCode = ($datosArray["result"]["error_id"] == "foreign_key") ? 409 : $datosArray["result"]["error_id"];
-        http_response_code($responseCode);
-    } else {
-        http_response_code(200);
-    }
+    http_response_code(isset($datosArray["result"]["error_id"]) ? $datosArray["result"]["error_id"] : 200);
     echo json_encode($datosArray);
 } else {
     header('Content-Type: application/json');

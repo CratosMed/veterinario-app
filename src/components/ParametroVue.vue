@@ -1,7 +1,7 @@
 <template>
     <div class="fondo2">
         <h5>Parámetros</h5>
-        <form>
+        <form @submit.prevent="submitForm">
             <div class="row">
                 <!-- Primera fila -->
                 <div class="col-md-4 mb-3">
@@ -188,8 +188,69 @@ export default {
                 constantesFisiologicas: 'astenico',
                 comida: '',
                 estadoDeshidratacion: 'normal'
-            }
+            },
+            editMode: false,
         };
+    },
+    created() {
+        const id = this.$route.params.id;
+        if (id) {
+            this.loadHistoria(id);
+        }
+    },
+    methods: {
+        loadCliente(id) {
+            axios.get(`http://localhost/veterinario-app/curso_apirest/historia?paciente_id=${id}`)
+                .then(response => {
+                    const cliente = response.data[0];
+                    this.parametros = {
+                        cedula: cliente.cedula,
+                        nombre: cliente.nombre,
+                        apellido: cliente.apellido,
+                        direccion: cliente.direccion,
+                        telefono: cliente.telefono,
+                        correo: cliente.correo,
+                        deuda: cliente.deuda
+                    };
+                    this.editMode = true;
+                    this.clienteId = id;
+                })
+                .catch(error => {
+                    this.showMessage('Error al cargar cliente', 'error');
+                });
+        },
+        clearForm() {
+            // Reinicia el formulario para agregar un nuevo cliente
+            this.parametros = {
+                cedula: '',
+                nombre: '',
+                apellido: '',
+                direccion: '',
+                telefono: '',
+                correo: '',
+                deuda: ''
+            };
+            this.editMode = false; // Vuelve al modo de agregar
+        },
+        submitForm() {
+            if (this.editMode) {
+                axios.put(`http://localhost/veterinario-app/curso_apirest/historias`, { ...this.parametros, id: this.clienteId })
+                    .then(() => {
+                        this.showMessage('Cliente actualizado con éxito', 'success', () => {
+                            this.$router.push('/listaclientes'); // Redirigir después de mostrar el mensaje
+                        });
+                    })
+                    .catch(error => alert('Error al actualizar cliente'));
+            } else {
+                axios.post('http://localhost/veterinario-app/curso_apirest/propietarios', this.parametros)
+                    .then(() => {
+                        this.showMessage('Cliente agregado con éxito', 'success', () => {
+                            this.$router.push('/listaclientes'); // Redirigir después de mostrar el mensaje
+                        });
+                    })
+                    .catch(error => this.showMessage('Error al agregar cliente', 'error'));
+            }
+        },
     }
 };
 </script>

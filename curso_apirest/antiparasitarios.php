@@ -1,58 +1,64 @@
 <?php
 require_once 'clases/respuestas.class.php';
-require_once 'clases/desparasitaciones.class.php';
+require_once 'clases/antiparasitarios.class.php';
 
 function cors()
 {
-    // Allow from any origin
+    // Permitir acceso desde cualquier origen
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Origin, Authorization, X-Requested-With, Content-Type, Accept");
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
         header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Max-Age: 86400');    // cache for 1 day
+        header('Access-Control-Max-Age: 86400');    // cache por 1 día
     }
 
-    // Access-Control headers are received during OPTIONS requests
+    // Manejo de las solicitudes OPTIONS
     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-
-        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-            // may also be using PUT, PATCH, HEAD etc
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
             header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-
-        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-            header("Access-Control-Allow-Headers: Origin, Authorization, X-Requested-With, Content-Type, Accept");
-
+        }
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+            header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        }
         exit(0);
     }
 }
 cors();
 
 $_respuestas = new respuestas;
-$_desparasitaciones = new desparasitaciones;
-
+$_antiparasitarios = new antiparasitarios;
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     if (isset($_GET["page"])) {
+        // Obtención de lista de antiparasitarios con paginación
         $pagina = $_GET["page"];
-        $listadesparasitaciones = $_desparasitaciones->listadesparasitaciones($pagina);
+        $listaantiparasitarios = $_antiparasitarios->listaantiparasitarios($pagina);
         header("Content-Type: application/json");
-        echo json_encode($listadesparasitaciones);
+        echo json_encode($listaantiparasitarios);
         http_response_code(200);
     } else if (isset($_GET['id'])) {
+        // Obtención de un antiparasitario por su ID
         $id = $_GET['id'];
-        $datosvacuna = $_desparasitaciones->obtenerdesparasitaciones($id);
+        $datosantiparasitario = $_antiparasitarios->obtenerantiparasitario($id);
         header("Content-Type: application/json");
-        echo json_encode($datosvacuna);
+        echo json_encode($datosantiparasitario);
+        http_response_code(200);
+    } else if (isset($_GET['paciente_id'])) {
+        // Obtención de un antiparasitario por su ID
+        $id = $_GET['paciente_id'];
+        $datosantiparasitario = $_antiparasitarios->obtenerantiparasitarios($id);
+        header("Content-Type: application/json");
+        echo json_encode($datosantiparasitario);
         http_response_code(200);
     }
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    //recibimos los datos enviados
+    // Recibir datos en POST
     $postBody = file_get_contents("php://input");
-    //enviamos los datos al manejador
-    $datosArray = $_desparasitaciones->post($postBody);
-    //delvovemos una respuesta 
+    // Enviar los datos al manejador de la clase
+    $datosArray = $_antiparasitarios->post($postBody);
+    // Devolver respuesta
     header('Content-Type: application/json');
     if (isset($datosArray["result"]["error_id"])) {
         $responseCode = $datosArray["result"]["error_id"];
@@ -62,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     echo json_encode($datosArray);
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
-    //recibimos los datos enviados
+    // Recibir datos en PUT
     $postBody = file_get_contents("php://input");
-    //enviamos datos al manejador
-    $datosArray = $_desparasitaciones->put($postBody);
-    //delvovemos una respuesta 
+    // Enviar los datos al manejador de la clase
+    $datosArray = $_antiparasitarios->put($postBody);
+    // Devolver respuesta
     header('Content-Type: application/json');
     if (isset($datosArray["result"]["error_id"])) {
         $responseCode = $datosArray["result"]["error_id"];
@@ -76,23 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     echo json_encode($datosArray);
 } else if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
-
-    $headers = getallheaders();
-    if (isset($headers["token"]) && isset($headers["id"])) {
-        //recibimos los datos enviados por el header
-        $send = [
-            "token" => $headers["token"],
-            "id" => $headers["id"]
-        ];
-        $postBody = json_encode($send);
-    } else {
-        //recibimos los datos enviados
-        $postBody = file_get_contents("php://input");
-    }
-
-    //enviamos datos al manejador
-    $datosArray = $_desparasitaciones->delete($postBody);
-    //delvovemos una respuesta 
+    // Recibir datos enviados en DELETE
+    $postBody = file_get_contents("php://input");
+    // Enviar los datos al manejador de la clase
+    $datosArray = $_antiparasitarios->delete($postBody);
+    // Devolver respuesta
     header('Content-Type: application/json');
     if (isset($datosArray["result"]["error_id"])) {
         $responseCode = $datosArray["result"]["error_id"];
@@ -102,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     echo json_encode($datosArray);
 } else {
+    // Método no permitido
     header('Content-Type: application/json');
     $datosArray = $_respuestas->error_405();
     echo json_encode($datosArray);

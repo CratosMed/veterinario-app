@@ -19,7 +19,7 @@ class historias extends conexion
     private $diagnostico = "";
     private $tratamiento = "";
     private $observaciones = "";
-    private $anamnecicos = "";
+    private $anamnesicos = "";
     private $constantes_fisiologicas = "";
     private $actitud = "";
     private $condicion_corporal = "";
@@ -80,7 +80,7 @@ class historias extends conexion
     {
         $_respuestas = new respuestas;
         $datos = json_decode($json, true);
-
+        error_log($json);
         if (!isset($datos['pacientes_id'])) {
             return $_respuestas->error_400("Falta el ID del paciente.");
         } else {
@@ -100,7 +100,7 @@ class historias extends conexion
             $this->diagnostico = $datos['diagnostico'] ?? '';
             $this->tratamiento = $datos['tratamiento'] ?? '';
             $this->observaciones = $datos['observaciones'] ?? '';
-            $this->anamnecicos = $datos['anamnecicos'] ?? '';
+            $this->anamnesicos = $datos['anamnesicos'] ?? '';
             $this->constantes_fisiologicas = $datos['constantes_fisiologicas'] ?? '';
             $this->actitud = $datos['actitud'] ?? '';
             $this->condicion_corporal = $datos['condicion_corporal'] ?? '';
@@ -132,13 +132,13 @@ class historias extends conexion
     private function insertarHistoria()
     {
         $query = "INSERT INTO " . $this->table . " (fecha, veterinario, comida, estado_reproductivo, temperatura, presion_arterial, frecuencia_cardiaca, frecuencia_respiratoria,
-        peso, motivo_consulta, diagnostico, tratamiento, observaciones, anamnecicos, constantes_fisiologicas, actitud, condicion_corporal, estado_deshidratacion, mucosa,
-        oral, vulvar_prepucial, ojos, aparato_reproductor, rectal, oidos, nodulos, piel, locomocion,sistema_musculoesqueletico, sistema_nervioso pacientes_id) 
+        peso, motivo_consulta, diagnostico, tratamiento, observaciones, anamnesicos, constantes_fisiologicas, actitud, condicion_corporal, estado_deshidratacion, mucosa,
+        oral, vulvar_prepucial, ojos, aparato_reproductor, rectal, oidos, nodulos, piel, locomocion,sistema_musculoesqueletico, sistema_nervioso, pacientes_id) 
         VALUES 
         ('" . $this->fecha . "', '" . $this->veterinario . "', '" . $this->comida . "', '" . $this->estado_reproductivo . "', '" . $this->temperatura . "', 
         '" . $this->presion_arterial . "', '" . $this->frecuencia_cardiaca . "', '" . $this->frecuencia_respiratoria . "', 
         '" . $this->peso . "', '" . $this->motivo_consulta . "', '" . $this->diagnostico . "', '" . $this->tratamiento . "', 
-        '" . $this->observaciones . "', '" . $this->anamnecicos . "', '" . $this->constantes_fisiologicas . "', '" . $this->actitud . "', 
+        '" . $this->observaciones . "', '" . $this->anamnesicos . "', '" . $this->constantes_fisiologicas . "', '" . $this->actitud . "', 
         '" . $this->condicion_corporal . "', '" . $this->estado_deshidratacion . "', '" . $this->mucosa . "', 
         '" . $this->oral . "', '" . $this->vulvar_prepucial . "', '" . $this->ojos . "', '" . $this->aparato_reproductor . "', 
         '" . $this->rectal . "', '" . $this->oidos . "', '" . $this->nodulos . "', '" . $this->piel . "', '" . $this->locomocion . "', '" . $this->sistema_musculoesqueletico . "', '" . $this->sistema_nervioso . "', '" . $this->pacientes_id . "')";
@@ -170,7 +170,7 @@ class historias extends conexion
             $this->diagnostico = $datos['diagnostico'] ?? $this->diagnostico;
             $this->tratamiento = $datos['tratamiento'] ?? $this->tratamiento;
             $this->observaciones = $datos['observaciones'] ?? $this->observaciones;
-            $this->anamnecicos = $datos['anamnecicos'] ?? $this->anamnecicos;
+            $this->anamnesicos = $datos['anamnesicos'] ?? $this->anamnesicos;
             $this->constantes_fisiologicas = $datos['constantes_fisiologicas'] ?? $this->constantes_fisiologicas;
             $this->actitud = $datos['actitud'] ?? $this->actitud;
             $this->condicion_corporal = $datos['condicion_corporal'] ?? $this->condicion_corporal;
@@ -187,6 +187,11 @@ class historias extends conexion
             $this->locomocion = $datos['locomocion'] ?? $this->locomocion;
             $this->sistema_musculoesqueletico = $datos['sistema_musculoesqueletico'] ?? $this->sistema_musculoesqueletico;
             $this->sistema_nervioso = $datos['sistema_nervioso'] ?? $this->sistema_nervioso;
+            $this->pacientes_id = isset($datos['pacientes_id']) ? intval($datos['pacientes_id']) : $this->pacientes_id;
+            error_log("Valor de pacientes_id: " . $this->pacientes_id); // Para verificar si es un entero
+            error_log("Valor de pacientes_id desde JSON: " . $datos['pacientes_id']);
+            error_log("Valor de pacientes_id asignado: " . $this->pacientes_id);
+
             $resp = $this->modificarHistoria();
             if ($resp) {
                 return $_respuestas->response;
@@ -212,7 +217,7 @@ class historias extends conexion
             diagnostico = '" . $this->diagnostico . "', 
             tratamiento = '" . $this->tratamiento . "', 
             observaciones = '" . $this->observaciones . "', 
-            anamnecicos = '" . $this->anamnecicos . "', 
+            anamnesicos = '" . $this->anamnesicos . "', 
             constantes_fisiologicas = '" . $this->constantes_fisiologicas . "', 
             actitud = '" . $this->actitud . "', 
             condicion_corporal = '" . $this->condicion_corporal . "', 
@@ -226,24 +231,40 @@ class historias extends conexion
             oidos = '" . $this->oidos . "', 
             nodulos = '" . $this->nodulos . "', 
             piel = '" . $this->piel . "', 
-            locomocion = '" . $this->locomocion . "' 
-            sistema_musculoesqueletico = '" . $this->sistema_musculoesqueletico . "'
-            sistema_nervioso = '" . $this->sistema_nervioso . "' 
+            locomocion = '" . $this->locomocion . "', 
+            sistema_musculoesqueletico = '" . $this->sistema_musculoesqueletico . "',
+            sistema_nervioso = '" . $this->sistema_nervioso . "' ,
+            pacientes_id = '" . $this->pacientes_id . "' 
             WHERE id = '" . $this->id . "'";
 
         return parent::nonQuery($query);
     }
 
-    public function eliminarHistoria($id)
+    public function eliminarHistoria($json)
     {
         $_respuestas = new respuestas;
-        $this->id = $id;
+        error_log("Iniciando método eliminarHistoria");
+        error_log("Datos recibidos en JSON: " . $json); // Loguea lo que se recibe
 
-        $query = "DELETE FROM " . $this->table . " WHERE id = '$this->id'";
-        $resp = parent::nonQuery($query);
+        $datos = json_decode($json, true); // Decodifica el JSON
 
-        if ($resp) {
-            return $_respuestas->response;
+        if (!isset($datos['id'])) {
+            error_log("Error: El campo 'id' no fue enviado en el JSON.");
+            return $_respuestas->error_400();
+        }
+
+        $id = $datos['id'];
+
+        // Eliminar historia
+        $query = "DELETE FROM historias WHERE id = '$id'";
+        $deleteResult = parent::nonQuery($query);
+
+        if ($deleteResult > 0) {
+            return array(
+                'status' => 'success',
+                'result' => array('id' => $id),
+                'message' => 'La historia ha sido eliminada correctamente.'
+            );
         } else {
             return $_respuestas->error_500();
         }

@@ -66,8 +66,13 @@ const router = createRouter({
       component: ListaPacientes
     },
     {
-      path: '/nuevavisita/:id',
+      path: '/nuevavisita/paciente_id/:paciente_id',
       name: 'nuevavisita',
+      component: NuevaVisita
+    },
+    {
+      path: '/nuevavisita/:id',
+      name: 'editarvisita',
       component: NuevaVisita
     },
     {
@@ -81,7 +86,7 @@ const router = createRouter({
       component: ActualizacionVue
     },
     {
-      path: '/detallesclientes',
+      path: '/detallesclientes/:id',
       name: 'detallesclientes',
       component: DetallesClientes
     },

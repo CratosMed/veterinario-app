@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <br />
         <h5 class="box-title mb-4">Citas</h5>
         <input type="text" v-model="search" placeholder="Buscar citas..." class="form-control mb-4" />
 
