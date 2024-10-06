@@ -350,9 +350,11 @@ export default {
                     let direccion = `http://localhost/veterinario-app/curso_apirest/historias`
                     response = await axios.put(direccion, { ...datosVisita, id: this.id_historia });
                     console.log(datosVisita);
-                } else if (this.paciente_id) {
+                } else if (this.pacientes_id) {
                     // Si tienes el paciente_id pero no hay id de historia, es una creación (POST)
+                    console.log(datosVisita);
                     response = await axios.post('http://localhost/veterinario-app/curso_apirest/historias', { ...datosVisita, pacientes_id: this.pacientes_id });
+
                     console.log('Nueva historia creada con éxito:', response.data);
                 }
                 // Mostrar mensaje de éxito
