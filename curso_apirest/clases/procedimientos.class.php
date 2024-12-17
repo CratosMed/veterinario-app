@@ -10,11 +10,11 @@ class procedimientos extends conexion
     private $anestesiologo = "";
     private $cirujano = "";
     private $valoracion_asa = "";
-    private $peso_paciente = 0;
-    private $patologia_preexistente = "";
-    private $medicacion_24h = "";
+    private $peso = 0;
+    private $patologias = "";
+    private $medicacion = "";
     private $observaciones = "";
-    private $pacientes_id = "";
+    private $paciente_id = "";
 
     // Listar procedimientos con paginación
     public function listaprocedimientos($pagina = 1)
@@ -26,7 +26,7 @@ class procedimientos extends conexion
             $cantidad = $cantidad * $pagina;
         }
         $query = "SELECT procedimientos.*, pacientes.nombre as nombre_paciente FROM " . $this->table . " 
-                  JOIN pacientes ON procedimientos.pacientes_id = pacientes.id LIMIT $inicio, $cantidad";
+                  JOIN pacientes ON procedimientos.paciente_id = pacientes.id LIMIT $inicio, $cantidad";
         $datos = parent::obtenerDatos($query);
         return $datos;
     }
@@ -50,11 +50,11 @@ class procedimientos extends conexion
         $datos = json_decode($json, true);
 
         // Validar campos obligatorios
-        if (!isset($datos['pacientes_id'])) {
+        if (!isset($datos['paciente_id'])) {
             return $_respuestas->error_400();
         } else {
             // Asignar valores a las propiedades
-            $this->pacientes_id = $datos['pacientes_id'];
+            $this->paciente_id = $datos['paciente_id'];
             if (isset($datos['fecha'])) {
                 $this->fecha = $datos['fecha'];
             }
@@ -67,14 +67,14 @@ class procedimientos extends conexion
             if (isset($datos['valoracion_asa'])) {
                 $this->valoracion_asa = $datos['valoracion_asa'];
             }
-            if (isset($datos['peso_paciente'])) {
-                $this->peso_paciente = $datos['peso_paciente'];
+            if (isset($datos['peso'])) {
+                $this->peso = $datos['peso'];
             }
-            if (isset($datos['patologia_preexistente'])) {
-                $this->patologia_preexistente = $datos['patologia_preexistente'];
+            if (isset($datos['patologias'])) {
+                $this->patologias = $datos['patologias'];
             }
-            if (isset($datos['medicacion_24h'])) {
-                $this->medicacion_24h = $datos['medicacion_24h'];
+            if (isset($datos['medicacion'])) {
+                $this->medicacion = $datos['medicacion'];
             }
             if (isset($datos['observaciones'])) {
                 $this->observaciones = $datos['observaciones'];
@@ -96,11 +96,11 @@ class procedimientos extends conexion
     // Método para insertar el procedimiento en la base de datos
     private function insertarprocedimiento()
     {
-        $query = "INSERT INTO " . $this->table . " (fecha, anestesiologo, cirujano, valoracion_asa, peso_paciente, 
-                  patologia_preexistente, medicacion_24h, observaciones, pacientes_id)
+        $query = "INSERT INTO " . $this->table . " (fecha, anestesiologo, cirujano, valoracion_asa, peso, 
+                  patologias, medicacion, observaciones, paciente_id)
                   VALUES ('" . $this->fecha . "', '" . $this->anestesiologo . "', '" . $this->cirujano . "', 
-                  '" . $this->valoracion_asa . "', '" . $this->peso_paciente . "', '" . $this->patologia_preexistente . "', 
-                  '" . $this->medicacion_24h . "', '" . $this->observaciones . "', '" . $this->pacientes_id . "')";
+                  '" . $this->valoracion_asa . "', '" . $this->peso . "', '" . $this->patologias . "', 
+                  '" . $this->medicacion . "', '" . $this->observaciones . "', '" . $this->paciente_id . "')";
         $resp = parent::nonQueryId($query);
         return $resp ? $resp : 0;
     }
@@ -130,20 +130,20 @@ class procedimientos extends conexion
             if (isset($datos['valoracion_asa'])) {
                 $this->valoracion_asa = $datos['valoracion_asa'];
             }
-            if (isset($datos['peso_paciente'])) {
-                $this->peso_paciente = $datos['peso_paciente'];
+            if (isset($datos['peso'])) {
+                $this->peso = $datos['peso'];
             }
-            if (isset($datos['patologia_preexistente'])) {
-                $this->patologia_preexistente = $datos['patologia_preexistente'];
+            if (isset($datos['patologias'])) {
+                $this->patologias = $datos['patologias'];
             }
-            if (isset($datos['medicacion_24h'])) {
-                $this->medicacion_24h = $datos['medicacion_24h'];
+            if (isset($datos['medicacion'])) {
+                $this->medicacion = $datos['medicacion'];
             }
             if (isset($datos['observaciones'])) {
                 $this->observaciones = $datos['observaciones'];
             }
-            if (isset($datos['pacientes_id'])) {
-                $this->pacientes_id = $datos['pacientes_id'];
+            if (isset($datos['paciente_id'])) {
+                $this->paciente_id = $datos['paciente_id'];
             }
 
             $resp = $this->modificarprocedimiento();
@@ -164,9 +164,9 @@ class procedimientos extends conexion
     {
         $query = "UPDATE " . $this->table . " SET fecha = '" . $this->fecha . "', anestesiologo = '" . $this->anestesiologo . "', 
                   cirujano = '" . $this->cirujano . "', valoracion_asa = '" . $this->valoracion_asa . "', 
-                  peso_paciente = '" . $this->peso_paciente . "', patologia_preexistente = '" . $this->patologia_preexistente . "', 
-                  medicacion_24h = '" . $this->medicacion_24h . "', observaciones = '" . $this->observaciones . "', 
-                  pacientes_id = '" . $this->pacientes_id . "' WHERE id = '" . $this->id . "'";
+                  peso = '" . $this->peso . "', patologias = '" . $this->patologias . "', 
+                  medicacion = '" . $this->medicacion . "', observaciones = '" . $this->observaciones . "', 
+                  paciente_id = '" . $this->paciente_id . "' WHERE id = '" . $this->id . "'";
         $resp = parent::nonQuery($query);
         return $resp >= 1 ? $resp : 0;
     }

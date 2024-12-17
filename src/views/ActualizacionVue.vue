@@ -1,7 +1,8 @@
 <template>
     <div class="container my-5">
-        <h3 class="mb-4 text-center">Futuras Actualizaciones</h3>
-
+        <div class="d-flex justify-content-between align-items-center mb-3 py-2">
+            <h4 class="text-primary me-auto">Futuras Actualizaciones</h4>
+        </div>
         <!-- Sección de Ventas -->
         <h4 class="mb-3">Ventas</h4>
         <div class="row">

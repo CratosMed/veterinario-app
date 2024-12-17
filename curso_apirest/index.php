@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API - Prubebas</title>
     <link rel="stylesheet" href="assets/estilo.css" type="text/css">
 </head>
+
 <body>
 
-<div  class="container">
-    <h1>Api de pruebas</h1>
-    <div class="divbody">
-        <h3>Auth - login</h3>
-        <code>
+    <div class="container">
+        <h1>Api de pruebas</h1>
+        <div class="divbody">
+            <h3>Auth - login</h3>
+            <code>
            POST  /auth
            <br>
            {
@@ -24,16 +26,16 @@
             }
         
         </code>
-    </div>      
-    <div class="divbody">   
-        <h3>Pacientes</h3>
-        <code>
+        </div>
+        <div class="divbody">
+            <h3>Pacientes</h3>
+            <code>
            GET  /pacientes?page=$numeroPagina
            <br>
            GET  /pacientes?id=$idPaciente
         </code>
 
-        <code>
+            <code>
            POST  /pacientes
            <br> 
            {
@@ -57,7 +59,7 @@
            }
 
         </code>
-        <code>
+            <code>
            PUT  /pacientes
            <br> 
            {
@@ -83,7 +85,7 @@
            }
 
         </code>
-        <code>
+            <code>
            DELETE  /pacientes
            <br> 
            {   
@@ -95,11 +97,11 @@
            }
 
         </code>
+        </div>
+
+
     </div>
 
-
-</div>
-    
 </body>
-</html>
 
+</html>

@@ -32,12 +32,29 @@
                     <td>{{ cliente.correo }}</td>
                     <td>{{ cliente.deuda }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-2" @click="editarCliente(cliente.id)">Editar</button>
-                        <button class="btn btn-sm btn-danger" @click="deleteCliente(cliente.id)">Eliminar</button>
+                        <button class="btn btn-sm btn-warning me-2" @click.stop="editarCliente(cliente.id)">
+                            <i class="bi bi-pencil"></i> <!-- Icono de editar -->
+                        </button>
+                        <button class="btn btn-sm btn-danger" @click.stop="deleteCliente(cliente.id)">
+                            <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
+                        </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination justify-content-end">
+                <li class="page-item" v-if="currentPage > 1" @click="previousPage">
+                    <a class="page-link" href="#" aria-label="Anterior">&laquo;</a>
+                </li>
+                <li class="page-item" v-for="page in totalPages" :key="page" @click="goToPage(page)">
+                    <a class="page-link" href="#">{{ page }}</a>
+                </li>
+                <li class="page-item" v-if="currentPage < totalPages" @click="nextPage">
+                    <a class="page-link" href="#" aria-label="Siguiente">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -52,28 +69,50 @@ export default {
             sortKey: "",
             sortOrder: 1,
             selectedcliente: null,
+            currentPage: 1, // Página actual
+            itemsPerPage: 10, // Elementos por página
         };
     },
     computed: {
         filteredAndSortedRows() {
+            // Filtra los clientes con base en el término de búsqueda
             let filteredClientes = this.clientes.filter((cliente) =>
                 Object.values(cliente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase())
             );
-            return filteredClientes.sort((a, b) => {
-                if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
-                if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
-                return 0;
-            });
+
+            // Ordenar los clientes si se seleccionó una columna de ordenación
+            if (this.sortKey) {
+                filteredClientes.sort((a, b) => {
+                    if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
+                    if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
+                    return 0;
+                });
+            }
+
+            // Calcular el índice inicial y final según la página actual y elementos por página
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = this.currentPage * this.itemsPerPage;
+
+            // Retornar los elementos de la página actual
+            return filteredClientes.slice(start, end);
         },
+        totalPages() {
+            // Calcular el total de páginas basado en el número de clientes filtrados
+            return Math.ceil(
+                this.clientes.filter((cliente) =>
+                    Object.values(cliente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase())
+                ).length / this.itemsPerPage
+            );
+        }
     },
     methods: {
         selectcliente(cliente) {
             this.$router.push({ path: `/detallesclientes/${cliente.id}` });
         },
         fetchClientes() {
-            axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1")
+            axios.get("http://192.168.10.1/veterinario-app/curso_apirest/propietarios?page=1")
                 .then((response) => {
-                    this.clientes = response.data;
+                    this.clientes = response.data.sort((a, b) => b.id - a.id);
                 })
                 .catch((error) => {
                     console.error("Error fetching clients:", error);
@@ -84,41 +123,43 @@ export default {
             this.sortOrder *= -1;
         },
         editarCliente(id) {
-            // Redirige a la vista de editar cliente con el ID del cliente
             this.$router.push({ name: 'editarCliente', params: { id: id } });
         },
         deleteCliente(id) {
             if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
                 axios
-                    .delete(`http://localhost/veterinario-app/curso_apirest/propietarios`, {
+                    .delete(`http://192.168.10.1/veterinario-app/curso_apirest/propietarios`, {
                         data: { id: id },
                     })
                     .then((response) => {
                         if (response.status === 200) {
-                            // Cliente eliminado correctamente
                             alert("Cliente eliminado correctamente");
-                            // Aquí actualiza la lista de clientes después de eliminar
                             this.fetchClientes();
                         }
                     })
                     .catch((error) => {
                         if (error.response && error.response.status === 409) {
-                            // Error de restricción de clave foránea (409 Conflict)
-                            alert(
-                                "No se puede eliminar el cliente porque tiene pacientes asociados."
-                            );
+                            alert("No se puede eliminar el cliente porque tiene pacientes asociados.");
                         } else {
-                            // Otro tipo de error
                             alert("Ocurrió un error al intentar eliminar el cliente.");
                         }
                     });
             }
+        },
+        goToPage(page) {
+            this.currentPage = page;
+        },
+        previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
         }
-
-
-
     },
-
     mounted() {
         this.fetchClientes();
     }

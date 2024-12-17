@@ -138,6 +138,7 @@ class citas extends conexion
         $id = $datos['id'];
 
         $query = "DELETE FROM " . $this->table . " WHERE id = '$id'";
+        error_log($query);
         $deleteResult = parent::nonQuery($query);
 
         if ($deleteResult > 0) {
@@ -147,6 +148,7 @@ class citas extends conexion
                 'message' => 'Cita eliminada correctamente'
             );
         } else {
+
             return $_respuestas->error_500();
         }
     }

@@ -39,6 +39,11 @@ class examenes extends conexion
         $query = "SELECT * FROM " . $this->table . " WHERE paciente_id = '$id'";
         return parent::obtenerDatos($query);
     }
+    public function obtenerTiposExamen()
+    {
+        $query = "SELECT DISTINCT tipo FROM " . $this->table;
+        return parent::obtenerDatos($query);
+    }
 
     // Método para agregar un nuevo examen
     public function post($json, $files)
@@ -66,6 +71,7 @@ class examenes extends conexion
         } else {
             $this->foto = ""; // O valor por defecto
         }
+        error_log("Insertando examen: " . json_encode($this)); // Esto te dará un registro del objeto antes de la inserción
 
         // Insertar examen
         $resp = $this->insertarExamen();

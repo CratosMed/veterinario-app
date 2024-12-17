@@ -1,17 +1,15 @@
 <template>
     <br />
+    <div v-if="message" v-show="message"
+        :class="['alert', messageType === 'success' ? 'alert-success' : 'alert-danger']"
+        style="max-width: 300px; margin: 0 auto;">
+        {{ message }}
+    </div>
     <div class="d-flex justify-content-between align-items-center mb-3 bg-white py-2">
         <h4 class="text-primary me-auto">{{ editMode ? 'Editar Paciente' : 'Agregar Paciente' }}</h4>
     </div>
     <br />
     <!-- Alertas -->
-    <div v-if="message" v-show="message"
-        :class="['alert', messageType === 'success' ? 'alert-success' : 'alert-danger']"
-        style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 50%;"
-        role="alert">
-        {{ message }}
-    </div>
-
     <div class="">
         <form @submit.prevent="submitForm">
             <!-- Campos obligatorios -->
@@ -57,7 +55,7 @@
                 <!-- Edad -->
                 <div class="col-md-4 col-lg-4">
                     <label for="anos" class="form-label">Edad</label>
-                    <input type="number" class="form-control" id="anos" v-model="form.anos" @change="updateDateFromAge">
+                    <input type="text" class="form-control" id="anos" v-model="form.anos" @change="updateDateFromAge">
                 </div>
             </div>
 
@@ -87,7 +85,7 @@
                 <div class="col-md-4 col-lg-4">
                     <label for="foto" class="form-label">Foto</label>
                     <input type="file" class="form-control" id="foto" @change="onFileChange">
-                    <img id="image-preview" :src="`http://localhost/veterinario-app/curso_apirest/${form.foto}`"
+                    <img id="image-preview" :src="`http://192.168.10.1/veterinario-app/curso_apirest/${form.foto}`"
                         alt="Imagen del paciente" class="img-fluid mt-2" />
                 </div>
             </div>
@@ -149,14 +147,28 @@ export default {
             if (this.form.fechaNacimiento) {
                 const today = new Date();
                 const birthDate = new Date(this.form.fechaNacimiento);
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDifference = today.getMonth() - birthDate.getMonth();
-                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
+
+                // Cálculo de la diferencia en años
+                let ageYears = today.getFullYear() - birthDate.getFullYear();
+                let ageMonths = today.getMonth() - birthDate.getMonth();
+
+                // Ajuste para años y meses si el mes o día actual es anterior al de nacimiento
+                if (ageMonths < 0 || (ageMonths === 0 && today.getDate() < birthDate.getDate())) {
+                    ageYears--;
+                    ageMonths += 12; // Añade 12 meses para el ajuste si restamos un año
                 }
-                this.form.anos = age;
+
+                // Cálculo de meses cuando la edad es menor a 1 año
+                const totalMonths = ageYears * 12 + ageMonths;
+                if (totalMonths < 12) {
+                    this.form.anos = ageMonths + " meses"
+
+                } else {
+                    this.form.anos = ageYears + " años" + " y " + ageMonths + " meses"
+                }
             }
         },
+
         obtenerFechaActual() {
             const hoy = new Date();
             const dia = hoy.getDate().toString().padStart(2, '0');
@@ -177,7 +189,7 @@ export default {
         },
 
         loadPropietarios() {
-            axios.get('http://localhost/veterinario-app/curso_apirest/propietarios?page=1')
+            axios.get('http://192.168.10.1/veterinario-app/curso_apirest/propietarios?page=1')
                 .then(response => {
                     this.propietarios = response.data;
                 })
@@ -186,7 +198,7 @@ export default {
                 });
         },
         loadPaciente(id) {
-            axios.get(`http://localhost/veterinario-app/curso_apirest/pacientes?id=${id}`)
+            axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes?id=${id}`)
                 .then(response => {
                     const paciente = response.data[0];
                     this.form = {
@@ -216,23 +228,11 @@ export default {
                     this.showMessage('Error al cargar paciente', 'error');
                 });
         },
-        updateAgeFromDate() {
-            if (this.form.fechaNacimiento) {
-                const today = new Date();
-                const birthDate = new Date(this.form.fechaNacimiento);
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDifference = today.getMonth() - birthDate.getMonth();
-                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                this.form.anos = age; // Asignar la edad calculada
-            }
-        },
 
         // Mostrar una vista previa de la imagen seleccionada o existente
         previewImage(imagePath) {
             if (imagePath) {
-                const fullPath = `http://localhost/veterinario-app/${imagePath}`;
+                const fullPath = `http://192.168.10.1/veterinario-app/${imagePath}`;
                 // Aquí puedes mostrar la imagen actual en el formulario
                 document.getElementById('image-preview').src = fullPath;
             }
@@ -285,7 +285,7 @@ export default {
                 // Actualizar paciente existente
                 formData.append('id', this.form.id);
 
-                axios.post(`http://localhost/veterinario-app/curso_apirest/pacientes`, formData, {
+                axios.post(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -302,7 +302,7 @@ export default {
                     });
             } else {
                 // Crear nuevo paciente
-                axios.post('http://localhost/veterinario-app/curso_apirest/pacientes', formData, {
+                axios.post('http://192.168.10.1/veterinario-app/curso_apirest/pacientes', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -329,7 +329,7 @@ export default {
                 if (callback) {
                     callback();
                 }
-            }, 3000);
+            }, 1000);
         },
 
     }

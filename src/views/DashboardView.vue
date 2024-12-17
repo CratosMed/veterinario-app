@@ -4,19 +4,23 @@
             <!-- Imagen de mascotas alineada al lado del menú lateral -->
             <div class="md-4">
                 <div class="d-flex justify-content-center align-items-center mb-4 position-relative mascotas-container">
-                    <img src="@/assets/mascotas.png" alt="Mascotas descansando"
-                        class="img-fluid mascotas-img ext-primary me-auto" />
+                    <!-- Contenedor flexible para el texto y la imagen -->
+                    <div class="d-flex align-items-center">
+                        <!-- Título central -->
+                        <h1 class="display-5 fw-bold ls-tight margen texto"
+                            style="color: rgba(1, 157, 162, 0.25); margin-right: 10px;">
+                            Inversiones
+                            <span class="texto" style="color: rgba(1, 157, 162, 0.75);"> CARU XV
+                                <span class="peque"
+                                    style="font-size: smaller; color: rgba(1, 157, 162, 0.75);">C.A.</span>
+                            </span>
+                        </h1>
 
-                    <h1 class="position-absolute top-10 start-50 translate-middle my-5 display-5 fw-bold ls-tight margen"
-                        style="color: rgba(1, 157, 162, 0.25);">
-                        Inversiones
-                        <span class="texto" style="color: rgba(1, 157, 162, 0.75);"> CARU XV
-                            <span class="peque" style="font-size: smaller; color: rgba(1, 157, 162, 0.75);">C.A.</span>
-                        </span>
-                    </h1>
-
-                    <img src="@/assets/logo.png" alt="logo" class="img-fluid logo img-fluid" />
+                        <!-- Imagen del logo al lado derecho del texto -->
+                        <img src="@/assets/logo.png" alt="logo" class="img-fluid logo" style="max-width: 150px;" />
+                    </div>
                 </div>
+
 
 
                 <!-- Contenido principal -->
@@ -26,24 +30,20 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title">Citas programadas para hoy</h5>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                </div>
-                                <!-- Listado de citas -->
                                 <ul class="list-group">
                                     <li v-for="(cita, index) in paginatedCitas" :key="index"
                                         class="list-group-item d-flex justify-content-between align-items-start p-3 mb-2 bg-light text-dark rounded">
-
-                                        <!-- Contenedor principal -->
-                                        <div class="d-flex flex-grow-1 mx-2 citas-item ">
-                                            <!-- Título y Descripción -->
+                                        <div class="d-flex flex-grow-1 mx-2 citas-item">
                                             <div class="flex-grow-1 d-flex flex-column citas-text">
+                                                <small class="text-muted" style="font-size: 0.99rem;">Paciente:
+                                                    <span class="fw-bold">{{ obtenerNombrePaciente(cita.paciente_id)
+                                                        }}</span>
+                                                </small>
                                                 <h5 class="fw-bold mb-0 small-text">{{ cita.titulo }}</h5>
                                                 <h6 class="mb-0 small-text">{{ cita.descripcion }}</h6>
                                             </div>
-
-                                            <!-- Fecha, Hora y Recurrencia -->
                                             <div class="d-flex align-items-center ms-3 m-2 small-text fecha">
-                                                {{ new Date(cita.fecha).toLocaleDateString('en-US') }} - {{ cita.hora }}
+                                                {{ cita.fecha }} - {{ cita.hora }}
                                                 - {{ cita.recurrencia }}
                                             </div>
                                         </div>
@@ -52,15 +52,12 @@
                             </div>
                         </div>
 
-
-                        <!-- Bloque 2 historias recientes -->
-                        <div class="col-12 col-md-6 mb-4 table-responsive">
+                        <!-- Bloque Historias Recientes -->
+                        <div class="col-12 col-md-6 mb-4 ">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Historias recientes</h5>
-                                <div class="box-content">
-                                    <!-- Tabla de historias recientes -->
+                                <div class="box-content table-responsive">
                                     <table class="table table-striped custom-table">
-                                        <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-center">Historia</th>
@@ -69,7 +66,6 @@
                                                 <th scope="col" class="text-center">Motivo de Consulta</th>
                                             </tr>
                                         </thead>
-                                        <!-- Cuerpo de la tabla -->
                                         <tbody>
                                             <tr v-for="historia in paginatedHistorias" :key="historia.id">
                                                 <th scope="row" class="text-center">{{ historia.id }}</th>
@@ -84,29 +80,15 @@
                                             todas</button>
                                     </div>
                                 </div>
-                                <!-- <div class="pagination-controls">
-                                    <button class="btn btn-secondary" @click="changePage(page - 1)"
-                                        :disabled="page <= 1">
-                                        Anterior
-                                    </button>
-                                    <span>Página {{ page }} de {{ totalPages }}</span>
-                                    <button class="btn btn-secondary" @click="changePage(page + 1)"
-                                        :disabled="page >= totalPages">
-                                        Siguiente
-                                    </button>
-                                </div> -->
                             </div>
                         </div>
 
-                        <!-- Bloque 3 -->
-                        <hr />
-                        <div class="col-12 col-md-6 mb-4 table-responsive margen">
+                        <!-- Últimos Registros de Clientes -->
+                        <div class="col-12 col-md-6 mb-4">
                             <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Últimos registros de clientes</h5>
-                                <div class="box-content">
-                                    <!-- Tabla de registros de clientes -->
+                                <div class="box-content table-responsive">
                                     <table class="table table-striped custom-table">
-                                        <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-center">Nombre</th>
@@ -116,7 +98,6 @@
                                                 <th scope="col" class="text-center">Deuda</th>
                                             </tr>
                                         </thead>
-                                        <!-- Cuerpo de la tabla -->
                                         <tbody>
                                             <tr v-for="cliente in paginatedClientes" :key="cliente.cedula">
                                                 <td class="text-center">{{ cliente.nombre }}</td>
@@ -134,14 +115,13 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Bloque 4 -->
-                        <div class="col-12 col-md-6 mb-4 table-responsive">
-                            <div class="box box-custom-size gradient-gray p-4  ">
+
+                        <!-- Lista de Deudores -->
+                        <div class="col-12 col-md-6 mb-4">
+                            <div class="box box-custom-size gradient-gray p-4">
                                 <h5 class="box-title mb-4">Lista de deudores</h5>
-                                <div class="box-content">
-                                    <!-- Tabla de historias recientes -->
+                                <div class="box-content table-responsive">
                                     <table class="table table-striped custom-table">
-                                        <!-- Encabezado de la tabla -->
                                         <thead>
                                             <tr>
                                                 <th scope="col" class="text-center">Nombre</th>
@@ -151,7 +131,6 @@
                                                 <th scope="col" class="text-center">Deuda</th>
                                             </tr>
                                         </thead>
-                                        <!-- Cuerpo de la tabla -->
                                         <tbody>
                                             <tr v-for="cliente in deudores" :key="cliente.cedula">
                                                 <td class="text-center">{{ cliente.nombre }}</td>
@@ -161,19 +140,18 @@
                                                 <td class="text-center">{{ cliente.deuda }}</td>
                                             </tr>
                                         </tbody>
-
                                     </table>
                                     <div class="d-grid gap-2">
                                         <button class="btn btn-primary" type="button" @click="mostrarDeudores">Ver
                                             todos</button>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                     <ModalAgregarCliente />
                 </main>
+
             </div>
         </div>
     </div>
@@ -209,6 +187,7 @@ export default {
         return {
             historias: [],
             clientes: [],
+            pacientes: [],
             citas: [], // Para almacenar las historias recientes obtenidas de la API
             page: 1,
             pageSize: 10,
@@ -222,37 +201,49 @@ export default {
     },
     computed: {
         paginatedHistorias() {
+            // Ordenar las historias por ID en orden descendente
+            const sortedHistorias = this.historias.sort((a, b) => b.id - a.id);
+
             const start = (this.page - 1) * this.pageSize;
             const end = this.page * this.pageSize;
-            return this.historias.slice(start, end);
+            return sortedHistorias.slice(start, end);
         },
         totalPages() {
             return Math.ceil(this.historias.length / this.pageSize);
         },
         paginatedClientes() {
+            const sortedClientes = this.clientes.sort((a, b) => b.id - a.id);
             const start = (this.page - 1) * this.pageSize;
             const end = this.page * this.pageSize;
-            return this.clientes.slice(start, end);
+            return sortedClientes.slice(start, end);
         },
         totalPagesClientes() {
             return Math.ceil(this.clientes.length / this.pageSize);
         },
         paginatedCitas() {
-            return this.citas.slice(0, 10); // Limita las citas a 10
+            const citasHoy = this.filtrarCitasHoy(); // Obtiene las citas de hoy
+            return citasHoy.slice(0, 7); // Limita las citas a 10
         },
         deudores() {
-            // Filtra a los clientes con deuda mayor a 0
-            return this.clientes.filter(cliente => {
-                const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
-                return deudaValue > 0;
-            });
+            // Filtra a los clientes con deuda mayor a 0 y los ordena por ID en orden descendente
+            return this.clientes
+                .filter(cliente => {
+                    const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
+                    return deudaValue > 0; // Filtra los deudores
+                })
+                .sort((a, b) => b.id - a.id) // Ordena por ID en orden descendente
+                .slice(0, 10); // Limita el array resultante a 10 elementos
         },
     },
     methods: {
+        obtenerNombrePaciente(paciente_id) {
+            const paciente = this.pacientes.find(p => p.id === paciente_id);
+            return paciente ? paciente.nombre : 'Desconocido';
+        },
         // Método para obtener historias recientes desde la API
         async fetchHistorias() {
             try {
-                const response = await axios.get('http://localhost/veterinario-app/curso_apirest/historias?page=1'); // Reemplaza con tu URL
+                const response = await axios.get('http://192.168.10.1/veterinario-app/curso_apirest/historias?page=1'); // Reemplaza con tu URL
                 this.historias = response.data;  // Asigna los datos obtenidos a 'historias'
                 console.log(this.historias); //
             } catch (error) {
@@ -260,22 +251,35 @@ export default {
             }
         },
         mostrarHistorias() {
-            this.$router.push('/historias');
+            this.$router.push('/listapacientes');
         },
         Listaclientes() {
             this.$router.push('/listaclientes');
         },
         async fetchClientes() {
             try {
-                const response = await axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1"); // Reemplaza con tu URL de clientes
+                const response = await axios.get("http://192.168.10.1/veterinario-app/curso_apirest/propietarios?page=1"); // Reemplaza con tu URL de clientes
                 this.clientes = response.data;
             } catch (error) {
                 console.error('Error al obtener los clientes:', error);
             }
         },
+        async fetchPacientes() {
+            console.log('Iniciando fetchPacientes');
+            try {
+                const response = await axios.get('http://192.168.10.1/veterinario-app/curso_apirest/pacientes?page=1'); // Cambia la URL según sea necesario
+                console.log('Respuesta de la API para pacientes:', response.data);
+
+                // Asegúrate de que la respuesta sea un array
+                this.pacientes = Array.isArray(response.data) ? response.data : [];
+                console.log('Pacientes asignados:', this.pacientes);
+            } catch (error) {
+                console.error('Error al consultar la API de pacientes:', error);
+            }
+        },
         async fetchCitas() {
             try {
-                const response = await axios.get('http://localhost/veterinario-app/curso_apirest/citas?page=1');
+                const response = await axios.get('http://192.168.10.1/veterinario-app/curso_apirest/citas?page=1');
                 this.citas = response.data;
                 console.log('Citas obtenidas:', this.citas); // Verifica los datos obtenidos
             } catch (error) {
@@ -316,15 +320,46 @@ export default {
             return this.citas.filter(cita => {
                 const citaFecha = new Date(cita.fecha);
                 citaFecha.setHours(0, 0, 0, 0); // Ajustamos la hora de la cita a medianoche
-                return hoy.getTime() === citaFecha.getTime(); // Comparamos las fechas
+
+                // Sumar un día a la fecha de la cita
+                citaFecha.setDate(citaFecha.getDate() + 1);
+
+                // Calculamos la diferencia en milisegundos
+                const diferencia = citaFecha - hoy;
+
+                // Convertimos la diferencia a días
+                const diferenciaEnDias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+
+                // Mostrar la diferencia en días en la consola
+                console.log(`Diferencia para la cita ${cita.fecha}: ${diferenciaEnDias} días`);
+
+                // Puedes asignar valores según la diferencia
+                if (diferenciaEnDias === 0) {
+                    // Cita es hoy (después de sumar un día)
+                    return true; // Mantener la cita
+                } else if (diferenciaEnDias > 0) {
+                    // Cita es en el futuro
+                    // Puedes hacer algo aquí si lo necesitas
+                    return false; // O mantener o no la cita según lo que necesites
+                } else {
+                    // Cita es en el pasado
+                    // Puedes hacer algo aquí si lo necesitas
+                    return false; // O mantener o no la cita según lo que necesites
+                }
             });
         },
+
+
+
+
     },
     mounted() {
         window.addEventListener('resize', this.handleResize);
         this.fetchHistorias(); // Llamada a la API al montar el componente
         this.fetchClientes();  // Llamada para cargar los clientes
         this.fetchCitas();     // Llamada para cargar las citas
+        this.fetchPacientes();     // Llamada para cargar las citas
+
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.handleResize);
@@ -431,23 +466,10 @@ export default {
 }
 
 /* Imagen de mascotas que sea responsiva */
-.mascotas-img {
-    max-width: 18%;
-    /* Reducir tamaño de la imagen */
-    height: 18%;
-    position: relative;
-    /* Hacer la imagen posicionable */
-    z-index: 10;
-    /* Poner la imagen delante de las tarjetas */
-    margin-top: -10px;
-    z-index: 0;
-    /* Ajustar margen superior para acercar las patitas a las tarjetas */
-}
-
 .logo {
-    max-width: 15%;
+    max-width: 11%;
     /* Reducir tamaño de la imagen */
-    height: 15%;
+    height: 11%;
     position: relative;
     /* Hacer la imagen posicionable */
     z-index: 0;
@@ -599,14 +621,143 @@ body {
         min-width: 70px;
         /* Reduce el ancho mínimo para pantallas pequeñas */
     }
-}
 
-@media (max-width: 767.98px) {
+    .custom-table {
+        table-layout: fixed;
+        width: 100%;
+        word-wrap: break-word;
+    }
 
     .custom-table th,
     .custom-table td {
-        font-size: 0.8rem;
-        /* Ajusta este valor según tus necesidades */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
+
+    .table-responsive {
+        max-height: 300px;
+        /* Limita la altura de la tabla, ajusta según sea necesario */
+        overflow-y: auto;
+        /* Activa el desplazamiento vertical si el contenido excede */
+        width: 100%;
+        /* Asegura que las tablas ocupen todo el ancho disponible */
+
+
+    }
+
+    .box-custom-size {
+        max-height: 400px;
+        /* Limita la altura de cada caja para evitar crecimiento excesivo */
+        overflow-y: auto;
+
+    }
+
+    .texto {
+        font-size: 4vw;
+    }
+
+    .boxing-container {
+        display: flex;
+        /* Usa flex para que se muestren en fila */
+        flex-wrap: wrap;
+        /* Permite que los elementos se ajusten si no caben en una fila */
+    }
+
+    .col-12 {
+        flex: 1 0 50%;
+        /* Ajusta el ancho para ocupar aproximadamente la mitad de la fila */
+        margin: 1%;
+        /* Espaciado entre las columnas */
+    }
+
+
+
+    /* Ajusta el tamaño del texto si es necesario */
+    .small-text {
+        font-size: 1.1rem;
+        /* Ajusta el tamaño del texto */
+    }
+
+    .texto {
+        font-size: 3vw;
+        /* Ajusta el tamaño del texto en pantalla grande */
+    }
+}
+
+@media (max-width: 1024px) {
+    .texto {
+        font-size: 2.5vw;
+    }
+}
+
+
+
+.custom-table {
+    table-layout: fixed;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.custom-table th,
+.custom-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-responsive {
+    max-height: 300px;
+    /* Limita la altura de la tabla, ajusta según sea necesario */
+    overflow-y: auto;
+    /* Activa el desplazamiento vertical si el contenido excede */
+}
+
+.box-custom-size {
+    max-height: 400px;
+    /* Limita la altura de cada caja para evitar crecimiento excesivo */
+    overflow-y: auto;
+}
+
+/* Para ajustar la relación de tamaño en diferentes resoluciones */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+
+        /* Espacio entre el texto y el logo */
+        /* Reducir el tamaño del texto en pantallas pequeñas */
+    }
+
+    .logo {
+        max-width: 40px;
+
+
+        /* Reducir el tamaño de la imagen en pantallas pequeñas */
+    }
+}
+
+.table-responsive {
+    overflow-x: auto;
+    /* Mantiene el comportamiento responsivo */
+}
+
+table {
+    table-layout: fixed;
+    /* Mantiene el ancho fijo de las celdas */
+    width: 100%;
+    /* Hace que la tabla ocupe el 100% del contenedor */
+}
+
+th,
+td {
+    white-space: normal;
+    /* Permite que el contenido ocupe varias líneas */
+    word-wrap: break-word;
+    /* Fuerza al texto a ajustarse dentro de las celdas */
+}
+
+td {
+    max-width: 150px;
+    /* Ajusta este valor según el diseño para evitar la expansión */
 }
 </style>

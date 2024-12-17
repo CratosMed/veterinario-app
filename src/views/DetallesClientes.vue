@@ -107,8 +107,6 @@
                                                 <th class="text-center">Especie</th>
                                                 <th class="text-center">Pelaje</th>
                                                 <th class="text-center">Sexo</th>
-                                                <th class="text-center">Citas</th>
-                                                <th class="text-center">Notificar</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -120,27 +118,6 @@
                                                 <td class="text-center">{{ parametro.color || 'No disponible' }}
                                                 </td>
                                                 <td class="text-center">{{ parametro.sexo || 'No disponible' }}</td>
-                                                <td class="text-center citas-columna">
-                                                    <div v-for="cita in parametro.citas" :key="cita.id"
-                                                        class="d-flex align-items-center mb-2">
-                                                        <span class="badge bg-danger rounded-pill me-2">{{ cita.dia
-                                                            }}</span>
-                                                        <div class="text-truncate" style="max-width: 150px;">
-                                                            <strong>{{ cita.evento }}</strong>
-                                                            <div class="text-muted">{{ cita.hora }} {{
-                                                                cita.recurrencia }}</div>
-                                                        </div>
-                                                        <span
-                                                            :class="['badge', cita.recurrencia === 'every week' ? 'bg-success' : 'bg-danger']"></span>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <a :href="`https://web.whatsapp.com/send?phone=${parametro.telefono}&text=Hola%20${encodeURIComponent(parametro.Nombre)},%20te%20habla%20la%20veterinaria%20Inversiones%20Caru.%20Te%20recordamos%20la%20cita%20que%20tienes%20hoy.%20Te%20esperamos,%20tu%20salud%20es%20nuestra%20prioridad.`"
-                                                        target="_blank" rel="noopener noreferrer"
-                                                        aria-label="Notificar a través de WhatsApp">
-                                                        <i class="fab fa-whatsapp fa-2x text-success"></i>
-                                                    </a>
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -182,6 +159,9 @@ export default {
         }
     },
     methods: {
+        selectParametro(parametro) {
+            this.$router.push({ path: `/detalleshistorias/${parametro.id}` });
+        },
         setActiveSection(section) {
             this.activeSection = null; // Resetea la sección activa primero
             this.$nextTick(() => {
@@ -195,7 +175,7 @@ export default {
 
             try {
                 if (seccion === 'datos') {
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/propietarios?id=${this.id}`);
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/propietarios?id=${this.id}`);
                     const data = response.data;
                     console.log(data); // Verifica aquí la respuesta
 
@@ -204,7 +184,7 @@ export default {
                 } else if (seccion === 'pacientesRelacionados') {
                     this.pacientesRelacionados = true;
                     try {
-                        const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/pacientes?propietario_id=${this.id}`); // Reemplaza con la URL de tu API
+                        const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes?propietario_id=${this.id}`); // Reemplaza con la URL de tu API
                         this.parametros = response.data; // Asumiendo que la respuesta contiene un array de pacientes
                         console.log(this.parametros)
                     } catch (error) {

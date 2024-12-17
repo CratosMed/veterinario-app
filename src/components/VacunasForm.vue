@@ -21,8 +21,8 @@
 
                     <!-- Marca y N° de serie -->
                     <div class="mb-3">
-                        <label for="marcaSerie" class="form-label">Marca y N° de serie</label>
-                        <input type="text" class="form-control" v-model="vacuna.marcaSerie" id="marcaSerie">
+                        <label for="numero_serie" class="form-label">Número_serie</label>
+                        <input type="text" class="form-control" v-model="vacuna.numero_serie" id="numero_serie">
                     </div>
 
                     <div class="mb-3">
@@ -50,7 +50,7 @@
                 </div>
                 <br />
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                    <button type="button" class="btn btn-primary w-100" @click="guardarVacunas">Guardar</button>
                 </div>
             </div>
         </div>
@@ -66,52 +66,61 @@
 </template>
 
 <script>
+import axios from 'axios'; // Asegúrate de importar axios
+
 export default {
     data() {
         return {
             vacunas: [],
-            fechaActual: ''
+            fechaActual: '',
+            id: '',
         };
     },
     mounted() {
+        this.id = this.$route.params.id; // Captura el paciente_id de la URL
         this.obtenerFechaActual();
     },
     methods: {
         agregarVacuna() {
-            this.vacunas.push({ tipovacuna: '', marcaSerie: '', dosis: '', peso: '', descripcion: '' });
+            this.vacunas.push({ tipovacuna: '', numero_serie: '', dosis: '', peso: '', descripcion: '' });
         },
-    },
-    eliminarVacuna(index) {
-        this.vacunas.splice(index, 1);
-    },
-    obtenerFechaActual() {
-        const hoy = new Date();
-        const dia = hoy.getDate().toString().padStart(2, '0');
-        const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
-        const año = hoy.getFullYear();
-        // Formato correcto para el input de tipo date: YYYY-MM-DD
-        this.fechaActual = `${año}-${mes}-${dia}`;
-    },
-    async guardarVacunas() {
-        try {
-            for (const vacuna of this.vacunas) {
-                // Aquí deberías definir la URL de tu API
-                await axios.post(`http://localhost/veterinario-app/curso_apirest/vacunas`, {
-                    fecha: this.fechaActual,
-                    tipo: vacuna.tipovacuna,
-                    marcaSerie: vacuna.marcaSerie,
-                    dosis: vacuna.dosis,
-                    peso: vacuna.peso,
-                    descripcion: vacuna.descripcion
-                });
+
+        eliminarVacuna(index) {
+            this.vacunas.splice(index, 1);
+        },
+        obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const año = hoy.getFullYear();
+            // Formato correcto para el input de tipo date: YYYY-MM-DD
+            this.fechaActual = `${año}-${mes}-${dia}`;
+        },
+        async guardarVacunas() {
+            try {
+                for (const vacuna of this.vacunas) {
+                    const response = await axios.post('http://192.168.10.1/veterinario-app/curso_apirest/vacunas', {
+                        fecha: this.fechaActual,
+                        tipo: vacuna.tipovacuna,
+                        numero_serie: vacuna.numero_serie,
+                        dosis: vacuna.dosis,
+                        peso: vacuna.peso,
+                        descripcion: vacuna.descripcion,
+                        paciente_id: this.id // Asegúrate de incluir el paciente_id
+                    });
+                    console.log('Vacuna guardada:', response.data);
+                }
+                alert('Vacunas guardadas con éxito.');
+                this.$router.push({
+                    path: `/detalleshistorias/${this.id}`,
+                    hash: '#vacunas'
+                })
+                this.vacunas = []; // Opcionalmente puedes reiniciar el formulario
+                this.obtenerFechaActual(); // Opcional: reiniciar la fecha actual
+            } catch (error) {
+                console.error('Error al guardar las vacunas:', error);
+                alert('Error al guardar las vacunas. Intenta nuevamente.');
             }
-            alert('Vacunas guardadas con éxito');
-            // Opcionalmente puedes reiniciar el formulario
-            this.vacunas = [];
-            this.obtenerFechaActual(); // Opcional: reiniciar la fecha actual
-        } catch (error) {
-            console.error('Error al guardar las vacunas:', error);
-            alert('Hubo un error al guardar las vacunas');
         }
     }
 };

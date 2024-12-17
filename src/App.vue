@@ -73,6 +73,11 @@ export default {
         sidebarElement.classList.remove('menu-lateral-open');
       }
     },
+    closeSidebar() {
+      this.isSidebarOpen = false; // Cierra el menú
+      const sidebarElement = document.getElementById('sidebar');
+      sidebarElement.classList.remove('menu-lateral-open'); // Asegúrate de eliminar la clase
+    },
     handleResize() {
       this.screenWidth = window.innerWidth;
       if (this.screenWidth < 768) {
@@ -99,10 +104,6 @@ html,
 body {
   height: 100%;
   margin: 0;
-}
-
-.hide-content {
-  display: none;
 }
 
 #app {
@@ -203,16 +204,6 @@ button.btn-secondary:hover {
 .btn-atras:hover,
 .btn-adelante:hover {
   background-color: #034a58;
-}
-
-footer {
-  width: 100%;
-  background-color: #f1f1f1;
-  text-align: center;
-  padding: 10px 0;
-  position: absolute;
-  bottom: 0;
-  left: 0;
 }
 
 /* Media Queries */

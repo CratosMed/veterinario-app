@@ -12,7 +12,7 @@ class vacunas extends conexion
     private $dosis = "";
     private $descripcion = "";
     private $peso = "";
-    private $pacientes_id = "";
+    private $paciente_id = "";
 
     // Listar vacunas con paginación
     public function listavacunas($pagina = 1)
@@ -24,7 +24,7 @@ class vacunas extends conexion
             $cantidad = $cantidad * $pagina;
         }
         $query = "SELECT vacunas.*, pacientes.nombre as nombre_paciente FROM " . $this->table . " 
-                  JOIN pacientes ON vacunas.pacientes_id = pacientes.id LIMIT $inicio, $cantidad";
+                  JOIN pacientes ON vacunas.paciente_id = pacientes.id LIMIT $inicio, $cantidad";
         $datos = parent::obtenerDatos($query);
         return $datos;
     }
@@ -48,13 +48,13 @@ class vacunas extends conexion
         $datos = json_decode($json, true);
 
         // Validar campos obligatorios
-        if (!isset($datos['numero_serie']) || !isset($datos['tipo']) || !isset($datos['dosis']) || !isset($datos['pacientes_id'])) {
+        if (!isset($datos['numero_serie']) || !isset($datos['tipo']) || !isset($datos['dosis']) || !isset($datos['paciente_id'])) {
             return $_respuestas->error_400();
         } else {
             $this->numero_serie = $datos['numero_serie'];
             $this->tipo = $datos['tipo'];
             $this->dosis = $datos['dosis'];
-            $this->pacientes_id = $datos['pacientes_id'];
+            $this->paciente_id = $datos['paciente_id'];
 
             if (isset($datos['fecha'])) {
                 $this->fecha = $datos['fecha'];
@@ -82,9 +82,9 @@ class vacunas extends conexion
     // Método para insertar la vacuna en la base de datos
     private function insertarvacunas()
     {
-        $query = "INSERT INTO " . $this->table . " (fecha, numero_serie, tipo, dosis, descripcion, peso, pacientes_id)
+        $query = "INSERT INTO " . $this->table . " (fecha, numero_serie, tipo, dosis, descripcion, peso, paciente_id)
                   VALUES ('" . $this->fecha . "', '" . $this->numero_serie . "', '" . $this->tipo . "', '" . $this->dosis . "', 
-                          '" . $this->descripcion . "', '" . $this->peso . "', '" . $this->pacientes_id . "')";
+                          '" . $this->descripcion . "', '" . $this->peso . "', '" . $this->paciente_id . "')";
         $resp = parent::nonQueryId($query);
         if ($resp) {
             return $resp;
@@ -123,8 +123,8 @@ class vacunas extends conexion
             if (isset($datos['peso'])) {
                 $this->peso = $datos['peso'];
             }
-            if (isset($datos['pacientes_id'])) {
-                $this->pacientes_id = $datos['pacientes_id'];
+            if (isset($datos['paciente_id'])) {
+                $this->paciente_id = $datos['paciente_id'];
             }
 
             $resp = $this->modificarvacuna();
@@ -145,7 +145,7 @@ class vacunas extends conexion
     {
         $query = "UPDATE " . $this->table . " SET numero_serie ='" . $this->numero_serie . "', tipo = '" . $this->tipo . "',
                   dosis = '" . $this->dosis . "', fecha = '" . $this->fecha . "', descripcion = '" . $this->descripcion . "', 
-                  peso = '" . $this->peso . "', pacientes_id = '" . $this->pacientes_id . "' WHERE id = '" . $this->id . "'";
+                  peso = '" . $this->peso . "', paciente_id = '" . $this->paciente_id . "' WHERE id = '" . $this->id . "'";
         $resp = parent::nonQuery($query);
         if ($resp >= 1) {
             return $resp;

@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-4 fondo table-responsive">
         <div class="d-grid gap-2">
-            <div class="d-flex justify-content-between align-items-center mb-3py-2">
+            <div class="d-flex justify-content-between align-items-center mb-3 py-2">
                 <h4 class="text-primary me-auto">Historias Pacientes</h4>
             </div>
         </div>
@@ -34,11 +34,11 @@
                     <td>{{ paciente.raza }}</td>
                     <td>{{ paciente.color }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-2" @click.stop="editPaciente(paciente.id)">
-                            Editar
+                        <button class="btn btn-sm btn-warning btn-circle me-2" @click.stop="editPaciente(paciente.id)">
+                            <i class="bi bi-pencil"></i> <!-- Icono de editar -->
                         </button>
-                        <button class="btn btn-sm btn-danger" @click.stop="deletePaciente(paciente)">
-                            Eliminar
+                        <button class="btn btn-sm btn-danger btn-circle" @click.stop="deletePaciente(paciente)">
+                            <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
                         </button>
                     </td>
                 </tr>
@@ -74,26 +74,44 @@ export default {
             sortKey: "id",
             sortOrder: 1,
             currentPage: 1,
-            totalPages: 3,
+            itemsPerPage: 10, // Elementos por página
         };
     },
     computed: {
         filteredAndSortedpacientes() {
+            // Filtrar por búsqueda
             let filteredPacientes = this.pacientes.filter((paciente) =>
                 Object.values(paciente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase())
             );
-            return filteredPacientes.sort((a, b) => {
+
+            // Ordenar los pacientes
+            filteredPacientes.sort((a, b) => {
                 if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
                 if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
                 return 0;
             });
+
+            // Paginación: calcular el índice inicial y final para la página actual
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = this.currentPage * this.itemsPerPage;
+
+            // Devolver los elementos que corresponden a la página actual
+            return filteredPacientes.slice(start, end);
+        },
+        totalPages() {
+            // Calcular el número total de páginas en función del número de pacientes filtrados
+            return Math.ceil(
+                this.pacientes.filter((paciente) =>
+                    Object.values(paciente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase())
+                ).length / this.itemsPerPage
+            );
         },
     },
     methods: {
         async fetchHistorias() {
             try {
-                const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/pacientes?page=${this.currentPage}`);
-                this.pacientes = response.data;
+                const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes?page=${this.currentPage}`);
+                this.pacientes = response.data.sort((a, b) => b.id - a.id);
             } catch (error) {
                 console.error("Error al cargar los datos:", error);
             }
@@ -123,7 +141,7 @@ export default {
             const confirmed = confirm(`¿Estás seguro de que quieres eliminar al paciente ${paciente.nombre}?`);
             if (confirmed) {
                 try {
-                    const response = await axios.delete(`http://localhost/veterinario-app/curso_apirest/pacientes`, {
+                    const response = await axios.delete(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes`, {
                         data: { id: paciente.id }
                     });
 
@@ -139,18 +157,18 @@ export default {
 
         goToPage(page) {
             this.currentPage = page;
-            this.fetchHistorias();
+
         },
         previousPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                this.fetchHistorias();
+
             }
         },
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
-                this.fetchHistorias();
+
             }
         },
     },

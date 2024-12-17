@@ -60,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     // Actualizar cita usando método PUT
     error_log("Método PUT recibido.");
     $postBody = file_get_contents("php://input");
+    error_log("Contenido del cuerpo PUT: " . $postBody);
+
     $datosArray = $_citas->updateCita($postBody);
 
     header('Content-Type: application/json');

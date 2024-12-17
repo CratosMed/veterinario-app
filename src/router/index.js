@@ -10,10 +10,13 @@ import CitasVue from '../views/CitasVue.vue'
 import ActualizacionVue from '../views/ActualizacionVue.vue'
 import DetallesClientes from '../views/DetallesClientes.vue'
 import DeudoresVue from '../views/Deudores.Vue.vue'
-import ImafenesVue from '../views/ImagenesVue.vue'
 import ImagenesVue from '../views/ImagenesVue.vue'
 import ListaClientes from '../views/ListaClientes.vue'
 import ListaPacientes from '../views/ListaPacientes.vue'
+import RegistroLogin from '../views/RegistroLogin.vue'
+import VentasInventario from '../views/VentasInventario.vue'
+import InventarioVue from '../views/InventarioVue.vue'
+
 
 
 const router = createRouter({
@@ -51,7 +54,7 @@ const router = createRouter({
       component: AgregarCliente
     },
     {
-      path: '/agregarCliente/:id',
+      path: '/agregarCliente/:id/:fromDeudores?',
       name: 'editarCliente',
       component: AgregarCliente
     },
@@ -99,6 +102,21 @@ const router = createRouter({
       path: '/imagenes',
       name: 'imagenes',
       component: ImagenesVue
+    },
+    {
+      path: '/registrologin',
+      name: 'registrologin',
+      component: RegistroLogin
+    },
+    {
+      path: '/ventasInventario',
+      name: 'ventasInventario',
+      component: VentasInventario
+    },
+    {
+      path: '/inventario',
+      name: 'inventario',
+      component: InventarioVue
     },
     {
       path: '/about',

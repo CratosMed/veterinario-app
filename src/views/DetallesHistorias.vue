@@ -11,9 +11,10 @@
                 <div class="col-md-2 bg-light">
                     <div class="text-center">
 
-                        <img src="http://localhost/veterinario-app/curso_apirest/imagenes_pacientes/66f2fa5bdc5b5.png"
+                        <img :src="`http://192.168.10.1/veterinario-app/curso_apirest/${paciente.foto}`"
                             class="image-responsive mb-3" alt="Profile Picture">
                         <h4>{{ paciente.nombre }}</h4>
+
 
 
                     </div>
@@ -69,7 +70,7 @@
                                         <h5 class="text-primary">Fecha de nacimiento</h5>
                                         <p>{{ paciente.fecha_nacimiento || 'No disponible' }}</p>
                                         <h5 class="text-primary">Edad</h5>
-                                        <p>{{ paciente.edad || 'No disponible' }}</p>
+                                        <p>{{ form.anos || 'No disponible' }}</p>
                                     </div>
 
                                     <!-- Columna 2 -->
@@ -83,6 +84,8 @@
                                         <p>{{ paciente.color || 'No disponible' }}</p>
                                         <h5 class="text-primary">Sexo</h5>
                                         <p>{{ paciente.sexo || 'No disponible' }}</p>
+                                        <h5 class="text-primary">Alergías</h5>
+                                        <p>{{ paciente.alergias || 'No disponible' }}</p>
 
                                     </div>
                                 </div>
@@ -113,8 +116,10 @@
                                                     <tr>
                                                         <th scope="col">Fecha</th>
                                                         <th scope="col">Tipo de vacuna</th>
-                                                        <th scope="col">Marca y N° de vacuna</th>
-                                                        <th scope="col">Observaciones</th>
+                                                        <th scope="col">Número_serie</th>
+                                                        <th scope="col">Dosis</th>
+                                                        <th scope="col">Peso</th>
+                                                        <th scope="col">Descripción</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -122,7 +127,13 @@
                                                         <th scope="row">{{ vacuna.fecha }}</th>
                                                         <td>{{ vacuna.tipo }}</td>
                                                         <td>{{ vacuna.numero_serie }}</td>
+                                                        <td>{{ vacuna.dosis }}</td>
+                                                        <td>{{ vacuna.peso }}</td>
                                                         <td>{{ vacuna.descripcion }}</td>
+                                                        <td><button @click.stop="eliminarVacuna(vacuna)"
+                                                                class="btn btn-danger btn-sm">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -158,9 +169,11 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Fecha</th>
-                                                    <th scope="col">Tipo de Antiparasitarios</th>
-                                                    <th scope="col">Marca y N° de Antiparasitarios</th>
-                                                    <th scope="col">Observaciones</th>
+                                                    <th scope="col">Tipo de vacuna</th>
+                                                    <th scope="col">Número_serie</th>
+                                                    <th scope="col">Dosis</th>
+                                                    <th scope="col">Peso</th>
+                                                    <th scope="col">Descripción</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -168,7 +181,13 @@
                                                     <th scope="row">{{ antiparasitario.fecha }}</th>
                                                     <td>{{ antiparasitario.tipo }}</td>
                                                     <td>{{ antiparasitario.numero_serie }}</td>
+                                                    <td>{{ antiparasitario.dosis }}</td>
+                                                    <td>{{ antiparasitario.peso }}</td>
                                                     <td>{{ antiparasitario.descripcion }}</td>
+                                                    <td><button @click.stop="eliminarAntiparasitario(antiparasitario)"
+                                                            class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -215,11 +234,11 @@
                                                 <td>
                                                     <button @click.stop="EditarVisita(historia.id)"
                                                         class="btn btn-warning btn-sm me-1">
-                                                        <i class="bi bi-pencil"></i> Editar
+                                                        <i class="bi bi-pencil"></i>
                                                     </button>
                                                     <button @click.stop="eliminarHistoria(historia)"
                                                         class="btn btn-danger btn-sm">
-                                                        <i class="bi bi-trash"></i> Eliminar
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -240,8 +259,6 @@
                                                 <p>{{ selectedParametro.motivo_consulta }}</p>
                                                 <h5 class="text-primary">Veterinario que lo derivó</h5>
                                                 <p>{{ selectedParametro.veterinario }}</p>
-                                                <h5 class="text-primary">Antecedentes Familiares</h5>
-                                                <p>{{ selectedParametro.antecedentes }}</p>
                                             </div>
 
                                             <!-- Columna 2 -->
@@ -267,8 +284,6 @@
                                                 <p>{{ selectedParametro.reflejo_tusigeno }}</p>
                                                 <h5 class="text-primary">Temperatura</h5>
                                                 <p>{{ selectedParametro.temperatura }}</p>
-                                                <h5 class="text-primary">Palmopercusión</h5>
-                                                <p>{{ selectedParametro.palmopercusion }}</p>
                                             </div>
 
                                             <!-- Columna 2 -->
@@ -276,11 +291,9 @@
                                                 <h5 class="text-primary">Frecuencia Respiratoria/min</h5>
                                                 <p>{{ selectedParametro.frecuencia_respiratoria }}</p>
                                                 <h5 class="text-primary">Frecuencia cardíaca/min</h5>
-                                                <p>{{ selectedParametro.frecuencia_cardíaca }}</p>
+                                                <p>{{ selectedParametro.frecuencia_cardiaca }}</p>
                                                 <h5 class="text-primary">Presión Arterial</h5>
                                                 <p>{{ selectedParametro.presion_arterial }}</p>
-                                                <h5 class="text-primary">Pulso/min</h5>
-                                                <p>{{ selectedParametro.pulso }}</p>
                                                 <h5 class="text-primary">Reflejo deglutorio</h5>
                                                 <p>{{ selectedParametro.reflejo_deglutorio }}</p>
                                             </div>
@@ -305,11 +318,10 @@
                                                 <h5 class="text-primary">Condición corporal</h5>
                                                 <p>{{ selectedParametro.condicion_corporal }}</p>
                                                 <h5 class="text-primary">Agresividad</h5>
-                                                <p>{{ selectedParametro.agresividad }}</p>
+                                                <p>{{ selectedParametro.actitud }}</p>
                                                 <h5 class="text-primary">Señas Particulares</h5>
-                                                <p>{{ selectedParametro.señas_particulares }}</p>
-                                                <h5 class="text-primary">Alergias</h5>
-                                                <p>{{ selectedParametro.alergias }}</p>
+                                                <p>{{ selectedParametro.senas_particulares }}</p>
+
                                             </div>
 
                                             <!-- Columna 2 -->
@@ -319,15 +331,13 @@
                                                 <h5 class="text-primary">Comida</h5>
                                                 <p>{{ selectedParametro.comida }}</p>
                                                 <h5 class="text-primary">Nódulos Linfáticos</h5>
-                                                <p>{{ selectedParametro.nodulos_linfaticos }}</p>
-                                                <h5 class="text-primary">Tonsilas</h5>
-                                                <p>{{ selectedParametro.tonsilas }}</p>
+                                                <p>{{ selectedParametro.nodulos }}</p>
                                                 <h5 class="text-primary">Piel y Anexos</h5>
                                                 <p>{{ selectedParametro.piel_anexos }}</p>
                                                 <h5 class="text-primary">Locomoción</h5>
                                                 <p>{{ selectedParametro.locomocion }}</p>
                                                 <h5 class="text-primary">S. Musculoesquelético</h5>
-                                                <p>{{ selectedParametro.musculoesqueletico }}</p>
+                                                <p>{{ selectedParametro.sistema_musculoesqueletico }}</p>
                                                 <h5 class="text-primary">Sistema Nervioso</h5>
                                                 <p>{{ selectedParametro.sistema_nervioso }}</p>
                                                 <h5 class="text-primary">Heces</h5>
@@ -393,7 +403,8 @@
                                                     <th scope="col">Cirujano</th>
                                                     <th scope="col">Valoración ASA</th>
                                                     <th scope="col">Peso del paciente (kg)</th>
-                                                    <th scope="col">Patología preexistente</th>
+                                                    <th scope="col">Procedimiento</th>
+                                                    <th scope="col">Patologías</th>
                                                     <th scope="col">Medicación las últimas 24 horas</th>
                                                     <th scope="col">Observaciones</th>
                                                 </tr>
@@ -405,9 +416,14 @@
                                                     <td>{{ procedimiento.cirujano }}</td>
                                                     <td>{{ procedimiento.valoracion_asa }}</td>
                                                     <td>{{ procedimiento.peso }}</td>
+                                                    <td>{{ procedimiento.procedimiento }}</td>
                                                     <td>{{ procedimiento.patologias }}</td>
                                                     <td>{{ procedimiento.medicacion }}</td>
                                                     <td>{{ procedimiento.observaciones }}</td>
+                                                    <td><button @click.stop="eliminarProcedimiento(procedimiento)"
+                                                            class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -431,7 +447,7 @@
                                 </div>
                                 <!-- Sección de la tabla -->
                                 <div v-else class="table-responsive">
-                                    <div class="col-md-6 col-lg-12">
+                                    <div class="col-md-12 col-lg-12">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -451,6 +467,10 @@
                                                             <i class="fas fa-eye"></i> <!-- Ícono de ojo -->
                                                         </button>
                                                     </td>
+                                                    <td><button @click.stop="eliminarExamene(examene)"
+                                                            class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -465,7 +485,6 @@
             </div>
 
         </div>
-        <h2> arreglado por super conejoss :)</h2>
     </div>
 </template>
 
@@ -494,6 +513,9 @@ export default {
 
     data() {
         return {
+            form: {
+                anos: ''
+            },
             activeSection: null,
             mostrarhistorial: false,
             historial: [],
@@ -516,12 +538,14 @@ export default {
 
         const hash = this.$route.hash;
         if (hash) {
-            const section = hash.replace('#', ''); // Extrae el nombre de la sección sin el #
+            const section = hash.replace('#', ''); // Extrae el nombre de la sección sin el #           
             this.activeSection = section; // Asigna la sección a 'activeSection' para cargarla
+
         } else {
             // Cargar los datos iniciales (datos del paciente)
             this.cargarSeccion('datos');
         }
+        this.obtenerPacientes();
 
     },
     watch: {
@@ -531,17 +555,28 @@ export default {
         }
     },
     methods: {
-
+        async obtenerPacientes() {
+            const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/pacientes?id=${this.id}`);
+            const data = response.data;
+            // Asegúrate de que la respuesta es una lista y toma el primer elemento
+            this.paciente = Array.isArray(data) ? data[0] : null;
+            if (this.paciente) {
+                this.paciente.edad = this.calcularEdad(this.paciente.fecha_nacimiento);
+            }
+            console.log(this.paciente);
+        },
         // Lógica para eliminar una historia
         eliminarHistoria(historia) {
             // Preguntar confirmación
             if (confirm("¿Estás seguro de que quieres eliminar esta historia?")) {
                 // Hacer la petición DELETE enviando el ID en el cuerpo
-                axios.delete('http://localhost/veterinario-app/curso_apirest/historias/', {
+                console.log(historia.id)
+                axios.delete('http://192.168.10.1/veterinario-app/curso_apirest/historias', {
                     data: { id: historia.id }
                 })
                     .then(response => {
                         // Filtrar la historia eliminada de la lista
+                        console.log(response)
                         this.historial = this.historial.filter(p => p.id !== historia.id);
                         alert("Historia eliminada con éxito.");
                     })
@@ -552,7 +587,117 @@ export default {
                     });
             }
         },
+        eliminarVacuna(vacuna) {
+            // Preguntar confirmación
+            if (confirm("¿Estás seguro de que quieres eliminar esta vacuna?")) {
+                // Hacer la petición DELETE enviando el ID en el cuerpo
+                console.log(vacuna.id)
+                axios.delete('http://192.168.10.1/veterinario-app/curso_apirest/vacunas', {
+                    data: { id: vacuna.id }
+                })
+                    .then(response => {
+                        // Filtrar la vacuna eliminada de la lista
+                        console.log(response)
+                        this.vacunas = this.vacunas.filter(p => p.id !== vacuna.id);
+                        alert("vacuna eliminada con éxito.");
+                    })
+                    .catch(error => {
+                        // Manejar errores
+                        console.error("Error al eliminar la vacuna:", error);
+                        alert("Ocurrió un error al eliminar la vacuna.");
+                    });
+            }
+        },
+        eliminarAntiparasitario(antiparasitario) {
+            // Preguntar confirmación
+            if (confirm("¿Estás seguro de que quieres eliminar esta antiparasitario?")) {
+                // Hacer la petición DELETE enviando el ID en el cuerpo
+                console.log(antiparasitario.id)
+                axios.delete('http://192.168.10.1/veterinario-app/curso_apirest/antiparasitarios', {
+                    data: { id: antiparasitario.id }
+                })
+                    .then(response => {
+                        // Filtrar la antiparasitario eliminada de la lista
+                        console.log(response)
+                        this.antiparasitarios = this.antiparasitarios.filter(p => p.id !== antiparasitario.id);
+                        alert("antiparasitario eliminada con éxito.");
+                    })
+                    .catch(error => {
+                        // Manejar errores
+                        console.error("Error al eliminar la antiparasitario:", error);
+                        alert("Ocurrió un error al eliminar la antiparasitario.");
+                    });
+            }
+        },
+        eliminarProcedimiento(procedimiento) {
+            // Preguntar confirmación
+            if (confirm("¿Estás seguro de que quieres eliminar esta procedimiento?")) {
+                // Hacer la petición DELETE enviando el ID en el cuerpo
+                console.log(procedimiento.id)
+                axios.delete('http://192.168.10.1/veterinario-app/curso_apirest/procedimientos', {
+                    data: { id: procedimiento.id }
+                })
+                    .then(response => {
+                        // Filtrar la procedimiento eliminada de la lista
+                        console.log(response)
+                        this.procedimientos = this.procedimientos.filter(p => p.id !== procedimiento.id);
+                        alert("procedimiento eliminada con éxito.");
+                    })
+                    .catch(error => {
+                        // Manejar errores
+                        console.error("Error al eliminar la procedimiento:", error);
+                        alert("Ocurrió un error al eliminar la procedimiento.");
+                    });
+            }
+        },
+        eliminarExamene(examene) {
+            // Preguntar confirmación
+            if (confirm("¿Estás seguro de que quieres eliminar esta examene?")) {
+                // Hacer la petición DELETE enviando el ID en el cuerpo
+                console.log(examene.id)
+                axios.delete('http://192.168.10.1/veterinario-app/curso_apirest/examenes', {
+                    data: { id: examene.id }
+                })
+                    .then(response => {
+                        // Filtrar la examene eliminada de la lista
+                        console.log(response)
+                        this.examenes = this.examenes.filter(p => p.id !== examene.id);
+                        alert("examene eliminada con éxito.");
+                    })
+                    .catch(error => {
+                        // Manejar errores
+                        console.error("Error al eliminar la examene:", error);
+                        alert("Ocurrió un error al eliminar la examene.");
+                    });
+            }
+        },
         calcularEdad(fechaNacimiento) {
+            if (fechaNacimiento) {
+                const today = new Date();
+                const birthDate = new Date(fechaNacimiento);
+
+                // Cálculo de la diferencia en años
+                let ageYears = today.getFullYear() - birthDate.getFullYear();
+                let ageMonths = today.getMonth() - birthDate.getMonth();
+
+                // Ajuste para años y meses si el mes o día actual es anterior al de nacimiento
+                if (ageMonths < 0 || (ageMonths === 0 && today.getDate() < birthDate.getDate())) {
+                    ageYears--;
+                    ageMonths += 12; // Añade 12 meses para el ajuste si restamos un año
+                }
+
+                // Cálculo de meses cuando la edad es menor a 1 año
+                const totalMonths = ageYears * 12 + ageMonths;
+                if (totalMonths < 12) {
+                    this.form.anos = ageMonths + " meses"
+
+                } else {
+                    this.form.anos = ageYears + " años" + " y " + ageMonths + " meses"
+                }
+            }
+
+
+
             const hoy = new Date();
             const nacimiento = new Date(fechaNacimiento);
             let edad = hoy.getFullYear() - nacimiento.getFullYear();
@@ -568,7 +713,7 @@ export default {
         verImagen(foto) {
             if (foto) {
                 // Concatenar la ruta base con el nombre de la imagen desde la base de datos
-                const imagenUrl = `http://localhost/veterinario-app/curso_apirest/${foto}`;
+                const imagenUrl = `http://192.168.10.1/veterinario-app/curso_apirest/${foto}`;
                 window.open(imagenUrl, '_blank'); // Abre la imagen en una nueva pestaña
             } else {
                 alert('No hay imagen disponible.');
@@ -625,38 +770,29 @@ export default {
 
             try {
                 if (seccion === 'datos') {
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/pacientes?id=${this.id}`);
-                    const data = response.data;
-                    // Asegúrate de que la respuesta es una lista y toma el primer elemento
-                    this.paciente = Array.isArray(data) ? data[0] : null;
-                    if (this.paciente) {
-                        this.paciente.edad = this.calcularEdad(this.paciente.fecha_nacimiento);
-                    }
-                    console.log(this.paciente);
+
                 } else if (seccion === 'vacunas') {
                     this.isVacunasFormVisible = false;
                     // Hacer la llamada a la API para obtener las vacunas del paciente
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/vacunas?paciente_id=${this.id}`);
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/vacunas?paciente_id=${this.id}`);
                     this.vacunas = response.data; // Asignar los datos de las vacunas
                 } else if (seccion === 'antiparasitarios') {
                     this.AntiparasitarioForm = false;
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/antiparasitarios?paciente_id=${this.id}`);
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/antiparasitarios?paciente_id=${this.id}`);
                     this.antiparasitarios = response.data;
                 } else if (seccion === 'historial') {
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/historias?paciente_id=${this.id}`);
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/historias?paciente_id=${this.id}`);
                     const data = response.data;
                     // Asegúrate de que los datos siempre sean un array
                     this.historial = Array.isArray(data) ? data : [];
-                    console.log(this.historial);  // Verifica qué datos estás recibiendo
-                    console.log(this.id)
                     this.mostrarhistorial = false
                 } else if (seccion === 'procedimientos') {
-                    this.ProcedimientosForm = false;
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/procedimientos?paciente_id=${this.id}`);
+                    this.isProcedimientosFormVisible = false;
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/procedimientos?paciente_id=${this.id}`);
                     this.procedimientos = response.data;
                 } else if (seccion === 'examenes') {
                     this.isExamenesForm = false
-                    const response = await axios.get(`http://localhost/veterinario-app/curso_apirest/examenes?paciente_id=${this.id}`);
+                    const response = await axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/examenes?paciente_id=${this.id}`);
                     this.examenes = response.data;
 
                 }
@@ -799,5 +935,30 @@ p {
         font-size: 16px;
         /* Aumenta el tamaño de fuente para que sea legible */
     }
+}
+
+.table-responsive {
+    overflow-x: auto;
+    /* Mantiene el comportamiento responsivo */
+}
+
+table {
+    table-layout: fixed;
+    /* Mantiene el ancho fijo de las celdas */
+    width: 100%;
+    /* Hace que la tabla ocupe el 100% del contenedor */
+}
+
+th,
+td {
+    white-space: normal;
+    /* Permite que el contenido ocupe varias líneas */
+    word-wrap: break-word;
+    /* Fuerza al texto a ajustarse dentro de las celdas */
+}
+
+td {
+    max-width: 150px;
+    /* Ajusta este valor según el diseño para evitar la expansión */
 }
 </style>

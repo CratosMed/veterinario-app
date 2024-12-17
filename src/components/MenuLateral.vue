@@ -32,10 +32,10 @@ export default {
         return {
             menuItems: [
                 { id: 1, label: 'Inicio', path: '/', icon: 'bi bi-house-door' },
-                { id: 2, label: 'Agregar Paciente', path: '/agregarPaciente', icon: 'bi bi-person-plus' },
-                { id: 3, label: 'Lista de Pacientes', path: '/listaPacientes', icon: 'bi bi-list-ul' },
                 { id: 4, label: 'Agregar Cliente', path: '/agregarCliente', icon: 'bi bi-person-plus' },
                 { id: 5, label: 'Lista de Clientes', path: '/listaClientes', icon: 'bi bi-list-ul' },
+                { id: 2, label: 'Agregar Paciente', path: '/agregarPaciente', icon: 'bi bi-person-plus' },
+                { id: 3, label: 'Lista de Pacientes', path: '/listaPacientes', icon: 'bi bi-list-ul' },
                 { id: 6, label: 'Citas', path: '/citas', icon: 'bi bi-calendar-event' },
                 { id: 7, label: 'Deudores', path: '/deudores', icon: 'bi bi-receipt' },
                 { id: 8, label: 'Actualizaciones', path: '/actualizacion', icon: 'bi bi-arrow-clockwise' },

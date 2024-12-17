@@ -40,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         header("Content-Type: application/json");
         echo json_encode($datosExamen);
         http_response_code(200);
+    } else if (isset($_GET['obtenerTiposExamen'])) {
+        $datosExamen = $_examenes->obtenerTiposExamen();
+        header("Content-Type: application/json");
+        echo json_encode($datosExamen);
+        http_response_code(200);
     } else if (isset($_GET['paciente_id'])) {
         $id = $_GET['paciente_id'];
         $datosExamen = $_examenes->obtenerExamenes($id);

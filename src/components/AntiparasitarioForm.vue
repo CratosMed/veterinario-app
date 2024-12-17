@@ -27,9 +27,9 @@
 
                     <!-- Marca y N° de serie -->
                     <div class="mb-3">
-                        <label for="marcaSerieAntiparasitario" class="form-label">Marca y N° de serie</label>
-                        <input type="text" class="form-control" v-model="antiparasitario.marcaSerie"
-                            id="marcaSerieAntiparasitario">
+                        <label for="numero_serie" class="form-label">Marca y N° de serie</label>
+                        <input type="text" class="form-control" v-model="antiparasitario.numero_serie"
+                            id="numero_serie">
                     </div>
                     <div class="mb-3">
                         <label for="dosis" class="form-label">Dosis</label>
@@ -54,7 +54,8 @@
                     </div>
                     <br />
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                        <button type="button" class="btn btn-primary w-100"
+                            @click="guardarAntiparasitarios">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -71,19 +72,22 @@
 </template>
 
 <script>
+import axios from 'axios'; // Asegúrate de importar axios
 export default {
     data() {
         return {
             antiparasitarios: [],
             fechaActual: '',
+            id: '' // Asegúrate de que esta propiedad esté presente
         };
     },
     mounted() {
+        this.id = this.$route.params.id; // Captura el paciente_id de la URL
         this.obtenerFechaActual();
     },
     methods: {
         agregarAntiparasitario() {
-            this.antiparasitarios.push({ tipo: '', marcaSerie: '', descripcion: '' });
+            this.antiparasitarios.push({ tipo: '', numero_serie: '', descripcion: '', dosis: '', peso: '' });
         },
         eliminarAntiparasitario(index) {
             this.antiparasitarios.splice(index, 1);
@@ -95,8 +99,38 @@ export default {
             const day = String(today.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
             this.fechaActual = `${year}-${month}-${day}`;
         },
-    },
-};
+        async guardarAntiparasitarios() {
+            if (!this.id) {
+                alert('Paciente ID no definido. No se puede guardar la información.');
+                return;
+            }
+
+            try {
+                for (const antiparasitario of this.antiparasitarios) {
+                    const response = await axios.post('http://192.168.10.1/veterinario-app/curso_apirest/antiparasitarios', {
+                        fecha: this.fechaActual,
+                        tipo: antiparasitario.tipo,
+                        numero_serie: antiparasitario.numero_serie, // Asegúrate de que coincide con lo que espera el backend
+                        dosis: antiparasitario.dosis,
+                        peso: antiparasitario.peso,
+                        descripcion: antiparasitario.descripcion,
+                        paciente_id: this.id
+                    });
+                    console.log('Antiparasitario guardado:', response.data);
+                }
+                alert('Antiparasitarios guardados con éxito.');
+                this.$router.push({
+                    path: `/detalleshistorias/${this.id}`,
+                    hash: '#antiparasitarios'
+                })
+                this.antiparasitarios = []
+            } catch (error) {
+                console.error('Error al guardar antiparasitarios:', error);
+                alert('Error al guardar antiparasitarios. Intenta nuevamente.');
+            }
+        }
+    }
+}
 </script>
 
 <style scoped>

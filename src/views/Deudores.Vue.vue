@@ -31,12 +31,29 @@
                     <td>{{ cliente.correo }}</td>
                     <td>{{ cliente.deuda }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-2" @click="editarCliente(cliente.id)">Editar</button>
-                        <button class="btn btn-sm btn-danger" @click="deleteCliente(cliente.id)">Eliminar</button>
+                        <button class="btn btn-sm btn-warning me-2" @click.stop="editarCliente(cliente.id)">
+                            <i class="bi bi-pencil"></i> <!-- Icono de editar -->
+                        </button>
+                        <button class="btn btn-sm btn-danger" @click.stop="deleteCliente(cliente.id)">
+                            <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
+                        </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination justify-content-end">
+                <li class="page-item" v-if="currentPage > 1" @click="previousPage">
+                    <a class="page-link" href="#" aria-label="Anterior">&laquo;</a>
+                </li>
+                <li class="page-item" v-for="page in totalPages" :key="page" @click="goToPage(page)">
+                    <a class="page-link" href="#">{{ page }}</a>
+                </li>
+                <li class="page-item" v-if="currentPage < totalPages" @click="nextPage">
+                    <a class="page-link" href="#" aria-label="Siguiente">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -49,28 +66,46 @@ export default {
             searchQuery: "",
             clientes: [],
             sortKey: "",
-            sortOrder: 1
+            sortOrder: 1,
+            currentPage: 1, // Página actual
+            itemsPerPage: 10, // Cantidad de elementos por página
         };
     },
     computed: {
         filteredAndSortedRows() {
-            // Filtra los clientes cuya deuda es mayor que 0
+            // Filtra los clientes cuya deuda es mayor que 0 y que coinciden con el término de búsqueda
             let filteredClientes = this.clientes.filter((cliente) => {
-                // Convertir deuda a número y comprobar que sea mayor que 0
                 const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
                 return deudaValue > 0 && Object.values(cliente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase());
             });
-            // Ordena por el campo 'deuda' de mayor a menor
-            return filteredClientes.sort((a, b) => {
-                if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
-                if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
-                return 0;
-            });
+            filteredClientes.sort((a, b) => b.id - a.id);
+
+            // Ordenar si hay una clave de orden establecida
+            if (this.sortKey) {
+                filteredClientes.sort((a, b) => {
+                    if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortOrder;
+                    if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortOrder;
+                    return 0;
+                });
+            }
+
+            // Calcular los elementos a mostrar según la paginación
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = this.currentPage * this.itemsPerPage;
+
+            return filteredClientes.slice(start, end);
         },
+        totalPages() {
+            // Calcula el número total de páginas basado en los clientes filtrados
+            return Math.ceil(this.clientes.filter((cliente) => {
+                const deudaValue = parseFloat(cliente.deuda.replace('$', '').replace(',', '').trim());
+                return deudaValue > 0 && Object.values(cliente).join(" ").toLowerCase().includes(this.searchQuery.toLowerCase());
+            }).length / this.itemsPerPage);
+        }
     },
     methods: {
         fetchClientes() {
-            axios.get("http://localhost/veterinario-app/curso_apirest/propietarios?page=1")
+            axios.get("http://192.168.10.1/veterinario-app/curso_apirest/propietarios?page=1")
                 .then((response) => {
                     this.clientes = response.data;
                 })
@@ -83,13 +118,13 @@ export default {
             this.sortOrder *= -1;
         },
         editarCliente(id) {
-            // Redirige a la vista de editar cliente con el ID del cliente
-            this.$router.push({ name: 'editarCliente', params: { id: id } });
+            this.$router.push(`/agregarcliente/${id}/${this.fromDeudores = true}`);
+
         },
         deleteCliente(id) {
             if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
                 axios
-                    .delete(`http://localhost/veterinario-app/curso_apirest/propietarios`, {
+                    .delete(`http://192.168.10.1/veterinario-app/curso_apirest/propietarios`, {
                         data: { id: id },
                     })
                     .then((response) => {
@@ -109,6 +144,19 @@ export default {
                             alert("Ocurrió un error al intentar eliminar el cliente.");
                         }
                     });
+            }
+        },
+        goToPage(page) {
+            this.currentPage = page;
+        },
+        previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
             }
         }
     },
@@ -154,6 +202,7 @@ export default {
 .custom-table td {
     border-top: none;
     vertical-align: middle;
+
 }
 
 .custom-table th {
@@ -193,5 +242,30 @@ export default {
 
 .table tbody tr:active {
     transform: translateY(-2px);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    /* Mantiene el comportamiento responsivo */
+}
+
+table {
+    table-layout: fixed;
+    /* Mantiene el ancho fijo de las celdas */
+    width: 100%;
+    /* Hace que la tabla ocupe el 100% del contenedor */
+}
+
+th,
+td {
+    white-space: normal;
+    /* Permite que el contenido ocupe varias líneas */
+    word-wrap: break-word;
+    /* Fuerza al texto a ajustarse dentro de las celdas */
+}
+
+td {
+    max-width: 150px;
+    /* Ajusta este valor según el diseño para evitar la expansión */
 }
 </style>

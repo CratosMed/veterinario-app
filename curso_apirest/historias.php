@@ -92,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     echo json_encode($datosArray);
 } else if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
     $postBody = file_get_contents("php://input");
+
     $datosArray = $_historias->eliminarHistoria($postBody);
 
     header('Content-Type: application/json');

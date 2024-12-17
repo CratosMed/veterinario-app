@@ -29,8 +29,8 @@
 
                     <!-- Valoración ASA -->
                     <div class="mb-3">
-                        <label for="valoracionASA" class="form-label">Valoración ASA</label>
-                        <select class="form-select" v-model="procedimiento.asa">
+                        <label for="valoracion_asa" class="form-label">Valoración ASA</label>
+                        <select class="form-select" v-model="procedimiento.valoracion_asa">
                             <option value="I">I</option>
                             <option value="II">II</option>
                             <option value="III">III</option>
@@ -41,20 +41,20 @@
 
                     <!-- Peso del paciente -->
                     <div class="mb-3">
-                        <label for="pesoPaciente" class="form-label">Peso del paciente (kg)</label>
+                        <label for="peso" class="form-label">Peso del paciente (kg)</label>
                         <input type="number" step="0.01" class="form-control" v-model="procedimiento.peso">
                     </div>
 
                     <!-- Procedimiento -->
                     <div class="mb-3">
-                        <label for="procedimientoDescripcion" class="form-label">Procedimiento</label>
-                        <textarea class="form-control" v-model="procedimiento.descripcion" rows="3"></textarea>
+                        <label for="procedimiento" class="form-label">Procedimiento</label>
+                        <textarea class="form-control" v-model="procedimiento.procedimiento" rows="3"></textarea>
                     </div>
 
                     <!-- Patología preexistente -->
                     <div class="mb-3">
-                        <label for="patologiaPreexistente" class="form-label">Patología preexistente</label>
-                        <textarea class="form-control" v-model="procedimiento.patologia" rows="3"></textarea>
+                        <label for="patologias" class="form-label">Patologías</label>
+                        <textarea class="form-control" v-model="procedimiento.patologias" rows="3"></textarea>
                     </div>
 
                     <!-- Medicación en las últimas 24 horas -->
@@ -78,7 +78,7 @@
 
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                    <button type="button" class="btn btn-primary w-100" @click="guardarProcedimientos">Guardar</button>
                 </div>
             </div>
 
@@ -95,6 +95,8 @@
 </template>
 
 <script>
+import axios from 'axios'; // Asegúrate de importar axios
+
 export default {
     data() {
         return {
@@ -104,6 +106,7 @@ export default {
         };
     },
     mounted() {
+        this.id = this.$route.params.id; // Captura el paciente_id de la URL
         this.obtenerFechaActual();
     },
     methods: {
@@ -112,10 +115,10 @@ export default {
                 fecha: '',
                 anestesiologo: '',
                 cirujano: '',
-                asa: '',
+                valoracion_asa: '',
                 peso: '',
-                descripcion: '',
-                patologia: '',
+                procedimiento: '',
+                patologias: '',
                 medicacion: '',
                 observaciones: ''
             });
@@ -130,6 +133,35 @@ export default {
             const año = hoy.getFullYear();
             // Formato correcto para el input de tipo date: YYYY-MM-DD
             this.fechaActual = `${año}-${mes}-${dia}`;
+        },
+        async guardarProcedimientos() {
+            if (!this.id) {
+                alert('Paciente ID no definido. No se puede guardar la información.');
+                return;
+            }
+            try {
+                for (const procedimiento of this.procedimientos) {
+                    await axios.post(`http://192.168.10.1/veterinario-app/curso_apirest/procedimientos`, {
+                        fecha: this.fechaActual,
+                        anestesiologo: procedimiento.anestesiologo,
+                        cirujano: procedimiento.cirujano,
+                        valoracion_asa: procedimiento.valoracion_asa,
+                        peso: procedimiento.peso,
+                        procedimiento: procedimiento.procedimiento,
+                        patologias: procedimiento.patologias,
+                        medicacion: procedimiento.medicacion,
+                        observaciones: procedimiento.observaciones,
+                        paciente_id: this.id
+                    });
+                }
+                alert('Procedimientos guardados con éxito');
+                // Opcionalmente puedes reiniciar el formulario
+                this.procedimientos = [];
+                this.obtenerFechaActual(); // Opcional: reiniciar la fecha actual
+            } catch (error) {
+                console.error('Error al guardar los procedimientos:', error);
+                alert('Hubo un error al guardar los procedimientos');
+            }
         }
     },
 };

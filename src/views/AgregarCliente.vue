@@ -1,15 +1,14 @@
 <template>
     <br />
+    <div v-if="message" v-show="message"
+        :class="['alert', messageType === 'success' ? 'alert-success' : 'alert-danger']"
+        style="max-width: 300px; margin: 0 auto;">
+        {{ message }}
+    </div>
     <div class="d-flex justify-content-between align-items-center mb-3  bg-white py-2">
         <h4 class="text-primary me-auto">{{ editMode ? 'Editar Cliente' : 'Agregar Cliente' }}</h4>
     </div>
     <br />
-    <div v-if="message" v-show="message"
-        :class="['alert', messageType === 'success' ? 'alert-success' : 'alert-danger']"
-        style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 50%;"
-        role="alert">
-        {{ message }}
-    </div>
     <div>
         <form @submit.prevent="submitForm">
             <div class="row mb-3">
@@ -99,10 +98,13 @@ export default {
             clienteId: null,
             message: null,   // Almacena el mensaje a mostrar
             messageType: '', // Tipo de mensaje: success o error
+            fromDeudores: false,  // Nueva variable para controlar la redirección
         };
     },
     created() {
         const id = this.$route.params.id;
+        this.fromDeudores = !!this.$route.params.fromDeudores; // Detecta si proviene de deudores
+
         if (id) {
             this.loadCliente(id);
         }
@@ -112,7 +114,7 @@ export default {
     },
     methods: {
         loadCliente(id) {
-            axios.get(`http://localhost/veterinario-app/curso_apirest/propietarios?id=${id}`)
+            axios.get(`http://192.168.10.1/veterinario-app/curso_apirest/propietarios?id=${id}`)
                 .then(response => {
                     const cliente = response.data[0];
                     this.form = {
@@ -146,15 +148,21 @@ export default {
         },
         submitForm() {
             if (this.editMode) {
-                axios.put(`http://localhost/veterinario-app/curso_apirest/propietarios`, { ...this.form, id: this.clienteId })
+                axios.put(`http://192.168.10.1/veterinario-app/curso_apirest/propietarios`, { ...this.form, id: this.clienteId })
                     .then(() => {
                         this.showMessage('Cliente actualizado con éxito', 'success', () => {
-                            this.$router.push('/listaclientes'); // Redirigir después de mostrar el mensaje
+
+                            if (this.fromDeudores) {
+                                this.$router.push('/deudores'); // Regresar a lista de deudores
+                            } else {
+                                this.$router.push('/listaclientes'); // Regresar a lista de clientes
+
+                            }
                         });
                     })
                     .catch(error => alert('Error al actualizar cliente'));
             } else {
-                axios.post('http://localhost/veterinario-app/curso_apirest/propietarios', this.form)
+                axios.post('http://192.168.10.1/veterinario-app/curso_apirest/propietarios', this.form)
                     .then(() => {
                         this.showMessage('Cliente agregado con éxito', 'success', () => {
                             this.$router.push('/listaclientes'); // Redirigir después de mostrar el mensaje
@@ -205,8 +213,8 @@ export default {
                             if (callback) {
                                 callback();
                             }
-                        }, 1000);
-                    }, 1000);
+                        }, 700);
+                    }, 700);
                 }
             });
 
@@ -215,7 +223,7 @@ export default {
                 this.message = null;
                 this.messageType = '';
                 console.log('Mensaje borrado después de 3 segundos');
-            }, 1000);
+            }, 800);
         }
     }
 };

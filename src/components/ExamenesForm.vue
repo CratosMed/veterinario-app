@@ -6,7 +6,6 @@
         </div>
 
         <!-- Formulario de Hallazgos -->
-
         <div v-for="(hallazgo, index) in hallazgos" :key="index" class="card mb-3 p-3 shadow-sm">
             <div class="card-body">
                 <!-- Seleccionar tipo de examen -->
@@ -15,20 +14,18 @@
                     <input type="date" class="form-control" id="fechaActual" v-model="fechaActual" />
                 </div>
                 <div class="mb-1">
-                    <label for="tipoExamen" class="form-label">Tipo de hallazgos del examen</label>
                     <select class="form-select" v-model="hallazgo.tipo" aria-label="Tipo de examen">
-                        <option value="">Seleccione el tipo de hallazgos del examen</option>
-                        <option value="1">Análisis de sangre</option>
-                        <option value="2">Citología</option>
-                        <option value="3">Histopatología</option>
-                        <option value="4">Radiografía</option>
-                        <option value="5">Ultrasonido</option>
-                        <option value="6">Electrocardiograma</option>
-                        <option value="7">Endoscopía</option>
-                        <option value="8">Tomografía computarizada</option>
-                        <option value="9">Resonancia magnética</option>
-                        <option value="10">Otros</option>
+                        <option value="">Seleccione el tipo de examen</option>
+                        <option v-for="tipo in tiposExamen" :key="tipo.id" :value="tipo.tipo">{{ tipo.tipo }}</option>
+                        <option value="otra">Otra</option> <!-- Opción para "Otra" -->
                     </select>
+                </div>
+
+                <!-- Campo de entrada que se muestra cuando se selecciona "Otra" -->
+                <div v-if="hallazgo.tipo === 'otra'" class="mb-3">
+                    <label for="otroHallazgo" class="form-label">Especifique otro tipo de examen</label>
+                    <input type="text" class="form-control" id="otroHallazgo" v-model="hallazgo.otro"
+                        placeholder="Especifique aquí el tipo de examen">
                 </div>
 
                 <!-- Descripción -->
@@ -38,43 +35,11 @@
                         placeholder="Opcional"></textarea>
                 </div>
 
-                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div v-for="(imageData, index) in images" :key="index"
-                            :class="['carousel-item ', { active: index === 0 }]">
-                            <img :src="imageData.url" class="d-block w-100 " alt="Imagen del carrusel"
-                                @click="viewImage(imageData)" />
-                            <div class="carousel-caption d-none d-md-block talla">
-                                <p>{{ imageData.description }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-                </div>
+                <div class="col-md-4 col-lg-4">
+                    <label for="foto" class="form-label">Foto</label>
+                    <input type="file" class="form-control" id="foto" @change="onFileChange($event, index)">
 
-                <!-- Formulario para subir imágenes -->
-                <div class="mt-3">
-                    <input type="file" @change="handleFileUpload" multiple accept="image/*" class="form-control" />
-                    <input v-model="newDescription" type="text" placeholder="Descripción de la imagen"
-                        class="form-control mt-2" />
-                </div>
 
-                <!-- Imagen ampliada -->
-                <div v-if="selectedImage" class="fullscreen-modal">
-                    <img :src="selectedImage.url" class="img-fluid" alt="Imagen ampliada" />
-                    <p class="text-white text-center mt-2">{{ selectedImage.description }}</p>
-                    <button class="close-btn" @click="closeImage">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
                 </div>
             </div>
 
@@ -86,12 +51,10 @@
             </div>
             <br />
 
-            <br />
             <div class="text-center">
-                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                <button type="button" class="btn btn-primary w-100" @click="guardarHallazgos">Guardar</button>
             </div>
         </div>
-        <!-- Botón para agregar más hallazgos -->
     </div>
     <br />
     <div class="text-end">
@@ -102,57 +65,90 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
             hallazgos: [],
-            formularioHallazgosVisible: true,
             images: [],
             selectedImage: null,
             newDescription: '',
-            fechaActual: ''
+            fechaActual: '',
+            id: '',
+            tiposExamen: []
         };
     },
     mounted() {
+        this.id = this.$route.params.id;
         this.obtenerFechaActual();
+        this.obtenerTiposExamen();
     },
     methods: {
+        async obtenerTiposExamen() {
+            try {
+                const response = await axios.get('http://192.168.10.1/veterinario-app/curso_apirest/examenes?obtenerTiposExamen');
+                this.tiposExamen = response.data;
+                console.log(this.tiposExamen)
+            } catch (error) {
+                console.error('Error al obtener los tipos de examen:', error);
+            }
+        },
+
+        onFileChange(event, index) {
+            const file = event.target.files[0];
+            this.hallazgos[index].imagen = file; // Guardamos el archivo en el hallazgo correspondiente
+        },
         agregarHallazgo() {
-            this.hallazgos.push({ tipo: '', descripcion: '', imagen: '' });
+            this.hallazgos.push({ tipo: '', descripcion: '', imagen: null }); // Cambiado de [] a null
         },
         eliminarHallazgo(index) {
             this.hallazgos.splice(index, 1);
         },
-        handleFileUpload(event) {
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.images.push({
-                        url: e.target.result,
-                        description: this.newDescription || 'Sin descripción', // Asignar descripción
-                    });
-                    this.newDescription = ''; // Limpiar el campo de descripción
-                };
-                reader.readAsDataURL(file);
+        async guardarHallazgos() {
+            const formData = new FormData();
+            try {
+                this.hallazgos.forEach(hallazgo => {
+                    // Si el tipo de examen es "Otra", envía el valor del campo "otro"
+                    const tipoExamen = hallazgo.tipo === 'otra' ? hallazgo.otro : hallazgo.tipo;
+
+                    formData.append('tipo', tipoExamen);
+                    formData.append('descripcion', hallazgo.descripcion);
+                    formData.append('paciente_id', this.id);
+
+                    if (hallazgo.imagen) {
+                        formData.append('foto', hallazgo.imagen);
+                    }
+                });
+
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+
+                const response = await axios.post('http://192.168.10.1/veterinario-app/curso_apirest/examenes', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                alert('Hallazgos guardados con éxito');
+                this.hallazgos = [];
+                this.obtenerFechaActual();
+                this.obtenerTiposExamen();
+            } catch (error) {
+                console.error('Error al guardar los hallazgos:', error.response?.data || error.message);
+                alert('Hubo un error al guardar los hallazgos: ' + (error.response?.data?.message || 'Error desconocido'));
             }
-        },
-        viewImage(imageData) {
-            this.selectedImage = imageData; // Mostrar la imagen seleccionada
-        },
-        closeImage() {
-            this.selectedImage = null; // Ocultar la imagen
         },
         obtenerFechaActual() {
             const hoy = new Date();
             const dia = hoy.getDate().toString().padStart(2, '0');
-            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0');
             const año = hoy.getFullYear();
-            // Formato correcto para el input de tipo date: YYYY-MM-DD
             this.fechaActual = `${año}-${mes}-${dia}`;
         }
     }
+
 }
 </script>
 
@@ -168,60 +164,12 @@ export default {
     border-radius: 0.25rem;
 }
 
-.carousel-item img {
+.img-thumbnail {
     max-height: 100px;
     object-fit: cover;
 }
 
-.fullscreen-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-}
-
-.fullscreen-modal img {
-    max-width: 90%;
-    max-height: 90%;
-    margin: auto;
-    /* Asegura que la imagen se centre */
-}
-
-
-.close-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-}
-
-.carousel-caption {
-    background: rgba(0, 0, 0, 0.5);
-    /* Fondo semi-transparente para la descripción */
-}
-
-.fullscreen-modal p {
-    position: absolute;
-    bottom: 20px;
-    /* Espaciado desde la parte inferior */
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    /* Color del texto */
-}
-
-.talla {
-    margin-left: 15%;
-    margin-right: 15%;
+.text-center {
+    margin-top: 10px;
 }
 </style>

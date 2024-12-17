@@ -2,13 +2,16 @@
   "name": "veterinario-app",
   "version": "0.0.0",
   "private": true,
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "@react-oauth/google": "^0.12.1",
     "ag-grid-community": "^32.1.0",
     "ag-grid-vue3": "^32.1.0",
     "axios": "^1.7.5",
@@ -23,6 +26,20 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.2.0",
+    "electron": "^32.2.0",
+    "electron-builder": "^25.1.7",
     "vite": "^3.2.4"
+  },
+  "build": {
+    "appId": "com.veterinario.app",
+    "productName": "Veterinario App",
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js"
+    ],
+    "directories": {
+      "output": "build"
+    }
   }
 }
