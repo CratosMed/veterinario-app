@@ -125,8 +125,9 @@ body {
 .floating-button {
   position: fixed;
   top: 10px;
-  right: -15px;
+  left: 15px;
   z-index: 9999;
+  width: 38px;
 }
 
 /* Estilos para el menú lateral */

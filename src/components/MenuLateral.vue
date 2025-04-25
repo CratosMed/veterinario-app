@@ -38,6 +38,7 @@ export default {
                 { id: 3, label: 'Lista de Pacientes', path: '/listaPacientes', icon: 'bi bi-list-ul' },
                 { id: 6, label: 'Citas', path: '/citas', icon: 'bi bi-calendar-event' },
                 { id: 7, label: 'Deudores', path: '/deudores', icon: 'bi bi-receipt' },
+                { id: 7, label: 'ventas', path: '/ventasInventario', icon: 'fas fa-boxes' },
                 { id: 8, label: 'Actualizaciones', path: '/actualizacion', icon: 'bi bi-arrow-clockwise' },
             ]
         };

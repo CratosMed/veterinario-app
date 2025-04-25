@@ -16,6 +16,9 @@ import ListaPacientes from '../views/ListaPacientes.vue'
 import RegistroLogin from '../views/RegistroLogin.vue'
 import VentasInventario from '../views/VentasInventario.vue'
 import InventarioVue from '../views/InventarioVue.vue'
+import ListarUsuarios from '../views/ListarUsuarios.vue'
+import EstadisticaVue from '../views/EstadisticaVue.vue'
+
 
 
 
@@ -117,6 +120,16 @@ const router = createRouter({
       path: '/inventario',
       name: 'inventario',
       component: InventarioVue
+    },
+    {
+      path: '/listarusuario',
+      name: 'listarusuarios',
+      component: ListarUsuarios
+    },
+    {
+      path: '/estadistica',
+      name: 'estadisticas',
+      component: EstadisticaVue
     },
     {
       path: '/about',
