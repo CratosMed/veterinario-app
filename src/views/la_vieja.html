@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Juego de La Vieja (Tic-Tac-Toe) - Niveles</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+            rel="stylesheet">
+        <style>
+        /* Estilos personalizados */
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #1a202c; /* bg-gray-900 */
+            color: #cbd5e0; /* text-gray-300 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem; /* p-4 */
+        }
+        canvas {
+            background-color: #2d3748; /* bg-gray-800 */
+            border: 5px solid #4a5568; /* border-gray-700 */
+            border-radius: 0.5rem; /* rounded-lg */
+            cursor: pointer;
+            max-width: 90vw;
+            max-height: 65vh; /* Reducido un poco para dar espacio a controles */
+            aspect-ratio: 1 / 1;
+            display: block; /* Evita espacio extra debajo */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .game-title {
+            font-size: 2rem; /* text-3xl */
+            margin-bottom: 1rem; /* mb-4 */
+            color: #f7fafc; /* text-gray-100 */
+            text-shadow: 2px 2px #000;
+        }
+        .status-message {
+            font-size: 1.1rem; /* text-lg */
+            margin-top: 0.5rem; /* mt-2 */
+            min-height: 2em;
+            color: #a0aec0; /* text-gray-400 */
+            text-align: center;
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .difficulty-label {
+            margin-bottom: 0.5rem; /* mb-2 */
+            font-size: 0.9rem; /* text-sm */
+            color: #a0aec0; /* text-gray-400 */
+        }
+        .difficulty-options label {
+            margin: 0 0.5rem; /* mx-2 */
+            cursor: pointer;
+            font-size: 0.9rem; /* text-sm */
+            color: #e2e8f0; /* text-gray-200 */
+            padding: 0.3rem 0.6rem; /* py-1 px-2 */
+            border: 2px solid transparent;
+            border-radius: 0.375rem; /* rounded-md */
+            transition: all 0.2s ease-in-out;
+        }
+        .difficulty-options input[type="radio"] {
+            display: none; /* Oculta el botón de radio real */
+        }
+        /* Estilo para el label cuando el radio está seleccionado */
+        .difficulty-options input[type="radio"]:checked + label {
+            border-color: #4299e1; /* border-blue-500 */
+            background-color: #2b6cb0; /* bg-blue-700 */
+            color: #f7fafc; /* text-white */
+        }
+        .difficulty-options label:hover {
+             background-color: #4a5568; /* hover:bg-gray-700 */
+        }
+
+        .reset-button {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #4a5568; /* bg-gray-600 */
+            color: #f7fafc; /* text-white */
+            padding: 0.6rem 1.2rem; /* py-2 px-4 */
+            border: none;
+            border-radius: 0.5rem; /* rounded-lg */
+            cursor: pointer;
+            font-size: 1rem; /* text-base */
+            margin-top: 0.5rem; /* mt-2 */
+            transition: background-color 0.3s ease;
+            box-shadow: 3px 3px #2d3748; /* Sombra */
+        }
+        .reset-button:hover {
+            background-color: #718096; /* hover:bg-gray-500 */
+        }
+         .reset-button:active {
+            box-shadow: 1px 1px #2d3748;
+            transform: translate(2px, 2px);
+        }
+    </style>
+    </head>
+    <body>
+
+        <h1 class="game-title">La Vieja</h1>
+
+        <canvas id="ticTacToeCanvas" width="300" height="300"></canvas>
+
+        <div id="statusMessage" class="status-message">Selecciona dificultad y
+            empieza</div>
+
+        <div class="controls-container">
+            <div class="difficulty-label">Dificultad:</div>
+            <div class="difficulty-options">
+                <input type="radio" id="easy" name="difficulty" value="easy"
+                    checked>
+                <label for="easy">Fácil</label>
+
+                <input type="radio" id="medium" name="difficulty"
+                    value="medium">
+                <label for="medium">Medio</label>
+
+                <input type="radio" id="hard" name="difficulty" value="hard">
+                <label for="hard">Difícil</label>
+            </div>
+        </div>
+
+        <button id="resetButton" class="reset-button">Reiniciar Juego</button>
+
+        <script>
+        // --- Game Variables ---
+        const canvas = document.getElementById('ticTacToeCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusMessage = document.getElementById('statusMessage');
+        const resetButton = document.getElementById('resetButton');
+        const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
+
+        const boardSize = 3;
+        let cellSize;
+        let board; // 2D array for board state ('', 'X', 'O')
+        let currentPlayer; // 'X' or 'O'
+        let gameDifficulty; // 'easy', 'medium', 'hard'
+        let gameOver = false;
+        const playerSymbol = 'X';
+        const computerSymbol = 'O';
+        const scores = { // Scores for Minimax
+            [computerSymbol]: 10,
+            [playerSymbol]: -10,
+            'tie': 0
+        };
+
+        // --- Drawing Functions (No changes from previous version) ---
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#a0aec0'; // gray-400
+            ctx.lineWidth = 5;
+            for (let i = 1; i < boardSize; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * cellSize, 0);
+                ctx.lineTo(i * cellSize, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 1; i < boardSize; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+        }
+        function drawX(row, col) {
+            ctx.strokeStyle = '#f56565'; // red-500
+            ctx.lineWidth = 5;
+            const offset = cellSize * 0.2;
+            const x = col * cellSize;
+            const y = row * cellSize;
+            ctx.beginPath();
+            ctx.moveTo(x + offset, y + offset);
+            ctx.lineTo(x + cellSize - offset, y + cellSize - offset);
+            ctx.moveTo(x + cellSize - offset, y + offset);
+            ctx.lineTo(x + offset, y + cellSize - offset);
+            ctx.stroke();
+        }
+        function drawO(row, col) {
+            ctx.strokeStyle = '#4299e1'; // blue-500
+            ctx.lineWidth = 5;
+            const centerX = col * cellSize + cellSize / 2;
+            const centerY = row * cellSize + cellSize / 2;
+            const radius = cellSize / 2 * 0.6;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+        function drawBoard() {
+            drawGrid();
+            for (let row = 0; row < boardSize; row++) {
+                for (let col = 0; col < boardSize; col++) {
+                    if (board[row][col] === playerSymbol) {
+                        drawX(row, col);
+                    } else if (board[row][col] === computerSymbol) {
+                        drawO(row, col);
+                    }
+                }
+            }
+        }
+
+        // --- Game Logic ---
+        function initializeGame() {
+            // Adjust canvas size dynamically
+            const availableWidth = window.innerWidth * 0.9;
+            // Adjust available height considering controls
+            const availableHeight = window.innerHeight * 0.65;
+            const size = Math.min(availableWidth, availableHeight, 350); // Slightly larger max size if possible
+            canvas.width = size;
+            canvas.height = size;
+            cellSize = canvas.width / boardSize;
+
+            // Initialize board
+            board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(''));
+            currentPlayer = playerSymbol; // Player always starts
+            gameOver = false;
+
+            // Get selected difficulty
+            gameDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
+
+            statusMessage.textContent = `Dificultad: ${gameDifficulty}. Turno del Jugador (${playerSymbol})`;
+            drawBoard();
+        }
+
+        function handlePlayerClick(event) {
+            if (gameOver || currentPlayer !== playerSymbol) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const col = Math.floor(x / cellSize);
+            const row = Math.floor(y / cellSize);
+
+            if (isValidMove(row, col)) {
+                makeMove(row, col, playerSymbol);
+                if (!gameOver) {
+                    currentPlayer = computerSymbol;
+                    statusMessage.textContent = `Turno de la Computadora (${computerSymbol})...`;
+                    // Disable clicks during computer's turn visually (optional)
+                    canvas.style.cursor = 'wait';
+                    setTimeout(() => {
+                         computerMove();
+                         // Re-enable clicks after computer moves
+                         if (!gameOver) {
+                            canvas.style.cursor = 'pointer';
+                         } else {
+                             canvas.style.cursor = 'default'; // No pointer if game over
+                         }
+                    }, 500); // Delay for computer move
+                }
+            }
+        }
+
+        function isValidMove(row, col) {
+             return row >= 0 && row < boardSize && col >= 0 && col < boardSize && board[row][col] === '';
+        }
+
+        function makeMove(row, col, player) {
+            if (gameOver || board[row][col] !== '') return;
+
+            board[row][col] = player;
+            drawBoard();
+
+            let winner = checkWinner(); // Check for win or tie
+            if (winner) {
+                gameOver = true;
+                 if (winner === 'tie') {
+                    statusMessage.textContent = "¡Es un empate!";
+                 } else {
+                    statusMessage.textContent = winner === playerSymbol ? "¡Has ganado!" : "¡La Computadora ha ganado!";
+                 }
+                 canvas.style.cursor = 'default'; // Change cursor when game ends
+            }
+        }
+
+        // --- Computer AI ---
+        function computerMove() {
+            if (gameOver) return;
+
+            let bestMove;
+            // Choose AI based on difficulty
+            switch (gameDifficulty) {
+                case 'easy':
+                    bestMove = findRandomMove();
+                    break;
+                case 'medium':
+                    bestMove = findBestMoveHeuristic();
+                    break;
+                case 'hard':
+                    bestMove = findBestMoveMinimax();
+                    break;
+                default: // Fallback to easy
+                    bestMove = findRandomMove();
+            }
+
+            if (bestMove) {
+                makeMove(bestMove.row, bestMove.col, computerSymbol);
+            }
+
+            // If game isn't over, switch back to player
+            if (!gameOver) {
+                currentPlayer = playerSymbol;
+                statusMessage.textContent = `Turno del Jugador (${playerSymbol})`;
+            }
+        }
+
+        // AI Level 1: Easy (Random)
+        function findRandomMove() {
+            let availableCells = [];
+            for (let row = 0; row < boardSize; row++) {
+                for (let col = 0; col < boardSize; col++) {
+                    if (board[row][col] === '') {
+                        availableCells.push({ row, col });
+                    }
+                }
+            }
+            if (availableCells.length > 0) {
+                const randomIndex = Math.floor(Math.random() * availableCells.length);
+                return availableCells[randomIndex];
+            }
+            return null; // Should not happen if checkDraw is correct
+        }
+
+        // AI Level 2: Medium (Heuristics)
+        function findBestMoveHeuristic() {
+            // 1. Win
+            for (let r = 0; r < boardSize; r++) {
+                for (let c = 0; c < boardSize; c++) {
+                    if (board[r][c] === '') {
+                        board[r][c] = computerSymbol;
+                        if (checkWinnerInternal(board) === computerSymbol) {
+                            board[r][c] = ''; return { row: r, col: c };
+                        }
+                        board[r][c] = '';
+                    }
+                }
+            }
+            // 2. Block
+            for (let r = 0; r < boardSize; r++) {
+                for (let c = 0; c < boardSize; c++) {
+                    if (board[r][c] === '') {
+                        board[r][c] = playerSymbol;
+                        if (checkWinnerInternal(board) === playerSymbol) {
+                            board[r][c] = ''; return { row: r, col: c };
+                        }
+                        board[r][c] = '';
+                    }
+                }
+            }
+             // 3. Center
+            const center = Math.floor(boardSize / 2);
+            if (board[center][center] === '') return { row: center, col: center };
+
+            // 4. Opposite Corner
+            const corners = [{r:0,c:0},{r:0,c:2},{r:2,c:0},{r:2,c:2}]; // For 3x3
+             if (boardSize === 3) {
+                if (board[0][0] === playerSymbol && board[2][2] === '') return { row: 2, col: 2 };
+                if (board[2][2] === playerSymbol && board[0][0] === '') return { row: 0, col: 0 };
+                if (board[0][2] === playerSymbol && board[2][0] === '') return { row: 2, col: 0 };
+                if (board[2][0] === playerSymbol && board[0][2] === '') return { row: 0, col: 2 };
+             }
+
+            // 5. Empty Corner
+            for (const corner of corners) {
+                 if (board[corner.r][corner.c] === '') return { row: corner.r, col: corner.c };
+            }
+
+            // 6. Empty Side
+            const sides = [{r:0,c:1},{r:1,c:0},{r:1,c:2},{r:2,c:1}]; // For 3x3
+             if (boardSize === 3) {
+                for (const side of sides) {
+                     if (board[side.r][side.c] === '') return { row: side.r, col: side.c };
+                }
+             }
+
+            // 7. Random (fallback, should be rare with this logic)
+            return findRandomMove();
+        }
+
+        // AI Level 3: Hard (Minimax)
+        function findBestMoveMinimax() {
+            let bestScore = -Infinity;
+            let move = null;
+             for (let r = 0; r < boardSize; r++) {
+                for (let c = 0; c < boardSize; c++) {
+                    if (board[r][c] === '') {
+                        board[r][c] = computerSymbol; // Make the move
+                        let score = minimax(board, 0, false); // Call minimax for the opponent
+                        board[r][c] = ''; // Undo the move
+                        if (score > bestScore) {
+                            bestScore = score;
+                            move = { row: r, col: c };
+                        }
+                    }
+                }
+            }
+            // If no move found (shouldn't happen unless board full), return random
+            return move || findRandomMove();
+        }
+
+        function minimax(currentBoard, depth, isMaximizing) {
+            let winner = checkWinnerInternal(currentBoard);
+            if (winner !== null) {
+                return scores[winner]; // Return score based on winner/tie
+            }
+
+            if (isMaximizing) { // Computer's turn (maximize score)
+                let bestScore = -Infinity;
+                for (let r = 0; r < boardSize; r++) {
+                    for (let c = 0; c < boardSize; c++) {
+                        if (currentBoard[r][c] === '') {
+                            currentBoard[r][c] = computerSymbol;
+                            let score = minimax(currentBoard, depth + 1, false);
+                            currentBoard[r][c] = '';
+                            bestScore = Math.max(score, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            } else { // Player's turn (minimize score)
+                let bestScore = Infinity;
+                 for (let r = 0; r < boardSize; r++) {
+                    for (let c = 0; c < boardSize; c++) {
+                         if (currentBoard[r][c] === '') {
+                            currentBoard[r][c] = playerSymbol;
+                            let score = minimax(currentBoard, depth + 1, true);
+                            currentBoard[r][c] = '';
+                            bestScore = Math.min(score, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+
+        // --- Win/Draw Check ---
+        // Returns 'X', 'O', 'tie', or null if game not over
+        function checkWinner() {
+           return checkWinnerInternal(board);
+        }
+
+        // Internal helper for checking win/draw on any board state (used by AI)
+        function checkWinnerInternal(boardToCheck) {
+             // Check rows, columns, and diagonals for a win
+            let winner = null;
+            // Rows
+            for (let r = 0; r < boardSize; r++) {
+                if (boardToCheck[r][0] !== '' && boardToCheck[r].every(cell => cell === boardToCheck[r][0])) {
+                    winner = boardToCheck[r][0]; break;
+                }
+            }
+            // Columns
+            if (!winner) {
+                for (let c = 0; c < boardSize; c++) {
+                    if (boardToCheck[0][c] !== '' && boardToCheck.every(row => row[c] === boardToCheck[0][c])) {
+                         winner = boardToCheck[0][c]; break;
+                    }
+                }
+            }
+            // Diagonal \
+             if (!winner) {
+                if (boardToCheck[0][0] !== '' && boardToCheck.every((row, idx) => row[idx] === boardToCheck[0][0])) {
+                    winner = boardToCheck[0][0];
+                }
+            }
+            // Diagonal /
+            if (!winner) {
+                 const last = boardSize - 1;
+                 if (boardToCheck[0][last] !== '' && boardToCheck.every((row, idx) => row[last - idx] === boardToCheck[0][last])) {
+                     winner = boardToCheck[0][last];
+                 }
+            }
+
+            // Check for tie (if no winner and board is full)
+            let openSpots = 0;
+            for (let r = 0; r < boardSize; r++) {
+                for (let c = 0; c < boardSize; c++) {
+                    if (boardToCheck[r][c] === '') {
+                        openSpots++;
+                    }
+                }
+            }
+
+            if (winner === null && openSpots === 0) {
+                return 'tie'; // It's a tie
+            } else {
+                return winner; // Return the winner ('X' or 'O') or null if ongoing
+            }
+        }
+
+
+        // --- Event Listeners ---
+        canvas.addEventListener('click', handlePlayerClick);
+        resetButton.addEventListener('click', initializeGame);
+        // Add listeners for difficulty change to reset the game
+        difficultyRadios.forEach(radio => {
+            radio.addEventListener('change', initializeGame);
+        });
+        // Adjust canvas on resize
+        window.addEventListener('resize', initializeGame);
+
+        // --- Initial Game Start ---
+        window.onload = initializeGame;
+
+    </script>
+
+    </body>
+</html>

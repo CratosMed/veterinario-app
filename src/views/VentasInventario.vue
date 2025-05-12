@@ -123,10 +123,10 @@
 </template>
 
 <script>
-import CintilloForm from "../components/cintilloForm.vue";
+import CintilloForm from "../components/CintilloForm.vue";
 
 export default {
-    name: "DashboardView",
+    name: "VentasInventario",
     components: {
         CintilloForm,
     },
